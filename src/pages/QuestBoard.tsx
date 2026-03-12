@@ -1,30 +1,35 @@
-import { mockQuests } from "@/data/mockData";
+import { useQuestContext } from "@/context/QuestContext";
 import QuestCard from "@/components/QuestCard";
-import questBoardHero from "@/assets/quest-board-hero.png";
 import { useState } from "react";
 import PixelButton from "@/components/PixelButton";
+import { Link } from "react-router-dom";
 
 const QuestBoard = () => {
+  const { quests } = useQuestContext();
   const [filter, setFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("active");
 
-  const categories = ["all", ...new Set(mockQuests.map((q) => q.category))];
-  const filtered = filter === "all" ? mockQuests : mockQuests.filter((q) => q.category === filter);
+  const categories = ["all", ...new Set(quests.map((q) => q.category))];
+
+  const filtered = quests.filter((q) => {
+    const catMatch = filter === "all" || q.category === filter;
+    const statusMatch =
+      statusFilter === "all" ? true :
+      statusFilter === "active" ? q.status !== "completed" :
+      q.status === statusFilter;
+    return catMatch && statusMatch;
+  });
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <div className="relative w-full h-[280px] overflow-hidden pixel-border">
-        <img
-          src={questBoardHero}
-          alt="Quest Board"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-background/60 flex flex-col items-center justify-center gap-3">
+      <div className="relative w-full h-[200px] overflow-hidden pixel-border bg-secondary">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
           <h1 className="font-pixel text-[18px] sm:text-[22px] text-accent pixel-text-shadow text-center leading-relaxed">
-            Heed the Call, Adventurer!
+            ⚔ Quest Board
           </h1>
           <p className="font-pixel text-[10px] text-foreground pixel-text-shadow">
-            Your Next Quest Awaits
+            Accept quests. Earn gold. Level up.
           </p>
           <div className="flex gap-1 mt-2">
             {[0, 1, 2, 3, 4].map((i) => (
@@ -36,19 +41,42 @@ const QuestBoard = () => {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="max-w-[1280px] mx-auto px-4 mt-6">
-        <div className="flex flex-wrap gap-2 mb-6">
-          {categories.map((cat) => (
-            <PixelButton
-              key={cat}
-              variant={filter === cat ? "gold" : "ghost"}
-              size="sm"
-              onClick={() => setFilter(cat)}
-            >
-              {cat}
+        {/* Top bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <PixelButton
+                key={cat}
+                variant={filter === cat ? "gold" : "ghost"}
+                size="sm"
+                onClick={() => setFilter(cat)}
+              >
+                {cat}
+              </PixelButton>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            {["active", "completed", "all"].map((s) => (
+              <PixelButton
+                key={s}
+                variant={statusFilter === s ? "primary" : "ghost"}
+                size="sm"
+                onClick={() => setStatusFilter(s)}
+              >
+                {s}
+              </PixelButton>
+            ))}
+          </div>
+        </div>
+
+        {/* Post Quest CTA */}
+        <div className="mb-6">
+          <Link to="/create-quest">
+            <PixelButton variant="gold" size="md">
+              📜 Post New Quest
             </PixelButton>
-          ))}
+          </Link>
         </div>
 
         {/* Quest Grid */}

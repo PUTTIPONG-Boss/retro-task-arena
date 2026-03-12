@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { mockUser } from "@/data/mockData";
+import { useQuestContext } from "@/context/QuestContext";
 
 const Navbar = () => {
   const location = useLocation();
+  const { user } = useQuestContext();
 
   const links = [
     { to: "/", label: "Quest Board", icon: "📋" },
+    { to: "/create-quest", label: "Post Quest", icon: "📜" },
     { to: "/reward-shop", label: "Reward Shop", icon: "🏪" },
     { to: "/profile", label: "Profile", icon: "👤" },
   ];
@@ -36,7 +38,7 @@ const Navbar = () => {
           <div className="pixel-border bg-secondary px-3 py-1 flex items-center gap-2">
             <span className="text-lg">🪙</span>
             <span className="font-pixel text-[10px] text-accent pixel-text-shadow">
-              {mockUser.points.toLocaleString()}
+              {user.points.toLocaleString()}
             </span>
           </div>
         </div>
