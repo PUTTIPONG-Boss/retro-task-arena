@@ -1,17 +1,19 @@
 import { useParams, Link } from "react-router-dom";
-import { mockQuests } from "@/data/mockData";
+import { useQuestContext } from "@/context/QuestContext";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import { toast } from "sonner";
 
 const ProviderBids = () => {
   const { id } = useParams();
-  const quest = mockQuests.find((q) => q.id === id);
+  const { quests, acceptBidder } = useQuestContext();
+  const quest = quests.find((q) => q.id === id);
 
   if (!quest) return null;
 
-  const handleSelect = (username: string) => {
-    toast.success(`${username} has been chosen for this quest!`, {
+  const handleSelect = (userId: string, username: string) => {
+    acceptBidder(quest.id, userId);
+    toast.success(`${username} has been assigned to this quest!`, {
       style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
     });
   };
@@ -70,9 +72,14 @@ const ProviderBids = () => {
                       <p className="font-pixel text-[11px] text-accent pixel-text-shadow">🪙 {bid.requestedPoints} GP</p>
                       <p className="text-base text-muted-foreground">⏳ {bid.estimatedTime}</p>
                     </div>
-                    <PixelButton variant="primary" size="sm" onClick={() => handleSelect(bid.username)}>
-                      Select
-                    </PixelButton>
+                    {quest.status === "open" && (
+                      <PixelButton variant="gold" size="sm" onClick={() => handleSelect(bid.userId, bid.username)}>
+                        ⚔ Accept Bidder
+                      </PixelButton>
+                    )}
+                    {quest.assignedTo === bid.userId && (
+                      <span className="font-pixel text-[8px] text-success">✓ ASSIGNED</span>
+                    )}
                   </div>
                 </div>
               </div>
