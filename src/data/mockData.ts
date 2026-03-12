@@ -7,7 +7,7 @@ export interface Quest {
   difficulty: number; // 1-5
   estimatedTime: string;
   category: string;
-  status: "open" | "in-progress" | "completed";
+  status: "open" | "bidding" | "in-progress" | "review" | "completed";
   providerId: string;
   providerName: string;
   repoUrl?: string;
