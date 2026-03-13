@@ -37,8 +37,8 @@ const UserProfile = () => {
         {[
           { label: "Gold", value: `🪙 ${user.points.toLocaleString()}`, color: "text-accent" },
           { label: "Quests Done", value: `🏆 ${user.questsCompleted}`, color: "text-foreground" },
-          { label: "Rating", value: `★ ${user.rating}`, color: "text-accent" },
-          { label: "Skills", value: `📚 ${user.skills.length}`, color: "text-foreground" },
+          { label: "Rating", value: `★ ${user.rating} / 5`, color: "text-accent" },
+          { label: "Reviews", value: `📊 ${user.totalRatings}`, color: "text-foreground" },
         ].map((stat) => (
           <PixelFrame key={stat.label} className="text-center">
             <p className="font-pixel text-[7px] text-muted-foreground mb-1">{stat.label}</p>

@@ -203,6 +203,14 @@ const QuestWorkspace = () => {
           )}
         </div>
       </div>
+
+      <RatingModal
+        open={showRating}
+        onClose={() => setShowRating(false)}
+        onSubmit={handleRatingSubmit}
+        workerUsername={workerUsername}
+        questTitle={quest.title}
+      />
     </div>
   );
 };
