@@ -2,6 +2,8 @@ import { useQuestContext } from "@/context/QuestContext";
 import QuestCard from "@/components/QuestCard";
 import { useState } from "react";
 import PixelButton from "@/components/PixelButton";
+import PixelDivider from "@/components/PixelDivider";
+import GuildBanner from "@/components/GuildBanner";
 import { Link } from "react-router-dom";
 
 const QuestBoard = () => {
@@ -22,28 +24,11 @@ const QuestBoard = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
-      <div className="relative w-full h-[200px] overflow-hidden pixel-border bg-secondary">
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <h1 className="font-pixel text-[18px] sm:text-[22px] text-accent pixel-text-shadow text-center leading-relaxed">
-            ⚔ Quest Board
-          </h1>
-          <p className="font-pixel text-[10px] text-foreground pixel-text-shadow">
-            Accept quests. Earn gold. Level up.
-          </p>
-          <div className="flex gap-1 mt-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <span key={i} className="animate-blink-star text-accent" style={{ animationDelay: `${i * 0.4}s` }}>
-                ✦
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
+      <GuildBanner />
 
       <div className="max-w-[1280px] mx-auto px-4 mt-6">
         {/* Top bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <PixelButton
@@ -69,6 +54,8 @@ const QuestBoard = () => {
             ))}
           </div>
         </div>
+
+        <PixelDivider label="Quest List" />
 
         {/* Post Quest CTA */}
         <div className="mb-6">
