@@ -10,7 +10,7 @@ interface QuestContextType {
   addBid: (questId: string, bid: Bid) => void;
   acceptBidder: (questId: string, userId: string) => void;
   submitForReview: (questId: string) => void;
-  approveQuest: (questId: string) => void;
+  approveQuest: (questId: string, rating: number, feedback: string) => void;
   requestChanges: (questId: string) => void;
   pointsAnimation: { show: boolean; amount: number };
   clearPointsAnimation: () => void;
