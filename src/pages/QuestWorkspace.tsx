@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuestContext } from "@/context/QuestContext";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
+import RatingModal from "@/components/RatingModal";
 import { toast } from "sonner";
 
 const QuestWorkspace = () => {
   const { id } = useParams();
   const { quests, submitForReview, approveQuest, requestChanges } = useQuestContext();
   const quest = quests.find((q) => q.id === id);
+  const [showRating, setShowRating] = useState(false);
 
   if (!quest) return null;
 
@@ -55,7 +58,12 @@ const QuestWorkspace = () => {
   };
 
   const handleApprove = () => {
-    approveQuest(quest.id);
+    setShowRating(true);
+  };
+
+  const handleRatingSubmit = (rating: number, feedback: string) => {
+    setShowRating(false);
+    approveQuest(quest.id, rating, feedback);
     toast.success("Quest approved! Rewards transferred.", {
       style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
     });
@@ -67,6 +75,9 @@ const QuestWorkspace = () => {
       style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
     });
   };
+
+  const workerBid = quest.bids.find((b) => b.userId === quest.assignedTo);
+  const workerUsername = workerBid?.username || "Adventurer";
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 py-8">
@@ -192,6 +203,14 @@ const QuestWorkspace = () => {
           )}
         </div>
       </div>
+
+      <RatingModal
+        open={showRating}
+        onClose={() => setShowRating(false)}
+        onSubmit={handleRatingSubmit}
+        workerUsername={workerUsername}
+        questTitle={quest.title}
+      />
     </div>
   );
 };
