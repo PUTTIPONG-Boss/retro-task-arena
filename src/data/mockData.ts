@@ -53,6 +53,7 @@ export interface UserProfile {
   points: number;
   questsCompleted: number;
   rating: number;
+  totalRatings: number;
   githubUrl: string;
   joinedDate: string;
   skills: string[];
