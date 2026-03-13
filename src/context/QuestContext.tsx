@@ -61,7 +61,7 @@ export const QuestProvider = ({ children }: { children: ReactNode }) => {
     );
   }, []);
 
-  const approveQuest = useCallback((questId: string) => {
+  const approveQuest = useCallback((questId: string, rating: number, _feedback: string) => {
     const quest = quests.find((q) => q.id === questId);
     if (!quest) return;
 
@@ -73,11 +73,17 @@ export const QuestProvider = ({ children }: { children: ReactNode }) => {
       )
     );
 
-    setUser((prev) => ({
-      ...prev,
-      points: prev.points + reward,
-      questsCompleted: prev.questsCompleted + 1,
-    }));
+    setUser((prev) => {
+      const newTotalRatings = prev.totalRatings + 1;
+      const newAvgRating = Math.round(((prev.rating * prev.totalRatings) + rating) / newTotalRatings * 10) / 10;
+      return {
+        ...prev,
+        points: prev.points + reward,
+        questsCompleted: prev.questsCompleted + 1,
+        rating: newAvgRating,
+        totalRatings: newTotalRatings,
+      };
+    });
 
     setPointsAnimation({ show: true, amount: reward });
   }, [quests]);

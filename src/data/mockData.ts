@@ -67,6 +67,7 @@ export const mockUser: UserProfile = {
   points: 8500,
   questsCompleted: 34,
   rating: 4.7,
+  totalRatings: 32,
   githubUrl: "https://github.com/shadowblade42",
   joinedDate: "2025-03-15",
   skills: ["React", "TypeScript", "Node.js", "Python", "Rust"],
