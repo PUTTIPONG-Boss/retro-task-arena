@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const UserProfile = () => {
   const user = useUserStore((state) => state.user);
   const quests = useQuestStore((state) => state.quests);
-  
+
   if (!user) return null;
 
   const completedQuests = quests.filter((q) => q.status === "completed");

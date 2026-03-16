@@ -59,7 +59,7 @@ const GuildBanner = () => {
 
         {/* Subtitle */}
         <p className="font-pixel text-[8px] text-muted-foreground tracking-[0.3em] uppercase">
-          ── Guild Quest Board ──
+          ── Inet Quest Board ──
         </p>
 
         {/* Blinking stars */}

@@ -60,7 +60,7 @@ export interface UserProfile {
 }
 
 export const mockUser: UserProfile = {
-  id: "user-1",
+  id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6", // Valid UUID format required by Go Backend
   username: "ShadowBlade_42",
   title: "Veteran Adventurer",
   level: 12,
