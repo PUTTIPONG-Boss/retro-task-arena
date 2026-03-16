@@ -9,10 +9,12 @@ import QuestBoard from "@/features/quests/pages/QuestBoard";
 import QuestDetail from "@/features/quests/pages/QuestDetail";
 import QuestWorkspace from "@/features/quests/pages/QuestWorkspace";
 import CreateQuest from "@/features/quests/pages/CreateQuest";
+import EditQuest from "@/features/quests/pages/Edit/EditQuest";
 import SubmitBid from "@/features/bids/pages/SubmitBid";
 import ProviderBids from "@/features/bids/pages/ProviderBids";
 import RewardShop from "@/features/rewards/pages/RewardShop";
 import UserProfile from "@/features/users/pages/UserProfile";
+import EditUserProfile from "@/features/users/pages/Edit/EditUserProfile";
 import PointsAnimation from "@/features/users/components/PointsAnimation";
 
 import NotFound from "./pages/NotFound";
@@ -34,8 +36,10 @@ const App = () => (
             <Route path="/quest/:id/bids" element={<ProviderBids />} />
             <Route path="/quest/:id/workspace" element={<QuestWorkspace />} />
             <Route path="/create-quest" element={<CreateQuest />} />
+            <Route path="/quest/:id/edit" element={<EditQuest />} />
             <Route path="/reward-shop" element={<RewardShop />} />
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/profile/edit" element={<EditUserProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
