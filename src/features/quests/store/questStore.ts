@@ -11,6 +11,7 @@ interface QuestState {
   submitForReview: (questId: string) => void;
   approveQuest: (questId: string, rating?: number, feedback?: string) => void;
   requestChanges: (questId: string) => void;
+  updateQuest: (questId: string, updatedData: Partial<Quest>) => void;
 }
 
 export const useQuestStore = create<QuestState>((set) => ({
@@ -40,6 +41,11 @@ export const useQuestStore = create<QuestState>((set) => ({
   requestChanges: (questId: string) => set((state) => ({
     quests: state.quests.map((q) =>
       q.id === questId ? { ...q, status: "in-progress" } : q
+    )
+  })),
+  updateQuest: (questId: string, updatedData: Partial<Quest>) => set((state) => ({
+    quests: state.quests.map((q) =>
+      q.id === questId ? { ...q, ...updatedData } : q
     )
   }))
 }));

@@ -26,7 +26,9 @@ const QuestDetail = () => {
             Quest not found in the archives...
           </p>
           <Link to="/" className="block mt-4">
-            <PixelButton variant="primary" size="sm">Return to Board</PixelButton>
+            <PixelButton variant="primary" size="sm">
+              Return to Board
+            </PixelButton>
           </Link>
         </PixelFrame>
       </div>
@@ -34,16 +36,28 @@ const QuestDetail = () => {
   }
 
   const statusColor =
-    quest.status === "completed" ? "text-success" :
-    quest.status === "review" ? "text-accent" :
-    quest.status === "in-progress" ? "text-accent" :
-    "text-success";
+    quest.status === "completed"
+      ? "text-success"
+      : quest.status === "review"
+        ? "text-accent"
+        : quest.status === "in-progress"
+          ? "text-accent"
+          : "text-success";
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 py-8">
-      <Link to="/" className="inline-block mb-6">
-        <PixelButton variant="ghost" size="sm">← Back to Board</PixelButton>
+      <div className="flex justify-between items-center mb-6">
+      <Link to="/">
+        <PixelButton variant="ghost" size="sm">
+          ← Back to Board
+        </PixelButton>
       </Link>
+        <Link to={`/quest/${quest.id}/edit`}>
+          <button className="pixel-border bg-secondary hover:bg-muted px-4 py-2 font-pixel text-[8px] text-accent transition-colors">
+            EDIT QUEST 
+          </button>
+        </Link>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
@@ -52,7 +66,9 @@ const QuestDetail = () => {
               <span className="font-pixel text-[8px] uppercase tracking-widest text-muted-foreground">
                 {quest.category}
               </span>
-              <span className={`font-pixel text-[8px] uppercase ${statusColor}`}>
+              <span
+                className={`font-pixel text-[8px] uppercase ${statusColor}`}
+              >
                 ● {statusLabel[quest.status] || quest.status}
               </span>
             </div>
@@ -62,13 +78,19 @@ const QuestDetail = () => {
             </h1>
 
             <div className="flex flex-wrap gap-4 mb-6">
-              <span className="font-pixel text-[10px] text-accent pixel-text-shadow">🪙 {quest.rewardPoints} GP</span>
+              <span className="font-pixel text-[10px] text-accent pixel-text-shadow">
+                🪙 {quest.rewardPoints} GP
+              </span>
               <DifficultyStars level={quest.difficulty} />
-              <span className="font-pixel text-[9px] text-muted-foreground">⏳ {quest.estimatedTime}</span>
+              <span className="font-pixel text-[9px] text-muted-foreground">
+                ⏳ {quest.estimatedTime}
+              </span>
             </div>
 
             <div className="border-t-2 border-border pt-4">
-              <h2 className="font-pixel text-[10px] text-foreground mb-3">Quest Details</h2>
+              <h2 className="font-pixel text-[10px] text-foreground mb-3">
+                Quest Details
+              </h2>
               <div className="text-xl leading-relaxed text-foreground/80 whitespace-pre-line">
                 {quest.fullDescription}
               </div>
@@ -82,16 +104,25 @@ const QuestDetail = () => {
               </h2>
               <div className="space-y-3">
                 {quest.bids.map((bid) => (
-                  <div key={bid.id} className="pixel-border bg-secondary p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div
+                    key={bid.id}
+                    className="pixel-border bg-secondary p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
                     <div>
-                      <p className="font-pixel text-[10px] text-foreground">{bid.username}</p>
+                      <p className="font-pixel text-[10px] text-foreground">
+                        {bid.username}
+                      </p>
                       <p className="text-lg text-muted-foreground mt-1">
                         {bid.questsCompleted} quests · ★ {bid.rating}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-pixel text-[10px] text-accent pixel-text-shadow">🪙 {bid.requestedPoints} GP</p>
-                      <p className="text-base text-muted-foreground">⏳ {bid.estimatedTime}</p>
+                      <p className="font-pixel text-[10px] text-accent pixel-text-shadow">
+                        🪙 {bid.requestedPoints} GP
+                      </p>
+                      <p className="text-base text-muted-foreground">
+                        ⏳ {bid.estimatedTime}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -103,23 +134,42 @@ const QuestDetail = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <PixelFrame>
-            <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">Quest Provider</h3>
+            <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">
+              Quest Provider
+            </h3>
             <p className="text-xl text-foreground mb-1">{quest.providerName}</p>
             {quest.contact && (
               <div className="mt-3 space-y-1">
-                {quest.contact.discord && <p className="text-lg text-muted-foreground">💬 {quest.contact.discord}</p>}
-                {quest.contact.email && <p className="text-lg text-muted-foreground">📧 {quest.contact.email}</p>}
-                {quest.contact.line && <p className="text-lg text-muted-foreground">📱 LINE: {quest.contact.line}</p>}
+                {quest.contact.discord && (
+                  <p className="text-lg text-muted-foreground">
+                    💬 {quest.contact.discord}
+                  </p>
+                )}
+                {quest.contact.email && (
+                  <p className="text-lg text-muted-foreground">
+                    📧 {quest.contact.email}
+                  </p>
+                )}
+                {quest.contact.line && (
+                  <p className="text-lg text-muted-foreground">
+                    📱 LINE: {quest.contact.line}
+                  </p>
+                )}
               </div>
             )}
           </PixelFrame>
 
           {quest.repoUrl && (
             <PixelFrame>
-              <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">Repository</h3>
+              <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">
+                Repository
+              </h3>
               <p className="text-lg text-accent break-all">{quest.repoUrl}</p>
               {quest.branchName && (
-                <p className="text-lg text-muted-foreground mt-2">Branch: <span className="text-accent">{quest.branchName}</span></p>
+                <p className="text-lg text-muted-foreground mt-2">
+                  Branch:{" "}
+                  <span className="text-accent">{quest.branchName}</span>
+                </p>
               )}
             </PixelFrame>
           )}
@@ -161,7 +211,9 @@ const QuestDetail = () => {
           {quest.status === "completed" && (
             <PixelFrame>
               <div className="text-center py-3">
-                <span className="font-pixel text-[10px] text-success pixel-text-shadow">🏆 QUEST COMPLETED</span>
+                <span className="font-pixel text-[10px] text-success pixel-text-shadow">
+                  🏆 QUEST COMPLETED
+                </span>
               </div>
             </PixelFrame>
           )}
