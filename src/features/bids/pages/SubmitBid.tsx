@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useQuestContext } from "@/context/QuestContext";
+import { useQuestStore } from "@/features/quests/store/questStore";
+import { useUserStore } from "@/features/users/store/userStore";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
@@ -10,7 +11,9 @@ import { toast } from "sonner";
 const SubmitBid = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { quests, addBid, user } = useQuestContext();
+  const quests = useQuestStore((state) => state.quests);
+  const addBid = useQuestStore((state) => state.addBid);
+  const user = useUserStore((state) => state.user);
   const quest = quests.find((q) => q.id === id);
 
   const [points, setPoints] = useState("");
@@ -22,6 +25,10 @@ const SubmitBid = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("You must be logged in to bid.");
+      return;
+    }
     addBid(quest.id, {
       id: `b-${Date.now()}`,
       oderId: quest.id,

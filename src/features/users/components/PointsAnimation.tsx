@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useQuestContext } from "@/context/QuestContext";
+import { useUiStore } from "@/store/uiStore";
 
 const PointsAnimation = () => {
-  const { pointsAnimation, clearPointsAnimation } = useQuestContext();
+  const { pointsAnimation, clearPointsAnimation } = useUiStore();
 
   useEffect(() => {
     if (pointsAnimation.show) {

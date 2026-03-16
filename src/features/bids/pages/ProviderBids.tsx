@@ -1,12 +1,13 @@
 import { useParams, Link } from "react-router-dom";
-import { useQuestContext } from "@/context/QuestContext";
+import { useQuestStore } from "@/features/quests/store/questStore";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import { toast } from "sonner";
 
 const ProviderBids = () => {
   const { id } = useParams();
-  const { quests, acceptBidder } = useQuestContext();
+  const quests = useQuestStore((state) => state.quests);
+  const acceptBidder = useQuestStore((state) => state.acceptBidder);
   const quest = quests.find((q) => q.id === id);
 
   if (!quest) return null;

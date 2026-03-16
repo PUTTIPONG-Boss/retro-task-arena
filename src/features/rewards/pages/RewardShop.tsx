@@ -1,12 +1,13 @@
 import { mockRewards } from "@/data/mockData";
-import { useQuestContext } from "@/context/QuestContext";
+import { useUserStore } from "@/features/users/store/userStore";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 const RewardShop = () => {
-  const { user } = useQuestContext();
+  const user = useUserStore((state) => state.user);
+  if (!user) return null;
 
   const handleBuy = (name: string, cost: number) => {
     if (user.points >= cost) {

@@ -1,10 +1,15 @@
-import { useQuestContext } from "@/context/QuestContext";
+import { useQuestStore } from "@/features/quests/store/questStore";
+import { useUserStore } from "@/features/users/store/userStore";
 import PixelFrame from "@/components/PixelFrame";
-import DifficultyStars from "@/components/DifficultyStars";
+import DifficultyStars from "@/features/quests/components/DifficultyStars";
 import { Link } from "react-router-dom";
 
 const UserProfile = () => {
-  const { user, quests } = useQuestContext();
+  const user = useUserStore((state) => state.user);
+  const quests = useQuestStore((state) => state.quests);
+  
+  if (!user) return null;
+
   const completedQuests = quests.filter((q) => q.status === "completed");
   const activeQuests = quests.filter((q) => q.assignedTo === user.id && q.status !== "completed");
 
