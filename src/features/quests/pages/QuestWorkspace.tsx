@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useQuestContext } from "@/context/QuestContext";
+import { useQuestStore } from "@/features/quests/store/questStore";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
-import RatingModal from "@/components/RatingModal";
+import RatingModal from "@/features/bids/components/RatingModal";
 import { toast } from "sonner";
 
 const QuestWorkspace = () => {
   const { id } = useParams();
-  const { quests, submitForReview, approveQuest, requestChanges } = useQuestContext();
+  const quests = useQuestStore((state) => state.quests);
+  const submitForReview = useQuestStore((state) => state.submitForReview);
+  const approveQuest = useQuestStore((state) => state.approveQuest);
+  const requestChanges = useQuestStore((state) => state.requestChanges);
   const quest = quests.find((q) => q.id === id);
   const [showRating, setShowRating] = useState(false);
 

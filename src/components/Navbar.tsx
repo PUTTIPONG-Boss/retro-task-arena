@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { useQuestContext } from "@/context/QuestContext";
+import { useUserStore } from "@/features/users/store/userStore";
 
 const Navbar = () => {
   const location = useLocation();
-  const { user } = useQuestContext();
+  const user = useUserStore((state) => state.user);
+  if (!user) return null;
 
   const links = [
     { to: "/", label: "Quest Board", icon: "📋" },

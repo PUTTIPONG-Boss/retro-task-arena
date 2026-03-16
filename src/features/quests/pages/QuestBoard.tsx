@@ -1,13 +1,13 @@
-import { useQuestContext } from "@/context/QuestContext";
-import QuestCard from "@/components/QuestCard";
+import { useQuestStore } from "@/features/quests/store/questStore";
+import QuestCard from "@/features/quests/components/QuestCard";
 import { useState } from "react";
 import PixelButton from "@/components/PixelButton";
 import PixelDivider from "@/components/PixelDivider";
-import GuildBanner from "@/components/GuildBanner";
+import GuildBanner from "@/features/quests/components/GuildBanner";
 import { Link } from "react-router-dom";
 
 const QuestBoard = () => {
-  const { quests } = useQuestContext();
+  const quests = useQuestStore((state) => state.quests);
   const [filter, setFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("active");
 

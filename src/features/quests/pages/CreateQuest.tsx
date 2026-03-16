@@ -4,7 +4,8 @@ import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
-import { useQuestContext } from "@/context/QuestContext";
+import { useQuestStore } from "@/features/quests/store/questStore";
+import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 
 const difficulties: { label: string; value: number }[] = [
@@ -17,7 +18,8 @@ const categories = ["Frontend", "Backend", "Bug Fix", "Feature"];
 
 const CreateQuest = () => {
   const navigate = useNavigate();
-  const { addQuest, user } = useQuestContext();
+  const addQuest = useQuestStore((state) => state.addQuest);
+  const user = useUserStore((state) => state.user);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -41,8 +43,8 @@ const CreateQuest = () => {
       estimatedTime: `~${estimatedTime} Cycles`,
       category,
       status: "open" as const,
-      providerId: user.id,
-      providerName: user.username,
+      providerId: user?.id || "unknown",
+      providerName: user?.username || "Unknown Adventurer",
       repoUrl: repoUrl || undefined,
       branchName: branchName || undefined,
       bids: [],

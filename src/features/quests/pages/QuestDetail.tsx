@@ -1,8 +1,8 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useQuestContext } from "@/context/QuestContext";
+import { useQuestStore } from "@/features/quests/store/questStore";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
-import DifficultyStars from "@/components/DifficultyStars";
+import DifficultyStars from "@/features/quests/components/DifficultyStars";
 
 const statusLabel: Record<string, string> = {
   open: "OPEN",
@@ -15,7 +15,7 @@ const statusLabel: Record<string, string> = {
 const QuestDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { quests } = useQuestContext();
+  const quests = useQuestStore((state) => state.quests);
   const quest = quests.find((q) => q.id === id);
 
   if (!quest) {
