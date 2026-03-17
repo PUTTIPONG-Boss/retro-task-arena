@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navbar from "@/components/Navbar";
+import PixelBackground from "@/components/PixelBackground";
 
 // Auth
 import LoginPage from "@/features/auth/pages/LoginPage";
@@ -29,7 +30,7 @@ const queryClient = new QueryClient();
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => (
   <ProtectedRoute>
     <PointsAnimation />
-    <div className="min-h-screen wood-bg">
+    <div className="relative z-10 min-h-screen">
       <Navbar />
       {children}
     </div>
@@ -41,6 +42,7 @@ const App = () => (
     <TooltipProvider>
       <Sonner />
       <BrowserRouter>
+        <PixelBackground />
         <AuthSyncProvider />
         <Routes>
           <Route path="/login" element={<LoginPage />} />

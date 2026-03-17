@@ -37,8 +37,8 @@ const LoginPage = () => {
   const particles = useMemo(() => makeParticles(14), []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* ═══ LAYER 1 — pixel star sky ═══ */}
+    <div className="relative min-h-screen overflow-hidden">
+      {/* ═══ LAYER 1 — pixel star sky (supplemental to global bg) ═══ */}
       <div className="absolute inset-0 z-0">
         {stars.map((s) => (
           <motion.div
