@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { UserProfile } from '../types';
-import { mockUser } from '@/data/mockData';
 
 interface UserState {
   user: UserProfile | null;
