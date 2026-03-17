@@ -1,10 +1,18 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/features/users/store/userStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const logout = useAuthStore((s) => s.logout);
   if (!user) return null;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const links = [
     { to: "/", label: "Quest Board", icon: "📋" },
@@ -54,6 +62,12 @@ const Navbar = () => {
             <span className="font-pixel text-[8px] text-foreground hidden md:inline">
               {user.username}
             </span>
+            <button
+              onClick={handleLogout}
+              className="font-pixel text-[7px] text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
+            >
+              ⏻
+            </button>
           </div>
         </div>
       </div>

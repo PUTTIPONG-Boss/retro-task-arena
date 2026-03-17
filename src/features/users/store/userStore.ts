@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { UserProfile } from '../types';
-import { mockUser } from '@/data/mockData';
 
 interface UserState {
   user: UserProfile | null;
@@ -9,7 +8,7 @@ interface UserState {
 }
 
 export const useUserStore = create<UserState>((set) => ({
-  user: mockUser, // Initialize with mock user for now
+  user: null,
   setUser: (user) => set({ user }),
   updateUserStats: (addedPoints, newRating) => set((state) => {
     if (!state.user) return state;
