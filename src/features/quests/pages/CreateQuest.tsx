@@ -5,6 +5,7 @@ import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
 import { useQuestStore } from "@/features/quests/store/questStore";
+import { useCreateQuest, CreateQuestPayload } from "@/features/quests/services/quest.service";
 import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 
@@ -18,7 +19,6 @@ const categories = ["Frontend", "Backend", "Bug Fix", "Feature"];
 
 const CreateQuest = () => {
   const navigate = useNavigate();
-  const addQuest = useQuestStore((state) => state.addQuest);
   const user = useUserStore((state) => state.user);
 
   const [title, setTitle] = useState("");
@@ -30,31 +30,55 @@ const CreateQuest = () => {
   const [repoUrl, setRepoUrl] = useState("");
   const [branchName, setBranchName] = useState("");
 
+  const { mutate: createQuest, isPending } = useCreateQuest();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newQuest = {
-      id: `q-${Date.now()}`,
+    if (!user) {
+       toast.error("You must be logged in to post a quest.");
+       return;
+    }
+
+    // Map Difficulty to Backend String
+    let difficultyStr = "EASY";
+    if (difficulty === 3) difficultyStr = "MEDIUM";
+    if (difficulty === 5) difficultyStr = "HARD";
+
+    // Map Category to Backend String explicitly
+    let categoryStr = "FRONTEND";
+    if (category === "Backend") categoryStr = "BACKEND";
+    if (category === "Bug Fix") categoryStr = "BUG FIX";
+    if (category === "Feature") categoryStr = "FEATURE";
+
+    // Format Backend Payload
+    const newQuest: CreateQuestPayload = {
+      employer_id: user.id,
       title,
       description,
-      fullDescription: description,
-      rewardPoints: parseInt(rewardPoints) || 0,
-      difficulty,
-      estimatedTime: `~${estimatedTime} Cycles`,
-      category,
-      status: "open" as const,
-      providerId: user?.id || "unknown",
-      providerName: user?.username || "Unknown Adventurer",
-      repoUrl: repoUrl || undefined,
-      branchName: branchName || undefined,
-      bids: [],
+      point: parseInt(rewardPoints) || 0,
+      estimated_time: `${estimatedTime} Cycles`,
+      type: categoryStr,
+      skills: "General", // Placeholder for now, can be added to form later
+      difficulty: difficultyStr,
+      git_repo_url: repoUrl || undefined,
+      req_branch_name: branchName || undefined,
     };
 
-    addQuest(newQuest);
-    toast.success("Quest posted to the board!", {
-      style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+    createQuest(newQuest, {
+      onSuccess: () => {
+        toast.success("Quest posted to the board!", {
+          style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+        });
+        navigate("/");
+      },
+      onError: (error) => {
+        console.error("Failed to post quest:", error);
+        toast.error("Failed to post the quest. Ensure the API is running.", {
+          style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+        });
+      }
     });
-    navigate("/");
   };
 
   return (
@@ -138,8 +162,8 @@ const CreateQuest = () => {
             <PixelInput placeholder="e.g. feature/quest-42" value={branchName} onChange={(e) => setBranchName(e.target.value)} />
           </div>
 
-          <PixelButton type="submit" variant="gold" size="lg" className="w-full">
-            📜 Post Quest
+          <PixelButton type="submit" variant="gold" size="lg" className="w-full" disabled={isPending}>
+            {isPending ? "📜 Posting..." : "📜 Post Quest"}
           </PixelButton>
         </form>
       </PixelFrame>
