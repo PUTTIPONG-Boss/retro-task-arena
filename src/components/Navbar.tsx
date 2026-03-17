@@ -4,8 +4,15 @@ import { useAuthStore } from "@/features/auth/store/authStore";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const logout = useAuthStore((s) => s.logout);
   if (!user) return null;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const links = [
     { to: "/", label: "Quest Board", icon: "📋" },
