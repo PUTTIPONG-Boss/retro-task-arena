@@ -5,6 +5,7 @@ import PixelButton from "@/components/PixelButton";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import RewardBanner from "../components/RewardBanner";
 
 const priceFilters = [
   { id: "all", label: "ALL ITEMS" },
@@ -49,16 +50,7 @@ const RewardShop = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="relative w-full h-[180px] overflow-hidden pixel-border bg-secondary">
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <h1 className="font-pixel text-[18px] text-accent pixel-text-shadow">
-            🏪 Reward Shop
-          </h1>
-          <p className="font-pixel text-[10px] text-foreground pixel-text-shadow mt-2">
-            Trade your gold for legendary items
-          </p>
-        </div>
-      </div>
+      <RewardBanner />
 
       <div className="max-w-[1280px] mx-auto px-4 py-8">
         <PixelFrame className="mb-6 flex items-center justify-between">
