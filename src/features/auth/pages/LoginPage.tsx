@@ -158,7 +158,7 @@ const LoginPage = () => {
                 {/* Title */}
                 <div className="text-center mb-6">
                   <h1 className="font-pixel text-[16px] text-accent pixel-text-shadow mb-3">
-                    ⚔ Developer Guild ⚔
+                    ⚔ Inet Developer Guild ⚔
                   </h1>
                   <p className="font-pixel-body text-lg text-muted-foreground">
                     Login to access the Quest Board
@@ -168,7 +168,7 @@ const LoginPage = () => {
                 <PixelDivider label="authenticate" />
 
                 {/* Pixel terminal decoration */}
-                <div className="pixel-inset bg-background p-4 mb-6">
+                {/* <div className="pixel-inset bg-background p-4 mb-6">
                   <div className="font-pixel-body text-sm text-muted-foreground space-y-1">
                     <p>
                       <span className="text-success terminal-glow">{">"}</span>{" "}
@@ -183,7 +183,7 @@ const LoginPage = () => {
                       Select login method_
                     </p>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Login buttons */}
                 <div className="space-y-3">
@@ -221,7 +221,7 @@ const LoginPage = () => {
           {/* Bottom decoration */}
           <div className="text-center mt-4">
             <span className="font-pixel text-[7px] text-muted-foreground tracking-widest">
-              v0.1.0 · QUEST BOARD SYSTEM
+              v0.1.0 · INET QUEST BOARD SYSTEM
             </span>
           </div>
         </div>
