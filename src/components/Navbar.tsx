@@ -62,6 +62,12 @@ const Navbar = () => {
             <span className="font-pixel text-[8px] text-foreground hidden md:inline">
               {user.username}
             </span>
+            <button
+              onClick={handleLogout}
+              className="font-pixel text-[7px] text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
+            >
+              ⏻
+            </button>
           </div>
         </div>
       </div>
