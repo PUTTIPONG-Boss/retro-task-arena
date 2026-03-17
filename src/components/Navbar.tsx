@@ -1,5 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/features/users/store/userStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 
 const Navbar = () => {
   const location = useLocation();
