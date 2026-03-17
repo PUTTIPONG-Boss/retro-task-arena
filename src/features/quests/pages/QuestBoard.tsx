@@ -4,7 +4,7 @@ import { useState } from "react";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from '@/components/PixelInput'
 // import PixelDivider from "@/components/PixelDivider";
-// import GuildBanner from "@/features/quests/components/GuildBanner";
+import GuildBanner from "@/features/quests/components/GuildBanner";
 import { Link } from "react-router-dom";
 
 const QuestBoard = () => {
@@ -35,24 +35,7 @@ const QuestBoard = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
-      <div className="relative w-full h-[200px] overflow-hidden pixel-border bg-secondary">
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <h1 className="font-pixel text-[18px] sm:text-[22px] text-accent pixel-text-shadow text-center leading-relaxed">
-            ⚔ Quest Board
-          </h1>
-          <p className="font-pixel text-[10px] text-foreground pixel-text-shadow">
-            Accept quests. Earn gold. Level up.
-          </p>
-          <div className="flex gap-1 mt-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <span key={i} className="animate-blink-star text-accent" style={{ animationDelay: `${i * 0.4}s` }}>
-                ✦
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
+      <GuildBanner />
 
       <div className="max-w-[1280px] mx-auto px-4 mt-6">
 
@@ -145,23 +128,46 @@ const QuestBoard = () => {
           </div>
         )}
 
-        {/* กรณีค้นหาไม่เจอ */}
-        {filtered.length === 0 && (
-          <div className="text-center py-20 pixel-border bg-secondary/50">
-            <span className="text-4xl mb-4 block">👻</span>
-            <p className="font-pixel text-[12px] text-muted-foreground pixel-text-shadow mb-4">
-              No quests found matching your criteria...
+        {isError && (
+          <div className="text-center py-20 border-2 border-destructive p-4 mt-4 bg-destructive/10">
+            <p className="font-pixel text-[12px] text-destructive pixel-text-shadow">
+              Failed to connect to the backend API.
             </p>
-            <button
-              onClick={() => { setSearchQuery(""); setFilter("all"); setStatusFilter("active"); }}
-              className="font-pixel text-[10px] text-accent hover:text-foreground transition-colors"
-            >
-              [ CLEAR ALL FILTERS ]
-            </button>
+            <p className="text-lg text-muted-foreground mt-2">Is the Go Fiber server running on port 5000?</p>
+          </div>
+        )}
+
+        {/* Quest Grid */}
+        {!isLoading && !isError && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
+            {filtered.map((quest) => (
+              <QuestCard key={quest.id} quest={quest} />
+            ))}
+          </div>
+        )}
+
+        {filtered.length === 0 && !isLoading && !isError && (
+          <div className="text-center py-20">
+            <p className="font-pixel text-[12px] text-muted-foreground pixel-text-shadow">
+              No quests found in this realm...
+            </p>
+            {/* กรณีค้นหาไม่เจอ */}
+            <div className="text-center py-20 pixel-border bg-secondary/50">
+              <span className="text-4xl mb-4 block">👻</span>
+              <p className="font-pixel text-[12px] text-muted-foreground pixel-text-shadow mb-4">
+                No quests found matching your criteria...
+              </p>
+              <button
+                onClick={() => { setSearchQuery(""); setFilter("all"); setStatusFilter("active"); }}
+                className="font-pixel text-[10px] text-accent hover:text-foreground transition-colors"
+              >
+                [ CLEAR ALL FILTERS ]
+              </button>
+            </div>
           </div>
         )}
       </div>
-    </div >
+    </div>
   );
 };
 
