@@ -5,20 +5,20 @@ import DifficultyStars from "@/features/quests/components/DifficultyStars";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getTransactions, Transaction } from "@/features/finance/services/finance.service";
-import { getMyApplications, TaskApplication } from "@/features/finance/services/application.service";
+import { getMyBids, MyBid } from "@/features/finance/services/application.service";
 
 const UserProfile = () => {
   const user = useUserStore((state) => state.user);
   const quests = useQuestStore((state) => state.quests);
   const [activeTab, setActiveTab] = useState<"quests" | "financials" | "activity">("quests");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [applications, setApplications] = useState<TaskApplication[]>([]);
+  const [bids, setBids] = useState<MyBid[]>([]);
 
   useEffect(() => {
     if (activeTab === "financials") {
       getTransactions().then(setTransactions).catch(console.error);
     } else if (activeTab === "activity") {
-      getMyApplications().then(setApplications).catch(console.error);
+      getMyBids().then(setBids).catch(console.error);
     }
   }, [activeTab]);
 
@@ -33,19 +33,18 @@ const UserProfile = () => {
     <div className="max-w-[900px] mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
-            {["quests", "financials", "activity"].map((tab) => (
-                <button 
-                  key={tab}
-                  onClick={() => setActiveTab(tab as any)}
-                  className={`pixel-border px-4 py-2 font-pixel text-[8px] transition-all ${
-                    activeTab === tab 
-                      ? "bg-accent text-accent-foreground border-accent-foreground" 
-                      : "bg-secondary text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {tab.toUpperCase()}
-                </button>
-            ))}
+          {["quests", "financials", "activity"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
+              className={`pixel-border px-4 py-2 font-pixel text-[8px] transition-all ${activeTab === tab
+                ? "bg-accent text-accent-foreground border-accent-foreground"
+                : "bg-secondary text-muted-foreground hover:bg-muted"
+                }`}
+            >
+              {tab.toUpperCase()}
+            </button>
+          ))}
         </div>
         <Link to="/profile/edit">
           <button className="pixel-border bg-secondary hover:bg-muted px-4 py-2 font-pixel text-[8px] text-accent transition-colors">
@@ -53,7 +52,7 @@ const UserProfile = () => {
           </button>
         </Link>
       </div>
-      
+
       <PixelFrame className="mb-6">
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <div className="w-24 h-24 pixel-border bg-secondary flex items-center justify-center">
@@ -165,7 +164,7 @@ const UserProfile = () => {
                 <p className="font-pixel text-[16px] text-accent mt-1">🪙 {user.points.toLocaleString()} GP</p>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <h3 className="font-pixel text-[8px] text-muted-foreground mb-2">RECENT TRANSACTIONS</h3>
               {transactions.length === 0 ? (
@@ -190,27 +189,37 @@ const UserProfile = () => {
 
       {activeTab === "activity" && (
         <PixelFrame>
-          <h2 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-4">🛡 Quest Applications</h2>
+          <h2 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-4">🛡 Your quest applications</h2>
           <div className="space-y-3">
-            {applications.length === 0 ? (
+            {bids.length === 0 ? (
               <p className="text-sm text-muted text-center py-4">You haven't applied for any quests yet.</p>
             ) : (
-              applications.map((app) => (
+              bids.map((app) => (
                 <div key={app.id} className="pixel-border bg-secondary p-3 flex justify-between items-center">
                   <div>
                     <Link to={`/quest/${app.taskId}`} className="font-pixel text-[9px] text-foreground hover:text-accent">
-                      {app.task?.title || "Unknown Quest"}
+                      {app.taskTitle || "Unknown Quest"}
                     </Link>
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      Reward: 🪙 {app.task?.rewardPoints || 0} GP
-                    </p>
+                    <div className="flex gap-3 items-center mt-1">
+                      <p className="text-[10px] text-muted-foreground">
+                        Bid: <span className="text-accent">🪙 {app.bidAmount} GP</span>
+                      </p>
+                      <span className="text-[10px] text-muted-foreground">·</span>
+                      <p className="text-[10px] text-muted-foreground">
+                        Wait: <span className="text-foreground">{app.waitDuration}</span>
+                      </p>
+                    </div>
+                    {app.note && (
+                      <p className="text-[9px] text-muted-foreground mt-2 italic border-l-2 border-muted pl-2">
+                        "{app.note}"
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
-                    <span className={`pixel-border px-2 py-1 font-pixel text-[7px] ${
-                      app.status === "PENDING" ? "bg-muted text-muted-foreground" :
-                      app.status === "APPROVED" ? "bg-success text-success-foreground" :
-                      "bg-destructive text-destructive-foreground"
-                    }`}>
+                    <span className={`pixel-border px-2 py-1 font-pixel text-[7px] ${app.status === "PENDING" ? "bg-muted text-muted-foreground" :
+                      app.status === "ACCEPTED" ? "bg-success text-success-foreground" :
+                        "bg-destructive text-destructive-foreground"
+                      }`}>
                       {app.status || "PENDING"}
                     </span>
                   </div>
