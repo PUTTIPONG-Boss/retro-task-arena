@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
+import PixelInput from "@/components/PixelInput";
 import PixelDivider from "@/components/PixelDivider";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 /* ── tiny helper: seeded-ish random array ── */
 const makeStars = (count: number) =>
@@ -26,8 +28,11 @@ const makeParticles = (count: number) =>
   }));
 
 const LoginPage = () => {
-  const { isAuthenticated, isLoading, loginWithOneID, mockLogin } = useAuth();
+  const { isAuthenticated, isLoading, loginWithOneID, login, mockLogin } = useAuth();
   const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) navigate("/", { replace: true });
@@ -36,9 +41,19 @@ const LoginPage = () => {
   const stars = useMemo(() => makeStars(40), []);
   const particles = useMemo(() => makeParticles(14), []);
 
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await login(email, password);
+      toast.success("Welcome back, Adventurer!");
+    } catch (error) {
+      toast.error("Authentication failed. Check your coordinates.");
+    }
+  };
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* ═══ LAYER 1 — pixel star sky ═══ */}
+    <div className="relative min-h-screen overflow-hidden">
+      {/* ═══ LAYER 1 — pixel star sky (supplemental to global bg) ═══ */}
       <div className="absolute inset-0 z-0">
         {stars.map((s) => (
           <motion.div
@@ -185,26 +200,69 @@ const LoginPage = () => {
                   </div>
                 </div> */}
 
-                {/* Login buttons */}
-                <div className="space-y-3">
+                {/* Login Form */}
+                <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
+                  <div>
+                    <label className="font-pixel text-[8px] text-muted-foreground block mb-2 uppercase">Email</label>
+                    <PixelInput 
+                      placeholder="adventurer@guild.com" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} 
+                      required 
+                    />
+                  </div>
+                  <div>
+                    <label className="font-pixel text-[8px] text-muted-foreground block mb-2 uppercase">Secret Password</label>
+                    <PixelInput 
+                      type="password" 
+                      placeholder="••••••••" 
+                      value={password} 
+                      onChange={(e) => setPassword(e.target.value)} 
+                      required 
+                    />
+                  </div>
                   <PixelButton
+                    type="submit"
                     variant="gold"
                     size="lg"
                     className="w-full"
-                    onClick={() => loginWithOneID()}
                     disabled={isLoading}
                   >
-                    {isLoading ? "Connecting..." : "🔑 Login with OneID"}
+                    {isLoading ? "Authenticating..." : "⚔ Sign In"}
+                  </PixelButton>
+                </form>
+
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border/50"></div>
+                  </div>
+                  <div className="relative flex justify-center text-[8px] uppercase">
+                    <span className="bg-[#1a1a1b] px-2 text-muted-foreground font-pixel">Or use Identity providers</span>
+                  </div>
+                </div>
+
+                {/* Other Login options */}
+                <div className="space-y-3">
+                  <PixelButton
+                    variant="primary"
+                    size="md"
+                    className="w-full"
+                    onClick={() => loginWithOneID()}
+                    disabled={isLoading}
+                    type="button"
+                  >
+                    🔑 Login with OneID
                   </PixelButton>
 
                   <PixelButton
                     variant="ghost"
-                    size="md"
-                    className="w-full"
+                    size="sm"
+                    className="w-full text-[8px]"
                     onClick={() => mockLogin()}
                     disabled={isLoading}
+                    type="button"
                   >
-                    🛠 Mock Login (Dev)
+                    🛠 Dev Tool: Mock Login
                   </PixelButton>
                 </div>
 

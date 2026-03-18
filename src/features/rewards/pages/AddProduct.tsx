@@ -5,10 +5,20 @@ import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
 import { useCreateProduct } from "../services/product.service";
+import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 const AddProduct = () => {
   const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
+
+  useEffect(() => {
+    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('senior'))) {
+      toast.error("Access denied. Only Senior Adventurers or Shopkeepers can list products.");
+      navigate("/reward-shop");
+    }
+  }, [user, navigate]);
 
   const [code, setCode] = useState("");
   const [name, setName] = useState("");

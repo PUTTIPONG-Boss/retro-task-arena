@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { Quest } from '../types';
+import { Quest, QuestStatus, CreateQuestPayload } from '../types';
 
 // The Backend Response Types
 interface BackendTask {
@@ -19,6 +19,7 @@ interface BackendTask {
   Status: string;
   CreatedAt: string;
   UpdatedAt: string;
+  EmployerName: string;
 }
 
 interface FetchTasksResponse {
@@ -50,11 +51,12 @@ const mapTaskToQuest = (task: BackendTask): Quest => {
     category: task.Type,
     status: status,
     providerId: task.EmployerID,
-    providerName: "Unknown Guild Master", // TODO: Fetch from User service later
+    providerName: task.EmployerName || "Unknown Guild Master",
     repoUrl: task.GitRepoUrl || undefined,
     branchName: task.ReqBranchName || undefined,
     bids: [], // TODO: Bids not yet supported by backend API
     assignedTo: task.AssigneeID || undefined,
+    skills: task.Skills || "General",
   };
 };
 
@@ -64,26 +66,13 @@ export const useGetQuests = () => {
     queryFn: async (): Promise<Quest[]> => {
       const response = await apiClient.get<FetchTasksResponse>('/tasks');
       if (!response.data || !response.data.data) return [];
-      
+
       // Ensure data is array before mapping (sometimes APIs return null if empty)
       const tasks = Array.isArray(response.data.data) ? response.data.data : [];
       return tasks.map(mapTaskToQuest);
     },
   });
 };
-
-export interface CreateQuestPayload {
-  employer_id: string;
-  title: string;
-  description: string;
-  point: number;
-  estimated_time: string;
-  type: string;
-  skills: string;
-  difficulty: string; // 'EASY', 'MEDIUM', 'HARD'
-  git_repo_url?: string;
-  req_branch_name?: string;
-}
 
 export const useCreateQuest = () => {
   const queryClient = useQueryClient();
@@ -95,6 +84,23 @@ export const useCreateQuest = () => {
     },
     onSuccess: () => {
       // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ['quests'] });
+    },
+  });
+};
+
+export const useUpdateQuestStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: QuestStatus }) => {
+      // Map frontend status to backend enum (uppercase snake_case)
+      const backendStatus = status === "review" ? "IN_REVIEW" : status.toUpperCase().replace("-", "_");
+
+      const response = await apiClient.put(`/tasks/${id}`, { status: backendStatus });
+      return response.data;
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quests'] });
     },
   });

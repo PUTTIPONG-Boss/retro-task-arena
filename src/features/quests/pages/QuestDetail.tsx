@@ -3,6 +3,9 @@ import { useQuestStore } from "@/features/quests/store/questStore";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import DifficultyStars from "@/features/quests/components/DifficultyStars";
+import { useAuthStore } from "@/features/auth/store/authStore";
+import { useUpdateQuestStatus } from "../services/quest.service";
+import { toast } from "sonner";
 
 const statusLabel: Record<string, string> = {
   open: "OPEN",
@@ -16,6 +19,8 @@ const QuestDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const quests = useQuestStore((state) => state.quests);
+  const user = useAuthStore((state) => state.user);
+  const updateStatus = useUpdateQuestStatus();
   const quest = quests.find((q) => q.id === id);
 
   if (!quest) {
@@ -34,6 +39,15 @@ const QuestDetail = () => {
       </div>
     );
   }
+
+  const handleCompleteQuest = async () => {
+    try {
+      await updateStatus.mutateAsync({ id: quest.id, status: "completed" });
+      toast.success("Order marked as completed! Points awarded.");
+    } catch {
+      toast.error("Failed to update order status.");
+    }
+  };
 
   const statusColor =
     quest.status === "completed"
@@ -86,6 +100,19 @@ const QuestDetail = () => {
                 ⏳ {quest.estimatedTime}
               </span>
             </div>
+
+            {quest.skills && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {quest.skills.split(',').map((skill, index) => (
+                  <span 
+                    key={index}
+                    className="pixel-text text-[10px] bg-secondary border border-border px-3 py-1 text-accent uppercase"
+                  >
+                    {skill.trim()}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div className="border-t-2 border-border pt-4">
               <h2 className="font-pixel text-[10px] text-foreground mb-3">
@@ -198,14 +225,28 @@ const QuestDetail = () => {
           )}
 
           {(quest.status === "in-progress" || quest.status === "review") && (
-            <PixelButton
-              variant="primary"
-              size="lg"
-              className="w-full"
-              onClick={() => navigate(`/quest/${quest.id}/workspace`)}
-            >
-              🛠 Open Workspace
-            </PixelButton>
+            <div className="space-y-3">
+                <PixelButton
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  onClick={() => navigate(`/quest/${quest.id}/workspace`)}
+                >
+                  🛠 Open Workspace
+                </PixelButton>
+  
+                {(user?.role === 'employer' || user?.role.toLowerCase().includes('senior')) && quest.status === "review" && (
+                  <PixelButton
+                    variant="gold"
+                    size="md"
+                    className="w-full"
+                    onClick={handleCompleteQuest}
+                    disabled={updateStatus.isPending}
+                  >
+                    🏆 Complete Quest & Award Points
+                  </PixelButton>
+                )}
+            </div>
           )}
 
           {quest.status === "completed" && (

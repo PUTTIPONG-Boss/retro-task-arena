@@ -9,5 +9,6 @@ export interface UserProfile {
   totalRatings: number;
   githubUrl: string;
   joinedDate: string;
+  role: string;
   skills: string[];
 }

@@ -83,7 +83,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Quest } from "@/data/mockData";
+import { Quest } from "../types";
 import DifficultyStars from "./DifficultyStars";
 
 interface QuestCardProps {
@@ -155,7 +155,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
       scale: 1.01,
       boxShadow: `0px 10px 20px rgba(0,0,0,0.6), 0px 0px 15px ${theme.accent}40`,
       borderColor: theme.accent,
-      transition: { type: "spring", stiffness: 400, damping: 20 }
+      transition: { type: "spring" as const, stiffness: 400, damping: 20 }
     }
   };
 
@@ -213,10 +213,24 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             <p className="text-sm leading-relaxed line-clamp-2 flex-1 mt-1" style={{
               color: theme.muted,
               fontSize: "16px",
-
             }}>
               {quest.description}
             </p>
+
+            {/* Required Skills */}
+            {quest.skills && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {quest.skills.split(',').map((skill, index) => (
+                  <span
+                    key={index}
+                    className="pixel-text text-[10px] bg-[#2a241e] border border-[#4a3e2a] px-2 py-0.5 text-[#e3b86a] uppercase"
+                    style={{ fontSize: "12px" }}
+                  >
+                    {skill.trim()}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Stats: รางวัลและความยาก */}
             <div className="mt-2 bg-[#1a1714] p-2 border border-[#2a241e] flex flex-col gap-2">
@@ -234,7 +248,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
 
               <div className="flex items-center justify-between pixel-text text-sm" style={{ color: theme.muted }}>
                 <span>⌛ {quest.estimatedTime}</span>
-                <span>⚔ {quest.bids.length} Adventurer(s)</span>
+                <span>⚔ {quest.bids.length} Total Bids</span>
               </div>
             </div>
 

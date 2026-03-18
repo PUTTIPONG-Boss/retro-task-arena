@@ -2,39 +2,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/features/users/store/userStore";
 import { useAuthStore } from "@/features/auth/store/authStore";
 
-const InetQuestLogo = () => (
-  <svg
-    width="80"
-    height="32"
-    viewBox="0 0 80 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="pixel-text-shadow" // เพิ่ม shadow ให้ดูมีมิติ
-  >
-    {/* ดาบไขว้ด้านขวา (สีทอง accent) */}
-    <path d="M68 4H72V8H76V12H72V16H68V20H64V16H60V12H64V8H68V4Z" fill="hsl(var(--accent))" />
-    <path d="M64 12H68V16H72V20H76V24H72V28H68V24H64V20H60V16H64V12Z" fill="hsl(var(--accent))" />
-
-    {/* ตัวอักษร "INET" (สีขาว foreground) */}
-    <path d="M4 4H12V8H8V24H12V28H4V4Z" fill="hsl(var(--foreground))" /> {/* I */}
-    <path d="M16 4H20V8H24V12H20V16H24V20H20V28H16V4Z" fill="hsl(var(--foreground))" /> {/* N */}
-    <path d="M28 4H36V8H32V12H36V16H32V20H36V24H32V28H28V4Z" fill="hsl(var(--foreground))" /> {/* E */}
-    <path d="M40 4H48V8H44V28H40V4Z" fill="hsl(var(--foreground))" /> {/* T */}
-
-    {/* ตัวอักษร "QUEST" (สีทอง accent) */}
-    <path d="M4 20H12V24H8V28H4V20Z" fill="hsl(var(--accent))" /> {/* Q */}
-    <path d="M16 20H24V28H20V24H16V20Z" fill="hsl(var(--accent))" /> {/* U */}
-    <path d="M28 20H36V24H32V28H28V20Z" fill="hsl(var(--accent))" /> {/* E */}
-    <path d="M40 20H48V24H44V28H40V20Z" fill="hsl(var(--accent))" /> {/* S */}
-    <path d="M52 20H60V24H56V28H52V20Z" fill="hsl(var(--accent))" /> {/* T */}
-
-    {/* โล่ด้านซ้าย (สี foreground) */}
-    <path d="M0 8H4V24H0V8Z" fill="hsl(var(--foreground))" />
-    <path d="M4 24H12V28H4V24Z" fill="hsl(var(--foreground))" />
-    <path d="M12 24V8H16V24H12Z" fill="hsl(var(--foreground))" />
-    <path d="M4 8H12V4H4V8Z" fill="hsl(var(--foreground))" />
-  </svg>
-);
 
 
 const Navbar = () => {
@@ -49,12 +16,25 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const isSeniorOrEmployer = (role: string) => {
+    const r = role.toLowerCase();
+    return r.includes('senior') || r === 'employer';
+  };
+
   const links = [
     { to: "/", label: "Quest Board", icon: "📋" },
-    { to: "/create-quest", label: "Post Quest", icon: "📜" },
+    { to: "/create-quest", label: "Post Quest", icon: "📜", roles: ["employer"] },
     { to: "/reward-shop", label: "Reward Shop", icon: "🏪" },
     { to: "/profile", label: "Profile", icon: "👤" },
   ];
+
+  const filteredLinks = links.filter((link) => {
+    if (!link.roles) return true;
+    return link.roles.some(r => {
+      if (r === 'employer') return isSeniorOrEmployer(user.role);
+      return user.role === r;
+    });
+  });
 
   return (
     <nav className="bg-card pixel-border sticky top-0 z-50">
@@ -76,7 +56,7 @@ const Navbar = () => {
         </Link>
 
         <div className="flex items-center gap-6">
-          {links.map((link) => (
+          {filteredLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}

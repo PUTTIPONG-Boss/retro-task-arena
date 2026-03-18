@@ -35,4 +35,18 @@ export interface Quest {
   };
   bids: Bid[];
   assignedTo?: string;
+  skills?: string;
+}
+
+export interface CreateQuestPayload {
+  employer_id: string;
+  title: string;
+  description: string;
+  point: number;
+  estimated_time: string;
+  type: string;
+  skills: string;
+  difficulty: string;
+  git_repo_url?: string;
+  req_branch_name?: string;
 }

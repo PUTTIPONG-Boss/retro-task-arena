@@ -6,9 +6,21 @@
 
 @layer base {
   :root {
-    --background: 220 20% 10%;
-    --foreground: 0 0% 75%;
+    /* --background: 0 0% 12%; */
+    /* /* --background: 30 15% 10%; */
+    /* --background: 220 20% 10%; */
+    /* --background: 0 0% 5%; */
 
+    /* ม่วง */
+    /* --background: 260 15% 7%; */
+    /* เขียว */
+    --background: 160 15% 6%;
+
+    /* --background: 0 10% 8%; */
+    /* --foreground: 0 0% 75%; */
+
+
+    --foreground: 40 10% 90%;
     --card: 0 0% 10%;
     --card-foreground: 0 0% 75%;
 
@@ -237,4 +249,159 @@
   .animate-coin-rain {
     animation: coin-rain 1.2s steps(6, end) forwards;
   }
+}
+
+/* ═══════════════════════════════════════════
+   GLOBAL 8-BIT PIXEL BACKGROUND SYSTEM
+   ═══════════════════════════════════════════ */
+
+@keyframes pixel-scroll-slow {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 800px;
+  }
+}
+
+@keyframes pixel-scroll-mid {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 600px;
+  }
+}
+
+@keyframes pixel-scroll-fast {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 400px;
+  }
+}
+
+@keyframes pixel-blink-a {
+
+  0%,
+  80% {
+    opacity: 0.15;
+  }
+
+  90% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes pixel-blink-b {
+
+  0%,
+  60% {
+    opacity: 0.1;
+  }
+
+  70% {
+    opacity: 0.55;
+  }
+
+  100% {
+    opacity: 0.1;
+  }
+}
+
+.pixel-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+  background-color: hsl(var(--background));
+}
+
+/* Layer 1 — far stars (1px dots, slow drift) */
+.pixel-layer-back {
+  position: absolute;
+  inset: 0;
+  animation: pixel-scroll-slow 120s steps(200) infinite;
+  background-image:
+    radial-gradient(1px 1px at 80px 40px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 200px 110px, hsl(0 0% 50%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 350px 70px, hsl(0 0% 55%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 500px 200px, hsl(0 0% 45%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 620px 140px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 750px 60px, hsl(0 0% 50%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 900px 220px, hsl(0 0% 55%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 120px 300px, hsl(0 0% 45%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 280px 380px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 440px 340px, hsl(0 0% 50%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 580px 420px, hsl(0 0% 55%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 700px 360px, hsl(0 0% 45%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 850px 440px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 160px 520px, hsl(0 0% 50%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 320px 560px, hsl(0 0% 55%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 480px 600px, hsl(0 0% 45%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 660px 540px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 800px 580px, hsl(0 0% 50%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 60px 680px, hsl(0 0% 55%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 240px 720px, hsl(0 0% 45%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 400px 760px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 560px 700px, hsl(0 0% 50%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 720px 740px, hsl(0 0% 55%) 100%, transparent 100%),
+    radial-gradient(1px 1px at 880px 680px, hsl(0 0% 45%) 100%, transparent 100%);
+  background-size: 960px 800px;
+  animation: pixel-scroll-slow 120s steps(200) infinite, pixel-blink-a 6s steps(3) infinite;
+  /* animation: pixel-scroll-slow 120s linear infinite, pixel-blink-a 6s ease-in-out infinite; */
+}
+
+/* Layer 2 — mid stars (2px dots, medium speed) */
+.pixel-layer-mid {
+  position: absolute;
+  inset: 0;
+  animation: pixel-scroll-mid 80s steps(150) infinite;
+  background-image:
+    radial-gradient(2px 2px at 100px 80px, hsl(0 0% 70%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 300px 160px, hsl(0 0% 65%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 520px 60px, hsl(0 0% 70%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 700px 200px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 180px 340px, hsl(0 0% 70%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 420px 280px, hsl(0 0% 65%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 640px 380px, hsl(0 0% 70%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 820px 300px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 60px 480px, hsl(0 0% 65%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 260px 520px, hsl(0 0% 70%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 480px 460px, hsl(0 0% 60%) 100%, transparent 100%),
+    radial-gradient(2px 2px at 740px 500px, hsl(0 0% 65%) 100%, transparent 100%);
+  background-size: 960px 600px;
+  opacity: 0.6;
+  animation: pixel-scroll-mid 80s steps(150) infinite, pixel-blink-b 8s steps(4) infinite;
+  /* animation: pixel-scroll-mid 80s linear infinite, pixel-blink-b 8s ease-in-out infinite; */
+}
+
+/* Layer 3 — front particles (2–3px, subtle gold dust) */
+.pixel-layer-front {
+  position: absolute;
+  inset: 0;
+  animation: pixel-scroll-fast 60s steps(100) infinite;
+  /* animation: pixel-scroll-fast 60s linear infinite; */
+  background-image:
+    radial-gradient(2px 2px at 150px 120px, hsl(var(--gold) / 0.25) 100%, transparent 100%),
+    radial-gradient(3px 3px at 400px 80px, hsl(var(--gold) / 0.15) 100%, transparent 100%),
+    radial-gradient(2px 2px at 650px 200px, hsl(var(--gold) / 0.2) 100%, transparent 100%),
+    radial-gradient(2px 2px at 250px 350px, hsl(var(--gold) / 0.18) 100%, transparent 100%),
+    radial-gradient(3px 3px at 550px 300px, hsl(var(--gold) / 0.12) 100%, transparent 100%),
+    radial-gradient(2px 2px at 800px 150px, hsl(var(--gold) / 0.22) 100%, transparent 100%),
+    radial-gradient(2px 2px at 100px 500px, hsl(var(--gold) / 0.15) 100%, transparent 100%),
+    radial-gradient(3px 3px at 700px 420px, hsl(var(--gold) / 0.18) 100%, transparent 100%);
+  background-size: 960px 600px;
+  opacity: 0.5;
 }
