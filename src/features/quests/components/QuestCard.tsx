@@ -196,7 +196,11 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             </div>
 
             {/* Title: ชื่อเควส พร้อมลูกศรชี้เมื่อ Hover */}
-            <h3 className="pixel-text text-xl leading-tight flex items-start gap-2 relative">
+            <h3 className="pixel-text text-xl leading-tight flex items-start gap-2 relative" style={
+              {
+                fontSize: "20px",
+              }
+            }>
               <motion.span variants={cursorVariants} className="text-accent absolute -left-4">
                 ►
               </motion.span>
@@ -206,7 +210,11 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             </h3>
 
             {/* Description: คำอธิบาย (ใช้ฟอนต์ปกติหรือฟอนต์ที่อ่านง่ายขึ้นเล็กน้อยเพื่อ UX ที่ดี) */}
-            <p className="text-sm leading-relaxed line-clamp-2 flex-1 mt-1" style={{ color: theme.muted }}>
+            <p className="text-sm leading-relaxed line-clamp-2 flex-1 mt-1" style={{
+              color: theme.muted,
+              fontSize: "16px",
+
+            }}>
               {quest.description}
             </p>
 

@@ -18,6 +18,7 @@ import EditQuest from "@/features/quests/pages/Edit/EditQuest";
 import SubmitBid from "@/features/bids/pages/SubmitBid";
 import ProviderBids from "@/features/bids/pages/ProviderBids";
 import RewardShop from "@/features/rewards/pages/RewardShop";
+import AddProduct from "@/features/rewards/pages/AddProduct";
 import UserProfile from "@/features/users/pages/UserProfile";
 import EditUserProfile from "@/features/users/pages/Edit/EditUserProfile";
 import PointsAnimation from "@/features/users/components/PointsAnimation";
@@ -59,6 +60,7 @@ const App = () => (
                   <Route path="/create-quest" element={<CreateQuest />} />
                   <Route path="/quest/:id/edit" element={<EditQuest />} />
                   <Route path="/reward-shop" element={<RewardShop />} />
+                  <Route path="/add-product" element={<AddProduct />} />
                   <Route path="/profile" element={<UserProfile />} />
                   <Route path="/profile/edit" element={<EditUserProfile />} />
                   <Route path="*" element={<NotFound />} />
