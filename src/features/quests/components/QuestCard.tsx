@@ -155,7 +155,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
       scale: 1.01,
       boxShadow: `0px 10px 20px rgba(0,0,0,0.6), 0px 0px 15px ${theme.accent}40`,
       borderColor: theme.accent,
-      transition: { type: "spring", stiffness: 400, damping: 20 }
+      transition: { type: "spring" as const, stiffness: 400, damping: 20 }
     }
   };
 
