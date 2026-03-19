@@ -200,7 +200,7 @@ const QuestDetail = () => {
               </span>
             </div>
 
-            <h1 className="font-pixel text-[14px] sm:text-[16px] text-foreground pixel-text-shadow leading-relaxed mb-4">
+            <h1 className="font-pixel text-[14px] sm:text-[16px] text-foreground pixel-text-shadow leading-relaxed mb-4 break-words overflow-hidden">
               {quest.title}
             </h1>
 
@@ -231,7 +231,7 @@ const QuestDetail = () => {
               <h2 className="font-pixel text-[10px] text-foreground mb-3">
                 Quest Details
               </h2>
-              <div className="text-xl leading-relaxed text-foreground/80 whitespace-pre-line">
+              <div className="text-xl leading-relaxed text-foreground/80 whitespace-pre-line break-all overflow-hidden">
                 {quest.fullDescription}
               </div>
             </div>
@@ -260,14 +260,14 @@ const QuestDetail = () => {
                       className="pixel-border bg-secondary p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                     >
                       <div className="flex-1">
-                        <p className="font-pixel text-[10px] text-foreground mb-1">
+                        <p className="font-pixel text-[10px] text-foreground mb-1 break-words">
                           ⚔ {bid.username}
                         </p>
                         <p className="text-base text-muted-foreground">
                           📜 {bid.questsCompleted} quests · ★ {bid.rating.toFixed(1)}
                         </p>
                         {bid.note && (
-                          <p className="text-base text-foreground/70 mt-1 italic">
+                          <p className="text-base text-foreground/70 mt-1 italic break-words overflow-hidden">
                             "{bid.note}"
                           </p>
                         )}
@@ -379,7 +379,7 @@ const QuestDetail = () => {
                       </div>
                       <p className="text-base text-foreground">Amount: <span className="text-accent">{myBid.bidAmount} GP</span></p>
                       <p className="text-base text-muted-foreground">Duration: {myBid.waitDuration}</p>
-                      {myBid.note && <p className="text-base text-muted-foreground mt-1">Note: {myBid.note}</p>}
+                      {myBid.note && <p className="text-base text-muted-foreground mt-1 break-words overflow-hidden">Note: {myBid.note}</p>}
                       <p className="text-base mt-2">
                         Status:{" "}
                         <span className={myBid.status === "ACCEPTED" ? "text-success font-semibold" : myBid.status === "REJECTED" ? "text-red-400" : "text-muted-foreground"}>
@@ -446,7 +446,10 @@ const QuestDetail = () => {
                   variant="gold"
                   size="md"
                   className="w-full mt-2"
-                  onClick={() => setShowBidForm(true)}
+                  onClick={() => {
+                    setBidAmount(quest.rewardPoints);
+                    setShowBidForm(true);
+                  }}
                 >
                   ⚔ Submit Bid
                 </PixelButton>
@@ -461,7 +464,7 @@ const QuestDetail = () => {
             <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">
               Quest Provider
             </h3>
-            <p className="text-xl text-foreground mb-1">{quest.providerName}</p>
+            <p className="text-xl text-foreground mb-1 break-words">{quest.providerName}</p>
             {quest.contact && (
               <div className="mt-3 space-y-1">
                 {quest.contact.discord && (
@@ -490,7 +493,7 @@ const QuestDetail = () => {
               </h3>
               <p className="text-lg text-accent break-all">{quest.repoUrl}</p>
               {quest.branchName && (
-                <p className="text-lg text-muted-foreground mt-2">
+                <p className="text-lg text-muted-foreground mt-2 break-words">
                   Branch: <span className="text-accent">{quest.branchName}</span>
                 </p>
               )}
@@ -498,7 +501,7 @@ const QuestDetail = () => {
           )}
 
           {/* Status Actions */}
-          {(quest.status === "in-progress" || quest.status === "review") && (
+          {(quest.status === "in-progress" || quest.status === "review") && (user?.id === quest.assignedTo || isOwner) && (
             <div className="space-y-3">
               <PixelButton
                 variant="primary"

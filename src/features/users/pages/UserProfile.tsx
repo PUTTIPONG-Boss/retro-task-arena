@@ -1,5 +1,6 @@
-import { useQuestStore } from "@/features/quests/store/questStore";
+import { useGetQuests } from "@/features/quests/services/quest.service";
 import { useUserStore } from "@/features/users/store/userStore";
+import PixelButton from "@/components/PixelButton";
 import PixelFrame from "@/components/PixelFrame";
 import DifficultyStars from "@/features/quests/components/DifficultyStars";
 import { Link } from "react-router-dom";
@@ -9,7 +10,7 @@ import { getMyBids, MyBid } from "@/features/finance/services/application.servic
 
 const UserProfile = () => {
   const user = useUserStore((state) => state.user);
-  const quests = useQuestStore((state) => state.quests);
+  const { data: quests = [] } = useGetQuests();
   const [activeTab, setActiveTab] = useState<"quests" | "financials" | "activity">("quests");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [bids, setBids] = useState<MyBid[]>([]);
@@ -28,6 +29,13 @@ const UserProfile = () => {
   const activeQuests = quests.filter(
     (q) => q.assignedTo === user.id && q.status !== "completed",
   );
+
+  const postedQuests = quests.filter((q) => q.providerId === user.id);
+
+  const isSeniorOrEmployer = (role: string) => {
+    const r = role.toLowerCase();
+    return r.includes('senior') || r === 'employer';
+  };
 
   return (
     <div className="max-w-[900px] mx-auto px-4 py-8">
@@ -134,6 +142,37 @@ const UserProfile = () => {
               </div>
             )}
           </PixelFrame>
+
+          {isSeniorOrEmployer(user.role) && (
+            <PixelFrame className="mb-6">
+              <h2 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">📜 Posted Quests</h2>
+              {postedQuests.length === 0 ? (
+                <p className="text-lg text-muted-foreground">You haven't posted any quests yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {postedQuests.map((q) => (
+                    <div key={q.id} className="pixel-border bg-secondary p-3 flex justify-between items-center hover:bg-muted group">
+                      <Link to={`/quest/${q.id}`} className="flex-1">
+                        <div>
+                          <p className="font-pixel text-[9px] text-foreground group-hover:text-accent transition-colors">{q.title}</p>
+                          <p className="text-base text-muted-foreground mt-1">
+                            {q.status.toUpperCase()} · ⏳ {q.estimatedTime}
+                          </p>
+                        </div>
+                      </Link>
+                      <div className="flex gap-2">
+                        <Link to={`/quest/${q.id}/edit`}>
+                          <PixelButton variant="gold" size="sm">
+                            [ EDIT ]
+                          </PixelButton>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </PixelFrame>
+          )}
 
           {completedQuests.length > 0 && (
             <PixelFrame>

@@ -151,6 +151,21 @@ export const useUpdateQuestStatus = () => {
   });
 };
 
+export const useUpdateQuest = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: Partial<CreateQuestPayload> & { status?: string } }) => {
+      const response = await apiClient.put(`/tasks/${id}`, payload);
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['quest', variables.id] });
+    },
+  });
+};
+
 // --- Bidding Hooks ---
 
 export const useGetBids = (taskId: string | undefined) => {

@@ -204,7 +204,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
               <motion.span variants={cursorVariants} className="text-accent absolute -left-4">
                 ►
               </motion.span>
-              <span className="gold-text">
+              <span className="gold-text break-words overflow-hidden">
                 {quest.title}
               </span>
             </h3>

@@ -87,7 +87,7 @@ const Navbar = () => {
             </span>
             <button
               onClick={handleLogout}
-              className="font-pixel text-[7px] text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
+              className="font-pixel text-[10px] text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
             >
               ⏻
             </button>

@@ -4,12 +4,13 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 interface PixelButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "gold" | "danger" | "ghost";
   size?: "sm" | "md" | "lg";
+  isLoading?: boolean;
 }
 
 const PixelButton = forwardRef<HTMLButtonElement, PixelButtonProps>(
-  ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     const base =
-      "font-pixel uppercase tracking-wider transition-none select-none cursor-pointer pixel-text-shadow border-[3px] border-[hsl(var(--pixel-shadow))]";
+      "font-pixel uppercase tracking-wider transition-none select-none cursor-pointer pixel-text-shadow border-[3px] border-[hsl(var(--pixel-shadow))] flex items-center justify-center gap-2";
 
     const variants = {
       primary:
@@ -30,9 +31,13 @@ const PixelButton = forwardRef<HTMLButtonElement, PixelButtonProps>(
     return (
       <button
         ref={ref}
-        className={cn(base, variants[variant], sizes[size], className)}
+        disabled={isLoading || disabled}
+        className={cn(base, variants[variant], sizes[size], (isLoading || disabled) && "opacity-70 cursor-not-allowed", className)}
         {...props}
       >
+        {isLoading && (
+          <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+        )}
         {children}
       </button>
     );
