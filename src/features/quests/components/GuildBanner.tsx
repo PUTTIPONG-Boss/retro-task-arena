@@ -92,8 +92,13 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const EnhancedGuildBanner = () => {
+  const { t, i18n } = useTranslation();
+
+  const fontClass = i18n.language === "th" ? "font-['TA-ChaiLai']" : "font-pixel";
+  
   // 1. กำหนดอนุภาคเป็นเหรียญทองพิกเซลที่จะลอยขึ้นและกะพริบ
   const particleCount = 15;
   const particles = Array.from({ length: particleCount }, (_, i) => ({
@@ -119,8 +124,13 @@ const EnhancedGuildBanner = () => {
   const styleTag = `
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
+    @font-face {
+      font-family: 'TA-ChaiLai';
+      src: url('/fonts/TA-ChaiLai.otf') format('opentype');
+    }
+
     .retro-banner {
-      font-family: 'VT323', monospace; /* ฟอนต์พิกเซลที่สมบูรณ์แบบ */
+
       background-color: ${colors.bg};
       border: 4px solid ${colors.border}; /* ขอบโลหะพิกเซลแบบยกสูง */
       border-radius: 4px;
@@ -176,8 +186,8 @@ const EnhancedGuildBanner = () => {
 
   return (
     <>
-      <style>{styleTag}</style>
-      <div className="retro-banner p-10 flex flex-col items-center justify-center gap-4">
+    <style>{styleTag}</style>
+      <div className={`retro-banner p-10 flex flex-col items-center justify-center gap-4 ${fontClass}`}>
         {/* 4. การตกแต่งพื้นหลังและขอบ */}
         <div className="pixel-border-top"></div>
         <div className="pixel-border-bottom"></div>
@@ -234,13 +244,13 @@ const EnhancedGuildBanner = () => {
             ⚔
           </motion.span>
           <motion.h1
-            className="text-4xl title-glow"
+            className={`title-glow ${i18n.language === 'th' ? 'text-5xl' : 'text-4xl'}`}
             style={{ color: colors.textAccent, lineHeight: '1.2' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            Inet Quest Board
+            {t("questBoard.title")}
           </motion.h1>
           <motion.span
             className="text-2xl"
@@ -256,12 +266,12 @@ const EnhancedGuildBanner = () => {
           <span
             className="scrolling-text uppercase"
             style={{
-              fontSize: '19px',
+              fontSize: i18n.language === 'th' ? '24px' : '19px',
               color: colors.textMuted,
               letterSpacing: '0.3em',
             }}
           >
-            Inet Quest Board ✦ New Quests Daily ✦ Accept Your Destiny ✦ Inet Quest Board
+            {t("questBoard.subtitle")}
           </span>
         </div>
 
@@ -295,7 +305,7 @@ const EnhancedGuildBanner = () => {
           <span style={{ fontSize: '12px', color: colors.textMuted }}>━━━</span>
         </div>
       </div>
-    </>
+      </>
   );
 };
 

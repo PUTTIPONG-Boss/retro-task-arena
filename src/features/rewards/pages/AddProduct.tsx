@@ -6,6 +6,7 @@ import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
 import { useCreateProduct } from "../services/product.service";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ const AddProduct = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
+
+  const { t, i18n } = useTranslation();
+  
+  // ⭐️ 1. กำหนด fontClass ตามแบบที่คุณให้จำไว้ (ไม่มีชื่อ font ข้างใน)
+  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
 
   const { mutate: createProduct, isPending } = useCreateProduct();
 
@@ -43,15 +49,17 @@ const AddProduct = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Product added to the shop!", {
-            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+          // ⭐️ 2. ดึงคำแปล Success Message และเปลี่ยนฟอนต์ตามภาษา
+          toast.success(t("createReward.successMsg"), {
+            style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
           });
           navigate("/reward-shop");
         },
         onError: (error: any) => {
-          const msg = error?.response?.data?.error || "Failed to add product. Check the API.";
+          // ⭐️ 3. ดึงคำแปล Error Message เป็น Default 
+          const msg = error?.response?.data?.error || t("createReward.errorMsg");
           toast.error(msg, {
-            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+            style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
           });
         },
       }
@@ -59,66 +67,80 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-[700px] mx-auto px-4 py-8">
+    // ⭐️ 4. เพิ่มคลาส font-['TA-ChaiLai'] ที่ Container หลักเพื่อให้คลุมทั้งหน้า
+    <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
       {/* Back Button */}
       <PixelButton
         variant="ghost"
         size="sm"
-        className="mb-6"
+        // ⭐️ 5. เพิ่ม font-pixel และ fontClass
+        className={`mb-6 font-pixel ${fontClass}`}
         onClick={() => navigate("/reward-shop")}
       >
-        ← Back to Shop
+        {/* ⭐️ 6. ดึงคำแปล */}
+        ← {t("createReward.back")}
       </PixelButton>
 
       <PixelFrame>
         {/* Header */}
-        <h1 className="font-pixel text-[13px] text-foreground pixel-text-shadow mb-2">
-          🏪 Add New Product
+        {/* ⭐️ 7. เพิ่ม fontClass */}
+        <h1 className={`font-pixel text-[13px] text-foreground pixel-text-shadow mb-2 ${fontClass}`}>
+          {/* ⭐️ 8. ดึงคำแปล */}
+          🏪 {t("createReward.title")}
         </h1>
-        <p className="text-xl text-muted-foreground mb-6">
-          List a new item in the Reward Shop.
+        {/* ⭐️ 9. เพิ่ม font-pixel และ fontClass */}
+        <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>
+          {/* ⭐️ 10. ดึงคำแปล */}
+          {t("createReward.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Product Code */}
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">
-              Product Code
+            {/* ⭐️ 11. เพิ่ม fontClass ลงใน Label ทั้งหมด */}
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {/* ⭐️ 12. ดึงคำแปล Label */}
+              {t("createReward.labels.code")}
             </label>
             <PixelInput
-              placeholder="e.g. PROD-2026-001"
+              // ⭐️ 13. ดึงคำแปล Placeholder และเพิ่ม fontClass
+              placeholder={t("createReward.placeholders.code")}
               value={code}
               onChange={(e) => setCode(e.target.value)}
+              className={`font-pixel ${fontClass}`}
               required
             />
-            <p className="font-pixel text-[7px] text-muted-foreground mt-1">
-              Must be unique. Will be auto-uppercased.
+            {/* ⭐️ 14. เพิ่ม fontClass ให้ Hint และดึงคำแปล */}
+            <p className={`font-pixel text-[7px] text-muted-foreground mt-1 ${fontClass}`}>
+              {t("createReward.hints.code")}
             </p>
           </div>
 
           {/* Product Name */}
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">
-              Product Name
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createReward.labels.name")}
             </label>
             <PixelInput
-              placeholder="e.g. Mechanical Keyboard G3"
+              placeholder={t("createReward.placeholders.name")}
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className={`font-pixel ${fontClass}`}
               required
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">
-              Description
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createReward.labels.description")}
             </label>
             <PixelTextarea
               rows={4}
-              placeholder="RGB Backlit, Blue Switches, Wireless 2.4GHz..."
+              placeholder={t("createReward.placeholders.description")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className={`font-pixel ${fontClass}`}
               required
             />
           </div>
@@ -126,28 +148,30 @@ const AddProduct = () => {
           {/* Price + Stock side by side */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">
-                Price (GP)
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createReward.labels.price")}
               </label>
               <PixelInput
                 type="number"
-                placeholder="2500"
+                placeholder={t("createReward.placeholders.price")}
                 min="0"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                className={`font-pixel ${fontClass}`}
                 required
               />
             </div>
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">
-                Stock
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createReward.labels.stock")}
               </label>
               <PixelInput
                 type="number"
-                placeholder="50"
+                placeholder={t("createReward.placeholders.stock")}
                 min="0"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
+                className={`font-pixel ${fontClass}`}
                 required
               />
             </div>
@@ -158,10 +182,12 @@ const AddProduct = () => {
             type="submit"
             variant="gold"
             size="lg"
-            className="w-full"
+            // ⭐️ 15. เพิ่ม font-pixel และ fontClass
+            className={`w-full font-pixel ${fontClass}`}
             disabled={isPending}
           >
-            {isPending ? "🏪 Adding..." : "🏪 Add Product"}
+            {/* ⭐️ 16. ดึงคำแปลปุ่ม */}
+            {isPending ? `🏪 ${t("createReward.submitBtn")}...` : `🏪 ${t("createReward.submitBtn")}`}
           </PixelButton>
         </form>
       </PixelFrame>

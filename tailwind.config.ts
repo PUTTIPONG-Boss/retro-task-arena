@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        pixel: ['"Press Start 2P"', "monospace"],
-        "pixel-body": ['"VT323"', "monospace"],
+        pixel: ['"Press Start 2P"',"TA-ChaiLai" , "monospace"],
+        "pixel-body": ['"VT323"',"TA-ChaiLai", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

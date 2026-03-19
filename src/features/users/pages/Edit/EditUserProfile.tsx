@@ -2,17 +2,28 @@ import { useUserStore } from "@/features/users/store/userStore";
 import PixelFrame from "@/components/PixelFrame";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+// ⭐️ 1. นำเข้า useTranslation และ toast (ถ้ายังไม่มี) เพื่อใช้แสดงข้อความ
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 const EditUserProfile = () => {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
-  const [username, setUsername] = useState(user.username);
-  const [title, setTitle] = useState(user.title);
-  const [githubUrl, setGithubUrl] = useState(user.githubUrl || "");
-  const [skills, setSkills] = useState<string[]>(user.skills || []);
+  
+  // ⭐️ 2. เรียกใช้ useTranslation
+  const { t, i18n } = useTranslation();
+
+  // ⭐️ 3. กำหนด fontClass แบบที่คุณให้จำไว้
+  const fontClass = i18n.language === "th" ? "text-[16px]  font-['TA-ChaiLai']" : "text-[16px] font-pixel";
+
+  const [username, setUsername] = useState(user?.username || "");
+  const [title, setTitle] = useState(user?.title || "");
+  const [githubUrl, setGithubUrl] = useState(user?.githubUrl || "");
+  const [skills, setSkills] = useState<string[]>(user?.skills || []);
   const [newSkill, setNewSkill] = useState("");
 
+  if (!user) return null; // เพิ่มกันเหนียวกรณี user เป็น null
 
   const addSkill = () => {
     if (newSkill.trim() && !skills.includes(newSkill.trim())) {
@@ -35,49 +46,57 @@ const EditUserProfile = () => {
         skills,
       });
     }
-    console.log("Profile Updated!");
+    // ⭐️ 4. เพิ่ม Toast ดึงคำแปล successMsg
+    toast.success(t("editProfile.successMsg"), {
+      style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+    });
     navigate(-1);
   };
 
   return (
-    <div className="max-w-[900px] mx-auto px-4 py-8">
+    // ⭐️ 5. ใส่ fontClass ลงใน div หลัก เพื่อให้ภาษาครอบคลุมทั้งหน้า
+    <div className={`max-w-[900px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="font-pixel text-[8px] text-muted-foreground hover:text-foreground transition-colors"
+          // ⭐️ 6. เพิ่ม fontClass ให้ปุ่ม CANCEL
+          className={`text-muted-foreground hover:text-foreground transition-colors font-pixel ${fontClass}`}
         >
-          {"< CANCEL"}
+          {/* ⭐️ 7. ดึงคำแปล */}
+          {t("editProfile.cancel")}
         </button>
 
-        <h1 className="font-pixel text-[12px] text-foreground pixel-text-shadow">
-          EDIT ADVENTURER
+        {/* ⭐️ 8. เพิ่ม fontClass ให้ Title */}
+        <h1 className={`text-foreground pixel-text-shadow font-pixel ${fontClass}`}>
+          {t("editProfile.title")}
         </h1>
       </div>
 
       <PixelFrame className="mb-6">
         <div className="flex flex-col sm:flex-row items-start gap-6 py-2">
-
           <div className="flex-1 w-full space-y-4">
             <div>
-              <label className="font-pixel text-[8px] text-accent block mb-1">
-                USERNAME
+              {/* ⭐️ 9. เพิ่ม fontClass และดึงคำแปล Label */}
+              <label className={`text-accent block mb-1 font-pixel ${fontClass}`}>
+                {t("editProfile.labels.username")}
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-secondary pixel-border p-2 font-pixel text-[10px] text-foreground focus:outline-none"
+                // ⭐️ 10. เพิ่ม fontClass
+                className={`w-full bg-secondary pixel-border p-2 text-foreground focus:outline-none font-pixel ${fontClass}`}
               />
             </div>
             <div>
-              <label className="font-pixel text-[8px] text-accent block mb-1">
-                ADVENTURER TITLE
+              <label className={`text-accent block mb-1 font-pixel ${fontClass}`}>
+                {t("editProfile.labels.adventurerTitle")}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-secondary pixel-border p-2 font-pixel text-[10px] text-foreground focus:outline-none"
+                className={`w-full bg-secondary pixel-border p-2 text-foreground focus:outline-none font-pixel ${fontClass}`}
               />
             </div>
           </div>
@@ -85,14 +104,15 @@ const EditUserProfile = () => {
       </PixelFrame>
 
       <PixelFrame className="mb-6">
-        <h2 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">
-          ⚔ Edit Skills
+        {/* ⭐️ 11. เพิ่ม fontClass และดึงคำแปล */}
+        <h2 className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}>
+          ⚔ {t("editProfile.skills.title")}
         </h2>
         <div className="flex flex-wrap gap-2 mb-4">
           {skills.map((skill) => (
             <span
               key={skill}
-              className="pixel-border bg-secondary px-3 py-1 font-pixel text-[8px] text-foreground flex items-center gap-2"
+              className={`pixel-border bg-secondary px-3 py-1 text-foreground flex items-center gap-2 font-pixel ${fontClass}`}
             >
               {skill}
               <button
@@ -107,40 +127,44 @@ const EditUserProfile = () => {
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="Add new skill..."
+            // ⭐️ 12. ดึงคำแปล Placeholder และเพิ่ม fontClass
+            placeholder={t("editProfile.skills.placeholder")}
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addSkill()}
-            className="flex-1 bg-secondary pixel-border p-2 font-pixel text-[8px] text-foreground focus:outline-none"
+            className={`flex-1 bg-secondary pixel-border p-2 text-foreground focus:outline-none font-pixel ${fontClass}`}
           />
           <button
             onClick={addSkill}
-            className="pixel-border bg-muted px-4 font-pixel text-[8px] text-foreground"
+            className={`pixel-border bg-muted px-4 text-foreground font-pixel ${fontClass}`}
           >
-            ADD
+            {/* ⭐️ 13. ดึงคำแปลปุ่ม Add */}
+            {t("editProfile.skills.addBtn")}
           </button>
         </div>
       </PixelFrame>
 
       <PixelFrame className="mb-6">
-        <h2 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-3">
-          🔗 GitHub URL
+        {/* ⭐️ 14. เพิ่ม fontClass และดึงคำแปล */}
+        <h2 className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}>
+          🔗 {t("editProfile.githubUrl")}
         </h2>
         <input
           type="text"
           value={githubUrl}
           onChange={(e) => setGithubUrl(e.target.value)}
-          placeholder="https://github.com/username"
-          className="w-full bg-secondary pixel-border p-3 font-pixel text-[10px] text-accent focus:outline-none"
+          placeholder={t("editProfile.githubPlaceholder")}
+          className={`w-full bg-secondary pixel-border p-3 text-accent focus:outline-none font-pixel ${fontClass}`}
         />
       </PixelFrame>
 
       <div className="flex justify-center mt-4">
         <button
           onClick={handleSave}
-          className="pixel-border bg-secondary hover:bg-muted w-full sm:w-64 py-4 font-pixel text-[10px] text-accent pixel-text-shadow transition-all"
+          // ⭐️ 15. เพิ่ม flex items-center justify-center เพื่อบังคับให้ข้อความอยู่กึ่งกลางเป๊ะๆ เสมอ
+          className={`pixel-border bg-secondary hover:bg-muted w-full sm:w-64 py-4 text-accent pixel-text-shadow transition-all font-pixel flex items-center justify-center ${fontClass}`}
         >
-          CONFIRM UPDATES
+          {t("editProfile.confirmBtn")}
         </button>
       </div>
     </div>

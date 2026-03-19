@@ -1,7 +1,15 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
+// ⭐️ 1. นำเข้า useTranslation
+import { useTranslation } from "react-i18next";
 
 const RewardBanner = () => {
+  // ⭐️ 2. เรียกใช้ useTranslation
+  const { t, i18n } = useTranslation();
+
+  // ⭐️ 3. สร้าง fontClass สำหรับจัดการฟอนต์ภาษาไทย
+  const fontClass = i18n.language === "th" ? "font-['TA-ChaiLai'] pt-2" : "font-pixel";
+
   // 1. Define particles (gold coins and sparkles)
   const particles = useMemo(() =>
     Array.from({ length: 20 }, (_, i) => ({
@@ -25,11 +33,10 @@ const RewardBanner = () => {
     shadow: "#00000066",
   };
 
+  // ⭐️ 4. ลบ @import และ @font-face ออกจาก styleTag เพราะเราย้ายไปไว้ที่ index.css แล้ว
+  // (ถ้าคุณใส่ .retro-banner-shop ไว้ใน index.css แล้ว สามารถลบ styleTag ทิ้งทั้งหมดได้เลยครับ แต่อันนี้ผมคงไว้ให้เผื่อคุณยังไม่ได้ย้าย)
   const styleTag = `
-    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
     .retro-banner-shop {
-      font-family: 'VT323', monospace;
       background-color: ${colors.bg};
       border: 4px solid ${colors.border};
       border-radius: 4px;
@@ -57,12 +64,6 @@ const RewardBanner = () => {
       white-space: nowrap;
     }
 
-    // .marquee-text {
-    //   display: inline-block;
-    //   padding-left: 100%;
-    //   animation: marquee-slide 20s linear infinite;
-    // }
-
     @keyframes marquee-slide {
       0% { transform: translate(0, 0); }
       100% { transform: translate(-100%, 0); }
@@ -72,7 +73,8 @@ const RewardBanner = () => {
   return (
     <>
       <style>{styleTag}</style>
-      <div className="retro-banner-shop p-10 flex flex-col items-center justify-center gap-4 my-4">
+      {/* ⭐️ 5. เพิ่ม ${fontClass} ไปที่ div หลัก */}
+      <div className={`retro-banner-shop p-10 flex flex-col items-center justify-center gap-4 my-4 ${fontClass}`}>
         {/* Decorations */}
         <div className="pixel-decoration top-2 left-3">╔══</div>
         <div className="pixel-decoration top-2 right-3">══╗</div>
@@ -124,12 +126,14 @@ const RewardBanner = () => {
             🏪
           </motion.span>
           <motion.h1
-            className="text-4xl text-accent shop-title-glow"
+             /* ⭐️ 6. ปรับขนาดฟอนต์ของ Title เมื่อเป็นภาษาไทยเพื่อความสวยงาม */
+            className={`text-accent shop-title-glow ${i18n.language === 'th' ? 'text-5xl' : 'text-4xl'}`}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            Inet Reward Shop
+            {/* ⭐️ 7. ดึงคำแปล Title (ใช้อันเดียวกับหน้า Shop หลักได้) */}
+            {t("rewardShop.title", "Inet Reward Shop")}
           </motion.h1>
           <motion.span
             className="text-3xl"
@@ -142,20 +146,30 @@ const RewardBanner = () => {
 
         {/* Marquee Subtitle */}
         <div className="marquee-container opacity-60">
-          <div className="marquee-text font-pixel uppercase tracking-[0.2em] text-[10px]" style={{
-            color: colors.textMuted,
-            textAlign: "center",
-          }}>
-            ✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦
+          <div 
+             /* ⭐️ 8. เพิ่ม fontClass และปรับขนาดฟอนต์ซับไทเทิล */
+            className={`marquee-text uppercase tracking-[0.2em] ${fontClass}`} 
+            style={{
+              color: colors.textMuted,
+              textAlign: "center",
+              fontSize: i18n.language === "th" ? "14px" : "10px",
+            }}
+          >
+            {/* ⭐️ 9. ดึงคำแปล Marquee (ดึงจาก rewardBanner ใน JSON ใหม่) */}
+            {t("rewardBanner.marquee", "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦")}
           </div>
         </div>
 
         {/* Description line */}
-        <p className="font-pixel-body text-lg text-foreground/80 text-center max-w-md" style={{
-
-          fontSize: "20px",
-        }}>
-          Trade your hard-earned gold for items.
+        <p 
+          /* ⭐️ 10. เพิ่ม fontClass และปรับการตั้งค่า */
+          className={`text-foreground/80 text-center max-w-md ${fontClass}`} 
+          style={{
+            fontSize: i18n.language === "th" ? "24px" : "20px",
+          }}
+        >
+          {/* ⭐️ 11. ดึงคำแปล Description (ดึงจาก rewardBanner ใน JSON ใหม่) */}
+          {t("rewardBanner.description", "Trade your hard-earned gold for items.")}
         </p>
 
         {/* Bottom line decoration */}
