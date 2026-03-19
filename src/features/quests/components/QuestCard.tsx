@@ -213,6 +213,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             <p className="text-sm leading-relaxed line-clamp-2 flex-1 mt-1" style={{
               color: theme.muted,
               fontSize: "16px",
+
             }}>
               {quest.description}
             </p>

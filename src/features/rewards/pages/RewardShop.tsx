@@ -81,6 +81,13 @@ const RewardShop = () => {
                 + Add Product
               </PixelButton>
             )}
+            <PixelButton
+              variant="gold"
+              size="sm"
+              onClick={() => navigate("/add-product")}
+            >
+              + Add Product
+            </PixelButton>
           </div>
         </PixelFrame>
 

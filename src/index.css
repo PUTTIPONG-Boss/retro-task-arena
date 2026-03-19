@@ -10,6 +10,8 @@
     /* /* --background: 30 15% 10%; */
     /* --background: 220 20% 10%; */
     /* --background: 0 0% 5%; */
+    --background: 220 20% 10%;
+    --foreground: 0 0% 75%;
 
     /* ม่วง */
     /* --background: 260 15% 7%; */
@@ -249,6 +251,9 @@
   .animate-coin-rain {
     animation: coin-rain 1.2s steps(6, end) forwards;
   }
+
+}
+=======
 }
 
 /* ═══════════════════════════════════════════
@@ -405,3 +410,5 @@
   background-size: 960px 600px;
   opacity: 0.5;
 }
+}
+
