@@ -72,6 +72,15 @@ const RewardShop = () => {
             <span className="font-pixel text-[14px] text-accent pixel-text-shadow">
               🪙 {user.points.toLocaleString()} GP
             </span>
+            {(user.role === 'employer' || user.role.toLowerCase().includes('senior')) && (
+              <PixelButton
+                variant="gold"
+                size="sm"
+                onClick={() => navigate("/add-product")}
+              >
+                + Add Product
+              </PixelButton>
+            )}
             <PixelButton
               variant="gold"
               size="sm"

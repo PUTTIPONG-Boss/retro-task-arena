@@ -49,16 +49,41 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const isSeniorOrEmployer = (role: string) => {
+    const r = role.toLowerCase();
+    return r.includes('senior') || r === 'employer';
+  };
+
   const links = [
     { to: "/", label: "Quest Board", icon: "📋" },
-    { to: "/create-quest", label: "Post Quest", icon: "📜" },
+    { to: "/create-quest", label: "Post Quest", icon: "📜", roles: ["employer"] },
     { to: "/reward-shop", label: "Reward Shop", icon: "🏪" },
     { to: "/profile", label: "Profile", icon: "👤" },
   ];
 
+  const filteredLinks = links.filter((link) => {
+    if (!link.roles) return true;
+    return link.roles.some(r => {
+      if (r === 'employer') return isSeniorOrEmployer(user.role);
+      return user.role === r;
+    });
+  });
+
   return (
     <nav className="bg-card pixel-border sticky top-0 z-50">
       <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between h-14">
+        <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2">
+          <img
+            src="/src/assets/logoinetquest.png"
+            alt="INETQUEST"
+            className="h-10 w-auto"
+            style={{
+              imageRendering: 'pixelated', // สำคัญมาก: ทำให้พิกเซลไม่เบลอ
+              filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.5))',
+              width: '100px',
+              height: '80px',
+            }}
+          />
         <Link to="/" className="font-pixel text-[12px] text-accent pixel-text-shadow tracking-wide flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img
@@ -76,7 +101,7 @@ const Navbar = () => {
         </Link>
 
         <div className="flex items-center gap-6">
-          {links.map((link) => (
+          {filteredLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
@@ -109,7 +134,7 @@ const Navbar = () => {
             </span>
             <button
               onClick={handleLogout}
-              className="font-pixel text-[7px] text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
+              className="font-pixel text-[10px] text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
             >
               ⏻
             </button>
