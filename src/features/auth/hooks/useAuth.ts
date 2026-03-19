@@ -6,9 +6,10 @@ export const useAuth = () => {
     isAuthenticated,
     isLoading,
     loginWithOneID,
+    login,
     mockLogin,
     logout,
   } = useAuthStore();
 
-  return { user, isAuthenticated, isLoading, loginWithOneID, mockLogin, logout };
+  return { user, isAuthenticated, isLoading, loginWithOneID, login, mockLogin, logout };
 };

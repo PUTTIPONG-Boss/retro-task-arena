@@ -9,6 +9,7 @@ interface AuthState {
   isLoading: boolean;
 
   loginWithOneID: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   mockLogin: () => Promise<void>;
   logout: () => void;
   setUser: (user: UserProfile) => void;
@@ -50,10 +51,28 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
+  login: async (email, password) => {
+    set({ isLoading: true });
+    try {
+      const res = await authService.login(email, password);
+      localStorage.setItem("auth_token", res.access_token);
+      set({
+        user: res.user,
+        token: res.access_token,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+
   logout: () => {
     authService.logout();
+    localStorage.removeItem("auth_token");
     set({ user: null, token: null, isAuthenticated: false });
   },
 
-  setUser: (user) => set({ user }),
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
 }));

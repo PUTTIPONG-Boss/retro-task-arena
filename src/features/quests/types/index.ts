@@ -2,16 +2,24 @@ export type QuestStatus = "open" | "bidding" | "in-progress" | "review" | "compl
 
 export interface Bid {
   id: string;
-  oderId: string;
+  taskId: string;
   userId: string;
   username: string;
-  githubUrl: string;
   questsCompleted: number;
+  totalPointsEarned: number;
   rating: number;
-  requestedPoints: number;
-  estimatedTime: string;
-  explanation: string;
-  avatarSeed: number;
+  bidAmount: number;
+  waitDuration: string;
+  note: string;
+  status: "PENDING" | "ACCEPTED" | "REJECTED";
+  createdAt: string;
+}
+
+export interface SubmitBidPayload {
+  user_id: string;
+  bid_amount: number;
+  wait_duration: string;
+  note?: string;
 }
 
 export interface Quest {
@@ -35,4 +43,18 @@ export interface Quest {
   };
   bids: Bid[];
   assignedTo?: string;
+  skills?: string;
+}
+
+export interface CreateQuestPayload {
+  employer_id: string;
+  title: string;
+  description: string;
+  point: number;
+  estimated_time: string;
+  type: string;
+  skills: string;
+  difficulty: string;
+  git_repo_url?: string;
+  req_branch_name?: string;
 }

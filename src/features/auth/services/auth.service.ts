@@ -23,7 +23,41 @@ export async function loginWithOneID(): Promise<OAuthTokenResponse> {
   // Simulate OAuth redirect → callback → token exchange
   return {
     access_token: "mock_access_token_" + Date.now(),
-    user: { ...mockUser },
+    user: { ...mockUser, role: "adventurer" },
+  };
+}
+
+/**
+ * Real login with email and password.
+ */
+import { apiClient } from "@/lib/api";
+
+export async function login(email: string, password: string): Promise<OAuthTokenResponse> {
+  const response = await apiClient.post("/user/login", { email, password });
+  const token = response.data.token;
+  
+  // After login, fetch user profile using the new /user/me endpoint
+  // The token is automatically attached by the interceptor if we wait for the store to update,
+  // but here we can pass it manually for the very first call.
+  const userResponse = await apiClient.get("/user/me", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const userData = userResponse.data;
+
+  return {
+    access_token: token,
+    user: {
+       ...mockUser, // Fallback fields
+       ...userData,
+       id: userData.userId || userData.id,
+       username: userData.username,
+       points: userData.points || 0,
+       role: userData.role || "adventurer",
+       skills: userData.skills ? userData.skills.split(",") : [],
+       questsCompleted: userData.questsCompleted || 0,
+       rating: userData.rating || 5.0,
+    },
   };
 }
 
@@ -34,19 +68,28 @@ export async function mockLogin(): Promise<OAuthTokenResponse> {
   await delay(400);
   return {
     access_token: "mock_dev_token_" + Date.now(),
-    user: { ...mockUser },
+    user: { ...mockUser, role: "employer" }, // Mock as employer for testing
   };
 }
 
 /**
  * Fetch or create user after OAuth callback.
- * Future: GET /users/me  or  POST /users (if new)
  */
 export async function fetchOrCreateUser(
-  _token: string
+  token: string
 ): Promise<UserProfile> {
-  await delay(300);
-  return { ...mockUser };
+  const response = await apiClient.get("/user/me", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const userData = response.data;
+  return {
+    ...mockUser,
+    ...userData,
+    id: userData.userId || userData.id,
+    points: userData.points || 0,
+    role: userData.role || "adventurer",
+    skills: userData.skills ? userData.skills.split(",") : [],
+  };
 }
 
 /**

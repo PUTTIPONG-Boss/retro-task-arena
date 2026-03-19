@@ -6,12 +6,21 @@ import PixelInput from '@/components/PixelInput'
 // import PixelDivider from "@/components/PixelDivider";
 import GuildBanner from "@/features/quests/components/GuildBanner";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/store/authStore";
 
 const QuestBoard = () => {
+  const user = useAuthStore((s) => s.user);
+
   const { data: quests = [], isLoading, isError } = useGetQuests();
   const [filter, setFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("active");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const isSeniorOrEmployer = () => {
+    if (!user) return false;
+    const r = user.role.toLowerCase();
+    return r.includes('senior') || r === 'employer';
+  };
 
   const categories = ["all", "FRONTEND", "BACKEND", "DEVOPS", "BUG FIX", "FEATURE"];
 
@@ -105,12 +114,14 @@ const QuestBoard = () => {
         </div>
 
         {/* Post Quest CTA */}
-        <div className="mb-6 flex justify-between items-center">
-          <Link to="/create-quest">
-            <PixelButton variant="gold" size="md">
-              📜 Post New Quest
-            </PixelButton>
-          </Link>
+        <div className={`mb-6 flex items-center ${isSeniorOrEmployer() ? 'justify-between' : 'justify-end'}`}>
+          {isSeniorOrEmployer() && (
+            <Link to="/create-quest">
+              <PixelButton variant="gold" size="md">
+                📜 Post New Quest
+              </PixelButton>
+            </Link>
+          )}
 
           {/* แสดงจำนวนผลลัพธ์การค้นหา */}
           {searchQuery && (
