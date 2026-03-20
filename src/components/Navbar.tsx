@@ -83,8 +83,7 @@ const Navbar = () => {
 
   return (
     <>
-      {/* ⭐️ 2. เพิ่มเงื่อนไขคลาส font-['TA-ChaiLai'] ไว้ที่ nav หลัก เพื่อคลุมทุกส่วนที่เป็นภาษาไทย */}
-      <nav className={`bg-card pixel-border sticky top-0 z-50 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
+      <nav className={`bg-card pixel-border sticky top-0 z-50 ${fontClass}`}>
         <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between h-14">
           
           <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2" onClick={playPageTurnSound}>
@@ -124,27 +123,27 @@ const Navbar = () => {
             <div className="pixel-border bg-secondary px-3 py-1 flex items-center gap-3">
               <div className="flex items-center gap-1">
                 {/* ⭐️ 4. เพิ่ม fontClass ให้ส่วนของเลเวลเผื่อมีการแปลในอนาคต */}
-                <span className={`font-pixel text-[7px] text-muted-foreground ${fontClass}`}>
+                <span className={`font-pixel text-muted-foreground ${fontClass}`}>
                   LV
                 </span>
-                <span className={`font-pixel text-[10px] text-foreground ${fontClass}`}>
+                <span className={`font-pixel text-foreground ${fontClass}`}>
                   {user.level}
                 </span>
               </div>
               <div className="w-[1px] h-4 bg-border" />
               <div className="flex items-center gap-1">
                 <span className="text-lg">🪙</span>
-                <span className={`font-pixel text-[10px] text-accent pixel-text-shadow ${fontClass}`}>
+                <span className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>
                   {user.points.toLocaleString()}
                 </span>
               </div>
               <div className="w-[1px] h-4 bg-border" />
-              <span className={`font-pixel text-[8px] text-foreground hidden md:inline ${fontClass}`}>
+              <span className={`font-pixel text-foreground hidden md:inline ${fontClass}`}>
                 {user.username}
               </span>
               <button
                 onClick={handleLogout}
-                className="font-pixel text-[10px] text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
+                className="font-pixel text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
               >
                 ⏻
               </button>

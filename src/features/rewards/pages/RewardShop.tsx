@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import RewardBanner from "../components/RewardBanner";
 import { useGetProducts } from "../services/product.service";
-// ⭐️ 1. นำเข้า useTranslation
 import { useTranslation } from "react-i18next";
 
 // Map product.code to a pixel icon for visual variety
@@ -23,12 +22,9 @@ const RewardShop = () => {
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
   const { data: products = [], isLoading, isError } = useGetProducts();
-  
-  // ⭐️ 2. เรียกใช้ useTranslation และสร้าง fontClass
   const { t, i18n } = useTranslation();
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1 font-['TA-ChaiLai']" : "text-[16px] font-pixel";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
-  // ⭐️ 3. ย้าย priceFilters เข้ามาใน Component เพื่อใช้ t() ได้ และปรับ key ให้ตรงกับ JSON
   const priceFilters = [
     { id: "all", labelKey: "all", min: 0, max: Infinity },
     { id: "0-500", labelKey: "range1", min: 0, max: 500 },
@@ -44,12 +40,20 @@ const RewardShop = () => {
     if (user.points >= cost) {
       // ⭐️ 4. ดึงคำแปลและส่งตัวแปร {{name}} เข้าไปใน toastSuccess
       toast.success(t("rewardShop.toastSuccess", { name }), {
-        style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+        style: {
+          fontFamily:
+            i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"',
+          fontSize: "10px",
+        },
       });
     } else {
       // ⭐️ 5. ดึงคำแปล toastError
       toast.error(t("rewardShop.toastError"), {
-        style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+        style: {
+          fontFamily:
+            i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"',
+          fontSize: "10px",
+        },
       });
     }
   };
@@ -68,23 +72,26 @@ const RewardShop = () => {
   });
 
   return (
-    // ⭐️ 6. นำ ${fontClass} ไปใส่ที่ div หลัก เพื่อให้ครอบคลุมทั้งหน้า
-    <div className={`min-h-screen ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
+    <div className={`min-h-screen ${fontClass}`}>
       <RewardBanner />
 
       <div className="max-w-[1280px] mx-auto px-4 py-8">
-        {/* User Balance + Add Product button */}
         <PixelFrame className="mb-6 flex items-center justify-between">
           <span className={`text-foreground pixel-text-shadow ${fontClass}`}>
-            {/* ⭐️ 7. ดึงคำแปล Your Balance */}
             {t("rewardShop.balance")}
           </span>
           <div className="flex items-center gap-4">
-            <span className={`text-accent pixel-text-shadow ${fontClass}`}>
-              {/* ⭐️ 8. ดึงคำแปล Currency (GP) */}
-              🪙 {user.points.toLocaleString()} {t("rewardShop.currency")}
+            <span
+              className={`text-accent pixel-text-shadow flex items-center gap-1.5 ${fontClass}`}
+            >  
+              <span className={fontClass}>
+                🪙 {user.points.toLocaleString()}
+              </span>
+              
+              <span className={fontClass}>{t("rewardShop.currency")}</span>
             </span>
-            {(user.role === 'employer' || user.role.toLowerCase().includes('senior')) && (
+            {(user.role === "employer" ||
+              user.role.toLowerCase().includes("senior")) && (
               <PixelButton
                 variant="gold"
                 size="sm"
@@ -129,7 +136,9 @@ const RewardShop = () => {
         {isError && !isLoading && (
           <div className="text-center py-20 pixel-border bg-secondary/50">
             <span className="text-4xl mb-4 block">⚠️</span>
-            <p className={`text-destructive pixel-text-shadow mb-4 ${fontClass}`}>
+            <p
+              className={`text-destructive pixel-text-shadow mb-4 ${fontClass}`}
+            >
               {t("rewardShop.loaditem")}
             </p>
             <p className={`text-muted-foreground ${fontClass}`}>
@@ -152,7 +161,9 @@ const RewardShop = () => {
                     <PixelFrame className="h-full flex flex-col">
                       {/* Icon derived from product code */}
                       <div className="text-center mb-3">
-                        <span className="text-4xl">{getProductIcon(item.code)}</span>
+                        <span className="text-4xl">
+                          {getProductIcon(item.code)}
+                        </span>
                       </div>
 
                       {/* Code badge */}
@@ -161,7 +172,9 @@ const RewardShop = () => {
                       </p>
 
                       {/* Name */}
-                      <h3 className={`text-foreground pixel-text-shadow text-center mb-2 ${fontClass}`}>
+                      <h3
+                        className={`text-foreground pixel-text-shadow text-center mb-2 ${fontClass}`}
+                      >
                         {item.name}
                       </h3>
 
@@ -172,19 +185,24 @@ const RewardShop = () => {
 
                       {/* Price + Stock */}
                       <div className="flex items-center justify-between mb-3">
-                        <span className={`text-accent pixel-text-shadow ${fontClass}`}>
-                           {/* ⭐️ 10. ดึงคำแปล Currency */}
-                          🪙 {item.price.toLocaleString()} {t("rewardShop.currency")}
+                        <span
+                          className={`text-accent pixel-text-shadow ${fontClass}`}
+                        >
+                          {/* ⭐️ 10. ดึงคำแปล Currency */}
+                          🪙 {item.price.toLocaleString()}{" "}
+                          {t("rewardShop.currency")}
                         </span>
                         <span className={`text-muted-foreground ${fontClass}`}>
-                           {/* ⭐️ 11. ดึงคำแปล Stock */}
+                          {/* ⭐️ 11. ดึงคำแปล Stock */}
                           {t("rewardShop.stock")}: {item.stock}
                         </span>
                       </div>
 
                       {/* Buy Button */}
                       <PixelButton
-                        variant={user.points >= item.price ? "primary" : "ghost"}
+                        variant={
+                          user.points >= item.price ? "primary" : "ghost"
+                        }
                         size="sm"
                         className={`w-full ${fontClass}`} // ⭐️
                         onClick={() => handleBuy(item.name, item.price)}
@@ -204,10 +222,12 @@ const RewardShop = () => {
             ) : (
               <div className="text-center py-20 pixel-border bg-secondary/50">
                 <span className="text-4xl mb-4 block">🕸️</span>
-                <p className={`text-muted-foreground pixel-text-shadow ${fontClass}`}>
-                   {/* ⭐️ 13. ดึงคำแปลเมื่อไม่มีไอเทม */}
+                <p
+                  className={`text-muted-foreground pixel-text-shadow ${fontClass}`}
+                >
+                  {/* ⭐️ 13. ดึงคำแปลเมื่อไม่มีไอเทม */}
                   {products.length === 0
-                    ? "The shop is empty. Check back later!" 
+                    ? "The shop is empty. Check back later!"
                     : t("rewardShop.empty")}
                 </p>
               </div>

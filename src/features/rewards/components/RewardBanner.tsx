@@ -1,16 +1,14 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-// ⭐️ 1. นำเข้า useTranslation
 import { useTranslation } from "react-i18next";
 
 const RewardBanner = () => {
-  // ⭐️ 2. เรียกใช้ useTranslation
   const { t, i18n } = useTranslation();
 
-  // ⭐️ 3. สร้าง fontClass สำหรับจัดการฟอนต์ภาษาไทย
-  const fontClass = i18n.language === "th" ? "font-['TA-ChaiLai'] pt-2" : "font-pixel";
+  // ⭐️ 1. ใช้แพทเทิร์นเดียวกับ GuildBanner (กำหนดแค่ขนาด)
+  const fontClass = i18n.language === "th" ? "text-[24px]" : "text-[24px]";
 
-  // 1. Define particles (gold coins and sparkles)
+  // Define particles (gold coins and sparkles)
   const particles = useMemo(() =>
     Array.from({ length: 20 }, (_, i) => ({
       id: i,
@@ -23,7 +21,7 @@ const RewardBanner = () => {
     })), []
   );
 
-  // 2. Define theme colors
+  // Define theme colors
   const colors = {
     bg: "#1a1a1b",
     border: "#4a3e2a",
@@ -33,10 +31,13 @@ const RewardBanner = () => {
     shadow: "#00000066",
   };
 
-  // ⭐️ 4. ลบ @import และ @font-face ออกจาก styleTag เพราะเราย้ายไปไว้ที่ index.css แล้ว
-  // (ถ้าคุณใส่ .retro-banner-shop ไว้ใน index.css แล้ว สามารถลบ styleTag ทิ้งทั้งหมดได้เลยครับ แต่อันนี้ผมคงไว้ให้เผื่อคุณยังไม่ได้ย้าย)
   const styleTag = `
     .retro-banner-shop {
+      /* ⭐️ 2. ฝังการบังคับใช้ฟอนต์ TA_8bit ไว้ใน CSS เหมือนหน้า GuildBanner */
+      font-family: 'TA_8bit', sans-serif !important;
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+
       background-color: ${colors.bg};
       border: 4px solid ${colors.border};
       border-radius: 4px;
@@ -45,17 +46,10 @@ const RewardBanner = () => {
       box-shadow: 0 10px 25px ${colors.shadow};
     }
 
-    .pixel-decoration {
-      font-size: 10px;
-      color: ${colors.textAccent}88;
-      position: absolute;
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .shop-title-glow {
-      text-shadow: 0 0 10px ${colors.glow}aa, 0 0 20px ${colors.glow}44;
-    }
+    /* --- สัดส่วนขนาดตัวอักษรเทียบกับ Base Size --- */
+    .pixel-decoration { font-size: 0.4em; color: ${colors.textAccent}88; position: absolute; opacity: 0.6; pointer-events: none; }
+    
+    .shop-title-glow { text-shadow: 0 0 10px ${colors.glow}aa, 0 0 20px ${colors.glow}44; }
 
     .marquee-container {
       overflow: hidden;
@@ -73,7 +67,6 @@ const RewardBanner = () => {
   return (
     <>
       <style>{styleTag}</style>
-      {/* ⭐️ 5. เพิ่ม ${fontClass} ไปที่ div หลัก */}
       <div className={`retro-banner-shop p-10 flex flex-col items-center justify-center gap-4 my-4 ${fontClass}`}>
         {/* Decorations */}
         <div className="pixel-decoration top-2 left-3">╔══</div>
@@ -89,7 +82,7 @@ const RewardBanner = () => {
             style={{
               left: p.left,
               bottom: "-10%",
-              fontSize: `${p.size}px`,
+              fontSize: `${p.size}px`, // อนุภาคอิงตาม px ที่สุ่มมา
               color: p.type === "coin" ? colors.textAccent : "#fff",
             }}
             animate={{
@@ -110,7 +103,7 @@ const RewardBanner = () => {
         ))}
 
         {/* Top line decoration */}
-        <div className="flex items-center gap-4 opacity-50">
+        <div className="flex items-center gap-4 opacity-50" style={{ fontSize: '0.8em' }}>
           <span style={{ color: colors.textMuted }}>━━━━━</span>
           <span className="text-xl">💰</span>
           <span style={{ color: colors.textMuted }}>━━━━━</span>
@@ -126,13 +119,12 @@ const RewardBanner = () => {
             🏪
           </motion.span>
           <motion.h1
-             /* ⭐️ 6. ปรับขนาดฟอนต์ของ Title เมื่อเป็นภาษาไทยเพื่อความสวยงาม */
-            className={`text-accent shop-title-glow ${i18n.language === 'th' ? 'text-5xl pt-2' : 'text-4xl'}`}
+            className="shop-title-glow font-bold tracking-wide"
+            style={{ color: colors.textAccent, lineHeight: 1.2, fontSize: '2em' }}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            {/* ⭐️ 7. ดึงคำแปล Title (ใช้อันเดียวกับหน้า Shop หลักได้) */}
             {t("rewardShop.title")}
           </motion.h1>
           <motion.span
@@ -147,37 +139,33 @@ const RewardBanner = () => {
         {/* Marquee Subtitle */}
         <div className="marquee-container opacity-60">
           <div 
-             /* ⭐️ 8. เพิ่ม fontClass และปรับขนาดฟอนต์ซับไทเทิล */
-            className={`marquee-text uppercase tracking-[0.2em] ${fontClass}`} 
+            className="uppercase tracking-[0.2em]" 
             style={{
               color: colors.textMuted,
               textAlign: "center",
-              fontSize: i18n.language === "th" ? "14px" : "10px",
+              fontSize: i18n.language === "th" ? "0.6em" : "0.5em", 
             }}
           >
-            {/* ⭐️ 9. ดึงคำแปล Marquee (ดึงจาก rewardBanner ใน JSON ใหม่) */}
             {t("rewardBanner.marquee", "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦")}
           </div>
         </div>
 
         {/* Description line */}
         <p 
-          /* ⭐️ 10. เพิ่ม fontClass และปรับการตั้งค่า */
-          className={`text-foreground/80 text-center max-w-md ${fontClass}`} 
+          className="text-foreground/80 text-center max-w-md mt-2" 
           style={{
-            fontSize: i18n.language === "th" ? "24px" : "20px",
+            fontSize: i18n.language === "th" ? "1em" : "0.8em", 
           }}
         >
-          {/* ⭐️ 11. ดึงคำแปล Description (ดึงจาก rewardBanner ใน JSON ใหม่) */}
           {t("rewardBanner.description", "Trade your hard-earned gold for items.")}
         </p>
 
         {/* Bottom line decoration */}
-        <div className="flex gap-3 mt-2">
+        <div className="flex gap-3 mt-2" style={{ fontSize: '1em' }}>
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
-              className="text-accent text-lg"
+              className="text-accent"
               animate={{ opacity: [0.2, 1, 0.2] }}
               transition={{ duration: 2, delay: i * 0.5, repeat: Infinity }}
             >

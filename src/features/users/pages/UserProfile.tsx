@@ -29,7 +29,7 @@ const UserProfile = () => {
   const { t, i18n } = useTranslation();
 
   // ⭐️ 3. กำหนด fontClass
-  const fontClass = i18n.language === "th" ? "text-[16px] font-['TA-ChaiLai']" : "text-[16px] font-pixel";
+  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
 
   if (!user) return null;
 
@@ -47,7 +47,7 @@ const UserProfile = () => {
 
   return (
     // ⭐️ 4. เพิ่ม ${fontClass} ไปที่ div หลัก
-    <div className={`max-w-[900px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
+    <div className={`max-w-[900px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       
       {/* Tab Navigation */}
       <div className="flex justify-between items-center mb-4">
@@ -56,10 +56,11 @@ const UserProfile = () => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`pixel-border px-4 py-2 transition-all font-pixel !text-[14px] ${fontClass} ${
+              // ✅ แก้ไขสไตล์ปุ่ม Tab ให้เป็นแบบปุ่มประกาศภารกิจสีทอง
+              className={`pixel-border px-4 py-2 transition-all font-pixel !text-[14px] bg-[#eab308] text-black hover:bg-[#facc15] shadow-[inset_-2px_-2px_0_0_rgba(0,0,0,0.3)] ${fontClass} ${
                 activeTab === tab
-                  ? "bg-accent text-accent-foreground border-accent-foreground"
-                  : "bg-secondary text-muted-foreground hover:bg-muted"
+                  ? "opacity-100"
+                  : "opacity-60" // ทำให้ปุ่มที่ไม่ได้เลือกสีดรอปลงเล็กน้อย
               }`}
             >
               {t(`userProfile.btn.${tab}`).toUpperCase()}
@@ -67,9 +68,8 @@ const UserProfile = () => {
           ))}
         </div>
         <Link to="/profile/edit">
-          {/* ⭐️ 5. เพิ่ม fontClass ให้ปุ่ม Edit Profile */}
-          <button className={`pixel-border bg-secondary hover:bg-muted px-4 py-2 text-accent transition-colors font-pixel ${fontClass}`}>
-            {/* ⭐️ 6. ดึงคำแปล */}
+          {/* ✅ แก้ไขสไตล์ปุ่ม Edit Profile ให้เป็นปุ่มทองเช่นกัน */}
+          <button className={`pixel-border bg-[#eab308] hover:bg-[#facc15] text-black shadow-[inset_-2px_-2px_0_0_rgba(0,0,0,0.3)] px-4 py-2 transition-colors font-pixel ${fontClass}`}>
             {t("userProfile.editProfile")}
           </button>
         </Link>
@@ -81,33 +81,30 @@ const UserProfile = () => {
           <PixelFrame className="mb-6">
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <div className="w-24 h-24 pixel-border bg-secondary flex items-center justify-center">
-                {/* ⭐️ 7. เพิ่ม fontClass ให้ตัวอักษรแรกของชื่อ */}
-                <span className={`text-accent pixel-text-shadow font-pixel ${i18n.language === "th" ? "text-[36px]" : "text-[28px]"} ${fontClass}`}>
+                {/* ✅ แก้ไขตัวอักษรแรกใน Avatar ให้เป็นสีขาว (text-white) */}
+                <span className={`text-white font-bold pixel-text-shadow font-pixel ${i18n.language === "th" ? "text-[36px]" : "text-[28px]"} ${fontClass}`}>
                   {user.username[0]}
                 </span>
               </div>
 
               <div className="flex-1 text-center sm:text-left">
-                {/* ⭐️ 8. เพิ่ม fontClass ให้ชื่อ */}
-                <h1 className={`text-foreground pixel-text-shadow font-pixel ${fontClass}`}>
+                <h1 className={`text-[22px] text-white font-bold pixel-text-shadow font-pixel ${fontClass}`}>
                   {user.username}
                 </h1>
-                {/* ⭐️ 9. เพิ่ม fontClass ให้ฉายา */}
-                <p className={`text-accent pixel-text-shadow mt-1 font-pixel ${fontClass}`}>
+                {/* ✅ แก้ไขฉายาให้เป็นสีขาว (text-white) */}
+                <p className={`text-white pixel-text-shadow mt-1 font-pixel ${fontClass}`}>
                   {user.title}
                 </p>
-                {/* ⭐️ 10. ดึงคำแปล Joined */}
-                <p className={`text-muted-foreground mt-1 ${fontClass}`}>
+                <p className={`text-muted-foreground mt-1 font-pixel ${fontClass}`}>
                   {t("userProfile.joined")} {user.joinedDate}
                 </p>
               </div>
 
               <div className="pixel-border bg-secondary px-6 py-3 text-center">
-                {/* ⭐️ 11. ดึงคำแปล LEVEL และเพิ่ม fontClass */}
                 <p className={`text-muted-foreground mb-1 font-pixel ${fontClass}`}>
                   {t("userProfile.level")}
                 </p>
-                <p className={`text-[22px] text-accent pixel-text-shadow font-pixel ${fontClass}`}>
+                <p className={`text-[22px] text-white pixel-text-shadow font-pixel ${fontClass}`}>
                   {user.level}
                 </p>
               </div>
@@ -117,10 +114,9 @@ const UserProfile = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             {[
               {
-                // ⭐️ 12. ดึงคำแปล Stats ย่อย
                 label: t("userProfile.stats.gold"),
                 value: `🪙 ${user.points.toLocaleString()}`,
-                color: "text-accent",
+                color: "text-white", // ✅ เปลี่ยนสีเหรียญทองเป็นสีขาว
               },
               {
                 label: t("userProfile.stats.questsDone"),
@@ -130,7 +126,7 @@ const UserProfile = () => {
               {
                 label: t("userProfile.stats.rating"),
                 value: `★ ${user.rating} / 5`,
-                color: "text-accent",
+                color: "text-white", // ✅ เปลี่ยนสีเรตติ้งเป็นสีขาว
               },
               {
                 label: t("userProfile.stats.reviews"),
@@ -139,7 +135,6 @@ const UserProfile = () => {
               },
             ].map((stat) => (
               <PixelFrame key={stat.label} className="text-center">
-                {/* ⭐️ 13. เพิ่ม fontClass */}
                 <p className={`text-muted-foreground mb-1 font-pixel ${fontClass}`}>
                   {stat.label}
                 </p>
@@ -151,7 +146,6 @@ const UserProfile = () => {
           </div>
 
           <PixelFrame className="mb-6">
-            {/* ⭐️ 14. ดึงคำแปล Skills และเพิ่ม fontClass */}
             <h2 className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}>
               ⚔ {t("userProfile.skills")}
             </h2>
@@ -168,15 +162,15 @@ const UserProfile = () => {
           </PixelFrame>
 
           <PixelFrame className="mb-6">
-            {/* ⭐️ 16. ดึงคำแปล Links และเพิ่ม fontClass */}
             <h2 className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}>
               🔗 {t("userProfile.links")}
             </h2>
+            {/* ✅ เปลี่ยนสีลิงก์ Github ให้เป็นสีขาว (text-white) */}
             <a
               href={user.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`text-accent hover:text-foreground ${fontClass}`}
+              className={`text-white hover:text-gray-300 font-pixel ${fontClass} transition-colors`}
             >
               {user.githubUrl}
             </a>
@@ -184,13 +178,11 @@ const UserProfile = () => {
 
           {/* --- Section: Active Quests --- */}
           <PixelFrame className="mb-6">
-            {/* ⭐️ 18. ดึงคำแปล Active Quests และเพิ่ม fontClass */}
             <h2 className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}>
               📋 {t("userProfile.activeQuests")}
             </h2>
             {activeQuests.length === 0 ? (
-              // ⭐️ 19. ดึงคำแปลเมื่อไม่มีเควสต์ และเพิ่ม fontClass
-              <p className={`text-muted-foreground ${fontClass}`}>
+              <p className={`text-muted-foreground font-pixel ${fontClass}`}>
                 {t("userProfile.noActiveQuests")}
               </p>
             ) : (
@@ -199,16 +191,14 @@ const UserProfile = () => {
                   <Link key={q.id} to={`/quest/${q.id}/workspace`}>
                     <div className="pixel-border bg-secondary p-3 flex justify-between items-center hover:bg-muted cursor-pointer">
                       <div>
-                        {/* ⭐️ 20. เพิ่ม fontClass */}
                         <p className={`text-foreground font-pixel ${fontClass}`}>
                           {q.title}
                         </p>
-                        <p className={`text-muted-foreground mt-1 ${fontClass}`}>
+                        <p className={`text-muted-foreground mt-1 font-pixel ${fontClass}`}>
                           {q.category} · ⏳ {q.estimatedTime}
                         </p>
                       </div>
                       <div className="text-right">
-                        {/* ⭐️ 21. เพิ่ม fontClass */}
                         <p className={`text-accent pixel-text-shadow font-pixel ${fontClass}`}>
                           🪙 {q.rewardPoints} GP
                         </p>
@@ -228,7 +218,7 @@ const UserProfile = () => {
                 📜 {t("userProfile.postQuests")}
               </h2>
               {postedQuests.length === 0 ? (
-                <p className={`text-lg text-muted-foreground ${fontClass}`}> {t("userProfile.noPostedQuests")}</p>
+                <p className={`text-lg text-muted-foreground font-pixel ${fontClass}`}> {t("userProfile.noPostedQuests")}</p>
               ) : (
                 <div className="space-y-3">
                   {postedQuests.map((q) => (
@@ -236,7 +226,7 @@ const UserProfile = () => {
                       <Link to={`/quest/${q.id}`} className="flex-1">
                         <div>
                           <p className={`font-pixel text-[9px] text-foreground group-hover:text-accent transition-colors ${fontClass}`}>{q.title}</p>
-                          <p className={`text-base text-muted-foreground mt-1 ${fontClass}`}>
+                          <p className={`text-base text-muted-foreground mt-1 font-pixel ${fontClass}`}>
                             {q.status.toUpperCase()} · ⏳ {q.estimatedTime}
                           </p>
                         </div>
@@ -271,7 +261,7 @@ const UserProfile = () => {
                       <p className={`text-foreground font-pixel ${fontClass}`}>
                         {q.title}
                       </p>
-                      <p className={`text-muted-foreground mt-1 ${fontClass}`}>
+                      <p className={`text-muted-foreground mt-1 font-pixel ${fontClass}`}>
                         {q.category}
                       </p>
                     </div>
@@ -294,7 +284,7 @@ const UserProfile = () => {
             <div className="pixel-border bg-secondary p-4 flex justify-between items-center">
               <div>
                 <p className={`font-pixel text-muted-foreground ${fontClass}`}>{t("userProfile.financials.currentBalance")}</p>
-                <p className={`font-pixel text-accent mt-1 ${fontClass}`}>🪙 {user.points.toLocaleString()} GP</p>
+                <p className={`font-pixel text-white mt-1 ${fontClass}`}>🪙 {user.points.toLocaleString()} GP</p>
               </div>
             </div>
 
@@ -307,7 +297,7 @@ const UserProfile = () => {
                   <div key={tx.id} className="pixel-border bg-muted p-3 flex justify-between items-center">
                     <div>
                       <p className={`font-pixel text-[8px] text-foreground ${fontClass}`}>{tx.transactionType}</p>
-                      <p className={`text-[10px] text-muted-foreground ${fontClass}`}>{new Date(tx.createdAt).toLocaleDateString()}</p>
+                      <p className={`text-[10px] text-muted-foreground font-pixel ${fontClass}`}>{new Date(tx.createdAt).toLocaleDateString()}</p>
                     </div>
                     <p className={`font-pixel text-[9px] ${tx.amount > 0 ? "text-success" : "text-destructive"} ${fontClass}`}>
                       {tx.amount > 0 ? "+" : ""}{tx.amount} GP

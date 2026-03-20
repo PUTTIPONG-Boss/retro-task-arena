@@ -411,14 +411,14 @@
 }
 
 @font-face {
-  font-family: 'TA-ChaiLai';
-  src: url('/fonts/TA-ChaiLai.otf') format('opentype');
+  font-family: 'TA_8bit';
+  src: url('/fonts/TA_8bit.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: block;
 }
 .font-pixel {
-  font-family: 'TA-ChaiLai', sans-serif;
+  font-family: 'TA_8bit', sans-serif;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   -webkit-font-smoothing: none; 

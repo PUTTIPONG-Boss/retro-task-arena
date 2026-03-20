@@ -97,54 +97,61 @@ import { useTranslation } from "react-i18next";
 const EnhancedGuildBanner = () => {
   const { t, i18n } = useTranslation();
 
-  const fontClass = i18n.language === "th" ? "font-['TA-ChaiLai']" : "font-pixel";
+  // 1. กำหนด Font Family และ ขนาดตัวอักษรหลัก (Base Size) ที่นี่ที่เดียว!
+  // คุณสามารถเปลี่ยน text-[24px] เป็นขนาดอื่นได้เลย แล้วทุกอย่างด้านล่างจะย่อ/ขยายตามสัดส่วนอัตโนมัติ
+  const fontClass = i18n.language === "th" ? "text-[24px]" : "text-[24px]"; 
   
-  // 1. กำหนดอนุภาคเป็นเหรียญทองพิกเซลที่จะลอยขึ้นและกะพริบ
+  // 2. กำหนดอนุภาคเป็นเหรียญทองพิกเซลที่จะลอยขึ้นและกะพริบ
   const particleCount = 15;
   const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
-    left: `${10 + Math.random() * 80}%`, // หลีกเลี่ยงมุม
+    left: `${10 + Math.random() * 80}%`,
     delay: Math.random() * 5,
     duration: 3 + Math.random() * 4,
-    size: Math.random() > 0.5 ? 6 : 4,
+    size: Math.random() > 0.5 ? 0.25 : 0.15, // เปลี่ยนจาก px เป็นสัดส่วน em
     rotation: Math.random() * 360,
   }));
 
-  // 2. กำหนดสีสำหรับธีมมืดสไตล์ย้อนยุค
+  // 3. กำหนดสีสำหรับธีมมืดสไตล์ย้อนยุค
   const colors = {
-    bg: "#1a1a1a", // พื้นหลังมืด
-    border: "#4a3e2a", // ขอบโลหะพิกเซล
-    textAccent: "#e3b86a", // สีทองเน้น
-    textMuted: "#6a6a6a", // สีเทาอ่อน
+    bg: "#1a1a1a", 
+    border: "#4a3e2a", 
+    textAccent: "#e3b86a", 
+    textMuted: "#6a6a6a", 
     shadow: "#00000033",
     glow: "#f1c40f",
   };
 
-  // 3. CSS Styles สำหรับสไตล์พิกเซลและองค์ประกอบที่กำหนดเอง
+  // 4. CSS Styles สำหรับสไตล์พิกเซล (ใช้หน่วย em เพื่อให้ขยายตาม fontClass)
   const styleTag = `
-    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
     @font-face {
-      font-family: 'TA-ChaiLai';
-      src: url('/fonts/TA-ChaiLai.otf') format('opentype');
+      font-family: 'TA_8bit';
+      src: url('/fonts/TA_8bit.otf') format('opentype');
     }
 
     .retro-banner {
-
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+      
       background-color: ${colors.bg};
-      border: 4px solid ${colors.border}; /* ขอบโลหะพิกเซลแบบยกสูง */
+      border: 4px solid ${colors.border};
       border-radius: 4px;
       position: relative;
       overflow: hidden;
       box-shadow: 0 10px 20px ${colors.shadow};
     }
 
-    .pixel-corner {
-      font-size: 10px;
-      color: ${colors.textAccent}aa;
-      position: absolute;
-      opacity: 0.5;
-    }
+    /* --- สัดส่วนขนาดตัวอักษรเทียบกับ Base Size --- */
+    .pixel-corner { font-size: 0.4em; color: ${colors.textAccent}aa; position: absolute; opacity: 0.5; }
+    .pixel-star { font-size: 0.6em; margin: 0 4px; }
+    
+    .deco-line { font-size: 0.5em; color: ${colors.textMuted}; }
+    .deco-icon { font-size: 0.8em; color: ${colors.textMuted}; }
+    
+    .title-icon { font-size: 1em; }
+    .title-text { font-size: 2em; line-height: 1.2; }
+    .subtitle-text { font-size: 1em; letter-spacing: 0.3em; }
+    /* -------------------------------------- */
 
     .pixel-border-top, .pixel-border-bottom {
       height: 2px;
@@ -160,35 +167,22 @@ const EnhancedGuildBanner = () => {
       text-shadow: 0 0 10px ${colors.glow}, 0 0 20px ${colors.glow}44;
     }
 
-    .pixel-star {
-      font-size: 16px;
-      margin: 0 4px;
-    }
-
-    @keyframes scroll-text {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
     .scrolling-text-container {
       overflow: hidden;
       width: 80%;
       margin: 0 auto;
       text-align: center;
     }
-
-    // .scrolling-text {
-    //   display: inline-block;
-    //   white-space: nowrap;
-    //   animation: scroll-text 15s linear infinite;
-    // }
   `;
 
   return (
     <>
-    <style>{styleTag}</style>
+      <style>{styleTag}</style>
+      
+      {/* 5. ดึงแค่ fontClass มาใช้ที่ตัวครอบหลักที่เดียวโค้ดด้านในจะไม่มีการตั้งค่า fontSize อีกแล้ว */}
       <div className={`retro-banner p-10 flex flex-col items-center justify-center gap-4 ${fontClass}`}>
-        {/* 4. การตกแต่งพื้นหลังและขอบ */}
+        
+        {/* การตกแต่งพื้นหลังและขอบ */}
         <div className="pixel-border-top"></div>
         <div className="pixel-border-bottom"></div>
         <div className="pixel-corner top-2 left-3">┌─</div>
@@ -196,7 +190,7 @@ const EnhancedGuildBanner = () => {
         <div className="pixel-corner bottom-2 left-3">└─</div>
         <div className="pixel-corner bottom-2 right-3">─┘</div>
 
-        {/* 5. อนุภาคเหรียญทองพิกเซลลอยขึ้น */}
+        {/* อนุภาคเหรียญทองพิกเซลลอยขึ้น */}
         {particles.map((p) => (
           <motion.span
             key={p.id}
@@ -204,16 +198,16 @@ const EnhancedGuildBanner = () => {
             style={{
               left: p.left,
               bottom: "10%",
-              fontSize: `${p.size}px`,
+              fontSize: `${p.size}em`, // ใช้หน่วย em
               color: colors.textAccent,
               pointerEvents: "none",
             }}
             animate={{
-              y: [0, -100, -150], // ลอยขึ้น
-              x: [0, Math.random() * 20 - 10, 0], // ส่ายเล็กน้อย
+              y: [0, -100, -150],
+              x: [0, Math.random() * 20 - 10, 0],
               opacity: [0, 0.8, 0],
               scale: [0.3, 1, 0.2],
-              rotate: [0, p.rotation, p.rotation * 2], // หมุน
+              rotate: [0, p.rotation, p.rotation * 2],
             }}
             transition={{
               duration: p.duration,
@@ -226,26 +220,27 @@ const EnhancedGuildBanner = () => {
           </motion.span>
         ))}
 
-        {/* 6. เนื้อหาหลัก */}
+        {/* เนื้อหาหลัก */}
+        
         {/* เส้นตกแต่งด้านบน */}
         <div className="flex items-center gap-3">
-          <span style={{ fontSize: '12px', color: colors.textMuted }}>━━━</span>
-          <span style={{ fontSize: '18px', color: colors.textMuted }}>⚜</span>
-          <span style={{ fontSize: '12px', color: colors.textMuted }}>━━━</span>
+          <span className="deco-line">━━━</span>
+          <span className="deco-icon">⚜</span>
+          <span className="deco-line">━━━</span>
         </div>
 
-        {/* แถวชื่อเรื่องพร้อมเอฟเฟกต์แสงและสั่น */}
+        {/* แถวชื่อเรื่อง */}
         <div className="flex items-center gap-6">
           <motion.span
-            className="text-2xl"
+            className="title-icon"
             animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
             transition={{ duration: 1, delay: 1, repeat: Infinity, repeatType: "mirror" }}
           >
             ⚔
           </motion.span>
           <motion.h1
-            className={`title-glow ${i18n.language === 'th' ? 'text-5xl' : 'text-4xl'}`}
-            style={{ color: colors.textAccent, lineHeight: '1.2' }}
+            className="title-glow title-text font-bold tracking-wide"
+            style={{ color: colors.textAccent }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
@@ -253,7 +248,7 @@ const EnhancedGuildBanner = () => {
             {t("questBoard.title")}
           </motion.h1>
           <motion.span
-            className="text-2xl"
+            className="title-icon"
             animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 10, 0] }}
             transition={{ duration: 1, delay: 1, repeat: Infinity, repeatType: "mirror" }}
           >
@@ -264,12 +259,8 @@ const EnhancedGuildBanner = () => {
         {/* ซับไทเทิลเลื่อน (Scrolling Marquee) */}
         <div className="scrolling-text-container">
           <span
-            className="scrolling-text uppercase"
-            style={{
-              fontSize: i18n.language === 'th' ? '24px' : '19px',
-              color: colors.textMuted,
-              letterSpacing: '0.3em',
-            }}
+            className="scrolling-text subtitle-text uppercase"
+            style={{ color: colors.textMuted }}
           >
             {t("questBoard.subtitle")}
           </span>
@@ -282,16 +273,8 @@ const EnhancedGuildBanner = () => {
               key={i}
               className="pixel-star"
               style={{ color: colors.textAccent }}
-              animate={{
-                opacity: [0.3, 1, 0.3],
-                scale: [0.8, 1.2, 0.8],
-              }}
-              transition={{
-                duration: 1.5,
-                delay: i * 0.25,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+              transition={{ duration: 1.5, delay: i * 0.25, repeat: Infinity, ease: "easeInOut" }}
             >
               ✦
             </motion.span>
@@ -300,12 +283,12 @@ const EnhancedGuildBanner = () => {
 
         {/* เส้นตกแต่งด้านล่าง */}
         <div className="flex items-center gap-3">
-          <span style={{ fontSize: '12px', color: colors.textMuted }}>━━━</span>
-          <span style={{ fontSize: '18px', color: colors.textMuted }}>⚜</span>
-          <span style={{ fontSize: '12px', color: colors.textMuted }}>━━━</span>
+          <span className="deco-line">━━━</span>
+          <span className="deco-icon">⚜</span>
+          <span className="deco-line">━━━</span>
         </div>
       </div>
-      </>
+    </>
   );
 };
 

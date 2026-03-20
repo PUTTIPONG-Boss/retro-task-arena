@@ -61,7 +61,7 @@ const AddProduct = () => {
         onSuccess: () => {
           // ⭐️ 2. ดึงคำแปล Success Message และเปลี่ยนฟอนต์ตามภาษา
           toast.success(t("createReward.successMsg"), {
-            style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
           navigate("/reward-shop");
         },
@@ -69,7 +69,7 @@ const AddProduct = () => {
           // ⭐️ 3. ดึงคำแปล Error Message เป็น Default 
           const msg = error?.response?.data?.error || t("createReward.errorMsg");
           toast.error(msg, {
-            style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
         },
       }
@@ -77,8 +77,8 @@ const AddProduct = () => {
   };
 
   return (
-    // ⭐️ 4. เพิ่มคลาส font-['TA-ChaiLai'] ที่ Container หลักเพื่อให้คลุมทั้งหน้า
-    <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
+    // ⭐️ 4. เพิ่มคลาส font-['TA_8bit'] ที่ Container หลักเพื่อให้คลุมทั้งหน้า
+    <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       {/* Back Button */}
       <PixelButton
         variant="ghost"
