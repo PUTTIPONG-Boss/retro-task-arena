@@ -6,8 +6,11 @@ import PixelInput from "@/components/PixelInput";
 import GuildBanner from "@/features/quests/components/GuildBanner";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuthStore } from "@/features/auth/store/authStore";
 
 const QuestBoard = () => {
+  const user = useAuthStore((s) => s.user);
+
   const { data: quests = [], isLoading, isError } = useGetQuests();
   const { t, i18n } = useTranslation();
 
@@ -36,6 +39,11 @@ const QuestBoard = () => {
 
   const categories = ["all", "frontend", "backend", "BUG FIX", " FEATURE"];
   const statuses = ["active", "completed", "all"];
+  const isSeniorOrEmployer = () => {
+    if (!user) return false;
+    const r = user.role.toLowerCase();
+    return r.includes('senior') || r === 'employer';
+  };
 
   const filtered = quests.filter((q) => {
     const catMatch =

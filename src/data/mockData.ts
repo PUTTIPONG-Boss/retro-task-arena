@@ -45,19 +45,7 @@ export interface RewardItem {
   stock: number;
 }
 
-export interface UserProfile {
-  id: string;
-  username: string;
-  title: string;
-  level: number;
-  points: number;
-  questsCompleted: number;
-  rating: number;
-  totalRatings: number;
-  githubUrl: string;
-  joinedDate: string;
-  skills: string[];
-}
+import { UserProfile } from "@/features/users/types";
 
 export const mockUser: UserProfile = {
   id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6", // Valid UUID format required by Go Backend
@@ -70,6 +58,7 @@ export const mockUser: UserProfile = {
   totalRatings: 32,
   githubUrl: "https://github.com/shadowblade42",
   joinedDate: "2025-03-15",
+  role: "adventurer",
   skills: ["React", "TypeScript", "Node.js", "Python", "Rust"],
 };
 

@@ -127,13 +127,13 @@ const RewardBanner = () => {
           </motion.span>
           <motion.h1
              /* ⭐️ 6. ปรับขนาดฟอนต์ของ Title เมื่อเป็นภาษาไทยเพื่อความสวยงาม */
-            className={`text-accent shop-title-glow ${i18n.language === 'th' ? 'text-5xl' : 'text-4xl'}`}
+            className={`text-accent shop-title-glow ${i18n.language === 'th' ? 'text-5xl pt-2' : 'text-4xl'}`}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
             {/* ⭐️ 7. ดึงคำแปล Title (ใช้อันเดียวกับหน้า Shop หลักได้) */}
-            {t("rewardShop.title", "Inet Reward Shop")}
+            {t("rewardShop.title")}
           </motion.h1>
           <motion.span
             className="text-3xl"

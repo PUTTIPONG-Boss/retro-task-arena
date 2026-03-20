@@ -84,14 +84,16 @@ const RewardShop = () => {
               {/* ⭐️ 8. ดึงคำแปล Currency (GP) */}
               🪙 {user.points.toLocaleString()} {t("rewardShop.currency")}
             </span>
-            <PixelButton
-              variant="gold"
-              size="sm"
-              className={fontClass} // ⭐️
-              onClick={() => navigate("/add-product")}
-            >
-              + {t("rewardShop.addProduct")}
-            </PixelButton>
+            {(user.role === 'employer' || user.role.toLowerCase().includes('senior')) && (
+              <PixelButton
+                variant="gold"
+                size="sm"
+                className={fontClass}
+                onClick={() => navigate("/add-product")}
+              >
+                + {t("rewardShop.addProduct")}
+              </PixelButton>
+            )}
           </div>
         </PixelFrame>
 

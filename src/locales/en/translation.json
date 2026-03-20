@@ -44,6 +44,7 @@
     "difficulty": "Difficulty",
     "provider": "Posted by"
   },
+
   "userProfile": {
     "editProfile": "[ EDIT PROFILE ]",
     "joined": "Joined",
@@ -57,10 +58,37 @@
     "skills": "Skills",
     "links": "Links",
     "activeQuests": "Active Quests",
-    "noActiveQuests": "No active quests. Visit the board to find your next adventure!",
+    "noActiveQuests": "No active quests. Visit the board to find your next adventure",
+    "postQuests": "Posted Quests",
+    "noPostedQuests": "You haven't posted any quests yet.",
+    "editPostedQuests": "Edit",
     "completedQuests": "Completed Quests",
-    "done": "DONE"
+    "done": "DONE",
+    "btn": {
+      "quests": "QUESTS",
+      "financials": "FINANCIALS",
+      "activity": "ACTIVITY"
+    },
+    "financials": {
+      "title": "Financial Ledger",
+      "currentBalance": "CURRENT BALANCE",
+      "recentTransactions": "RECENT TRANSACTIONS",
+      "noTransactions": "No transactions found."
+    },
+    "activity": {
+      "title": "Your quest applications",
+      "noApplications": "You haven't applied for any quests yet.",
+      "unknownQuest": "Unknown Quest",
+      "bid": "Bid:",
+      "wait": "Wait:",
+      "status": {
+        "pending": "PENDING",
+        "accepted": "ACCEPTED",
+        "rejected": "REJECTED"
+      }
+    }
   },
+
   "editProfile": {
     "cancel": "< CANCEL",
     "title": "EDIT ADVENTURER",
@@ -93,13 +121,21 @@
       "repoUrl": "Git Repository URL",
       "repoUrlPlaceholder": "https://github.com/org/repo",
       "branchName": "Required Branch Name",
-      "branchNamePlaceholder": "e.g. feature/quest-42"
+      "branchNamePlaceholder": "e.g. feature/quest-42",
+      "requiredSkills": "Required Skills"
     },
     "placeholders": {
       "questTitle": "e.g. Slay the Authentication Dragon",
       "questDesc": "Describe the quest requirements...",
       "reward": "1000",
-      "time": "e.g. 8"
+      "time": "e.g. 8",
+      "customSkill": "Add other skills (e.g. Rust, Docker)"
+    },
+    "buttons": {
+      "add": "ADD"
+    },
+    "messages": {
+      "noSkills": "No skills selected"
     },
     "difficulties": {
       "Easy": "Easy",
@@ -138,7 +174,7 @@
   },
 
   "rewardShop": {
-    "title": "Reward Shop",
+    "title": "Inet Reward Shop",
     "subtitle": "Trade your gold for legendary items",
     "balance": "Your Balance",
     "currency": "GP",
@@ -186,7 +222,7 @@
     "errorMsg": "Failed to add product."
   },
   "rewardBanner": {
-  "marquee": "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦",
-  "description": "Trade your hard-earned gold for items."
-}
+    "marquee": "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦",
+    "description": "Trade your hard-earned gold for items."
+  }
 }
