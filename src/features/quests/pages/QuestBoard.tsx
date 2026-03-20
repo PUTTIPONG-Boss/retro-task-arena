@@ -8,6 +8,12 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
 
+import {
+  playSoundOn,
+  playSoundOff,
+  playSoundSelect,
+} from "@/lib/sound/clickSound";
+
 const QuestBoard = () => {
   const user = useAuthStore((s) => s.user);
 
@@ -30,7 +36,13 @@ const QuestBoard = () => {
         filterRef.current &&
         !filterRef.current.contains(event.target as Node)
       ) {
-        setIsFilterOpen(false);
+        // เช็คก่อนว่าถ้ามันเปิดอยู่ แล้วกำลังจะปิด ให้เล่นเสียง Off
+        setIsFilterOpen((prev) => {
+          if (prev) {
+            playSoundOff();
+          }
+          return false;
+        });
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -42,7 +54,7 @@ const QuestBoard = () => {
   const isSeniorOrEmployer = () => {
     if (!user) return false;
     const r = user.role.toLowerCase();
-    return r.includes('senior') || r === 'employer';
+    return r.includes("senior") || r === "employer";
   };
 
   const filtered = quests.filter((q) => {
@@ -86,25 +98,39 @@ const QuestBoard = () => {
           <div className="relative" ref={filterRef}>
             <PixelButton
               variant="ghost"
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              onClick={() => {
+                if (isFilterOpen) {
+                  playSoundOff(); // ถ้าเปิดอยู่แล้วกดปิด
+                } else {
+                  playSoundOn(); // ถ้าปิดอยู่แล้วกดเปิด
+                }
+                setIsFilterOpen(!isFilterOpen);
+              }}
               className="font-pixel flex items-center gap-2 h-full"
             >
               <span>{isFilterOpen ? "✖" : "⚙️"}</span>
-              <span className={`hidden sm:inline ${fontClass}`}>{t("questBoard.filter")}</span>
+              <span className={`hidden sm:inline ${fontClass}`}>
+                {t("questBoard.filter")}
+              </span>
             </PixelButton>
 
             {isFilterOpen && (
               <div className="absolute right-0 mt-3 w-[280px] bg-[#1a1a1a] pixel-border z-50 p-5 shadow-2xl">
                 <div className="space-y-6">
                   <div>
-                    <p className={`font-pixel text-[10px] text-accent mb-3 uppercase border-b border-white/10 pb-1 ${fontClass}`}>
+                    <p
+                      className={`font-pixel text-[10px] text-accent mb-3 uppercase border-b border-white/10 pb-1 ${fontClass}`}
+                    >
                       {t("questBoard.queststatus")}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {statuses.map((s) => (
                         <button
                           key={s}
-                          onClick={() => setStatusFilter(s)}
+                          onClick={() => {
+                            setStatusFilter(s);
+                            playSoundSelect();
+                          }}
                           className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${
                             statusFilter === s
                               ? "border-primary text-primary bg-primary/10"
@@ -118,17 +144,22 @@ const QuestBoard = () => {
                   </div>
 
                   <div>
-                    <p className={`font-pixel text-[10px] text-accent mb-3 uppercase border-b border-white/10 pb-1 ${fontClass}`}>
+                    <p
+                      className={`font-pixel text-[10px] text-accent mb-3 uppercase border-b border-white/10 pb-1 ${fontClass}`}
+                    >
                       {t("questBoard.category")}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {categories.map((cat) => (
                         <button
                           key={cat}
-                          onClick={() => setFilter(cat)}
+                          onClick={() => {
+                            setFilter(cat);
+                            playSoundSelect();
+                          }}
                           className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${
-                            filter === cat 
-                              ? "border-gold text-gold bg-gold/10" 
+                            filter === cat
+                              ? "border-gold text-gold bg-gold/10"
                               : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
                           } ${fontClass}`}
                         >
@@ -142,7 +173,10 @@ const QuestBoard = () => {
                   <PixelButton
                     variant="primary"
                     className="w-full text-[12px] font-pixel"
-                    onClick={() => setIsFilterOpen(false)}
+                    onClick={() => {
+                      playSoundSelect();
+                      setIsFilterOpen(false);
+                    }}
                   >
                     {t("questBoard.searchPlaceholder")}
                   </PixelButton>

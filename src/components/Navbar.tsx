@@ -3,6 +3,7 @@ import { useUserStore } from "@/features/users/store/userStore";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { useTranslation } from "react-i18next";
 import PixelButton from "@/components/PixelButton";
+import { playPageTurnSound } from "@/lib/sound/pageTurnSound";
 
 const InetQuestLogo = () => (
   <svg
@@ -48,12 +49,14 @@ const Navbar = () => {
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[14px]";
 
   const toggleLanguage = () => {
+    playPageTurnSound();
     const newLang = i18n.language === "th" ? "en" : "th";
     i18n.changeLanguage(newLang);
     localStorage.setItem("app_lang", newLang);
   };
 
   const handleLogout = () => {
+    playPageTurnSound();
     logout();
     navigate("/login");
   };
@@ -84,7 +87,7 @@ const Navbar = () => {
       <nav className={`bg-card pixel-border sticky top-0 z-50 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
         <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between h-14">
           
-          <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2">
+          <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2" onClick={playPageTurnSound}>
             <img
               src="/src/assets/logoinetquest.png"
               alt="INETQUEST"
@@ -104,6 +107,7 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
+                onClick={playPageTurnSound}
                 // ⭐️ 3. เพิ่ม font-pixel (สำหรับภาษาอังกฤษ) และ fontClass
                 className={`font-pixel ${fontClass} uppercase tracking-wider transition-none ${
                   location.pathname === link.to
@@ -151,7 +155,7 @@ const Navbar = () => {
               onClick={toggleLanguage}
               variant="ghost"
               size="sm"
-              className="font-pixel text-[11px] min-w-[50px]"
+              className="font-pixel text-[11px] min-w-[50px]" 
             >
               {i18n.language === "th" ? "ENG" : "TH"}
             </PixelButton>
