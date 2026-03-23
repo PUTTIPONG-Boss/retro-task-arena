@@ -7,6 +7,7 @@ import PixelDivider from "@/components/PixelDivider";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 /* ── tiny helper: seeded-ish random array ── */
 const makeStars = (count: number) =>
@@ -41,6 +42,9 @@ const LoginPage = () => {
   const stars = useMemo(() => makeStars(40), []);
   const particles = useMemo(() => makeParticles(14), []);
 
+  const { i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[16px] font-['TA_8bit']" : "text-[14px] font-pixel";
+
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -52,7 +56,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className={`relative min-h-screen overflow-hidden ${fontClass}`}>
       {/* ═══ LAYER 1 — pixel star sky (supplemental to global bg) ═══ */}
       <div className="absolute inset-0 z-0">
         {stars.map((s) => (
@@ -156,7 +160,7 @@ const LoginPage = () => {
         <div className="w-full max-w-md">
           {/* Decorative top */}
           <div className="text-center mb-6">
-            <span className="font-pixel text-[10px] text-muted-foreground tracking-[0.3em] uppercase">
+            <span className="text-[12px] text-muted-foreground tracking-[0.3em] uppercase">
               Guild Access Terminal
             </span>
           </div>
@@ -172,15 +176,15 @@ const LoginPage = () => {
               <PixelFrame variant="dark" className="relative p-8">
                 {/* Title */}
                 <div className="text-center mb-6">
-                  <h1 className="font-pixel text-[16px] text-accent pixel-text-shadow mb-3">
+                  <h1 className="font-pixel text-[24px] text-accent pixel-text-shadow mb-3">
                     ⚔ Inet Developer Guild ⚔
                   </h1>
-                  <p className="font-pixel-body text-lg text-muted-foreground">
+                  <p className="font-pixel text-[18px] text-accent text-muted-foreground">
                     Login to access the Quest Board
                   </p>
                 </div>
 
-                <PixelDivider label="authenticate" />
+                <PixelDivider />
 
                 {/* Pixel terminal decoration */}
                 {/* <div className="pixel-inset bg-background p-4 mb-6">
@@ -203,7 +207,7 @@ const LoginPage = () => {
                 {/* Login Form */}
                 <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
                   <div>
-                    <label className="font-pixel text-[8px] text-muted-foreground block mb-2 uppercase">Email</label>
+                    <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">Email</label>
                     <PixelInput 
                       placeholder="adventurer@guild.com" 
                       value={email} 
@@ -212,7 +216,7 @@ const LoginPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="font-pixel text-[8px] text-muted-foreground block mb-2 uppercase">Secret Password</label>
+                    <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">Secret Password</label>
                     <PixelInput 
                       type="password" 
                       placeholder="••••••••" 
@@ -225,7 +229,7 @@ const LoginPage = () => {
                     type="submit"
                     variant="gold"
                     size="lg"
-                    className="w-full"
+                    className="w-full font-pixel text-[16px] uppercase tracking-wider"
                     disabled={isLoading}
                   >
                     {isLoading ? "Authenticating..." : "⚔ Sign In"}
@@ -237,7 +241,7 @@ const LoginPage = () => {
                     <div className="w-full border-t border-border/50"></div>
                   </div>
                   <div className="relative flex justify-center text-[8px] uppercase">
-                    <span className="bg-[#1a1a1b] px-2 text-muted-foreground font-pixel">Or use Identity providers</span>
+                    <span className="bg-[#1a1a1b] text-muted-foreground font-pixel text-[18px]">Or use Identity providers</span>
                   </div>
                 </div>
 
@@ -246,7 +250,7 @@ const LoginPage = () => {
                   <PixelButton
                     variant="primary"
                     size="md"
-                    className="w-full"
+                    className="w-full font-pixel text-[16px] uppercase tracking-wider"
                     onClick={() => loginWithOneID()}
                     disabled={isLoading}
                     type="button"
@@ -257,7 +261,7 @@ const LoginPage = () => {
                   <PixelButton
                     variant="ghost"
                     size="sm"
-                    className="w-full text-[8px]"
+                    className="w-full font-pixel text-[16px] uppercase tracking-wider"
                     onClick={() => mockLogin()}
                     disabled={isLoading}
                     type="button"
@@ -268,7 +272,7 @@ const LoginPage = () => {
 
                 <PixelDivider className="mt-6 mb-4" />
 
-                <p className="font-pixel text-[7px] text-muted-foreground text-center leading-relaxed">
+                <p className="font-pixel text-[12px] text-muted-foreground text-center leading-relaxed">
                   No account needed — your profile is created automatically after
                   first login.
                 </p>
@@ -278,7 +282,7 @@ const LoginPage = () => {
 
           {/* Bottom decoration */}
           <div className="text-center mt-4">
-            <span className="font-pixel text-[7px] text-muted-foreground tracking-widest">
+            <span className="font-pixel text-[12px] text-muted-foreground tracking-widest">
               v0.1.0 · INET QUEST BOARD SYSTEM
             </span>
           </div>
