@@ -8,8 +8,10 @@ export const useAuth = () => {
     loginWithOneID,
     login,
     mockLogin,
+    mockSeniorLogin,
+    mockAdminLogin,
     logout,
   } = useAuthStore();
 
-  return { user, isAuthenticated, isLoading, loginWithOneID, login, mockLogin, logout };
+  return { user, isAuthenticated, isLoading, loginWithOneID, login, mockLogin, mockSeniorLogin, mockAdminLogin, logout };
 };

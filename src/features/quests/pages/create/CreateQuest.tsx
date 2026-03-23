@@ -26,7 +26,7 @@ const CreateQuest = () => {
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('senior'))) {
+    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('admin') || user.role.toLowerCase().includes('senior'))) {
       toast.error("Access denied. Only Senior Adventurers or Employers can post quests.");
       navigate("/");
     }

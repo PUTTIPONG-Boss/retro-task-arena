@@ -77,11 +77,9 @@ const QuestBoard = () => {
       <GuildBanner />
 
       <div className="max-w-[1280px] mx-auto px-4 mt-6">
-        {/* --- Search & Filter Row --- */}
         <div className="flex items-center justify-center gap-4 mb-8">
-          {/* Search Input */}
           <div className="relative w-full max-w-md group">
-            <div className="absolute inset-0 bg-background/50 pixel-border pointer-events-none group-focus-within:border-accent"></div>
+              <div className="absolute inset-0 bg-background/50 border-2 border-amber-400 pointer-events-none group-focus-within:border-amber-300"></div>
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm z-10">
               🔍
             </span>
@@ -90,19 +88,18 @@ const QuestBoard = () => {
               placeholder={t("questBoard.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 bg-transparent border-none focus:ring-0 font-pixel ${fontClass}`}
+              className={`w-full pl-10 pr-4 py-3 bg-transparent border-2 border-amber-400 focus:border-amber-300 focus:ring-0 text-amber-400 placeholder:text-amber-400/70 font-pixel ${fontClass}`}
             />
           </div>
 
-          {/* Filter Popup Trigger */}
           <div className="relative" ref={filterRef}>
             <PixelButton
-              variant="ghost"
+              variant="gold"
               onClick={() => {
                 if (isFilterOpen) {
-                  playSoundOff(); // ถ้าเปิดอยู่แล้วกดปิด
+                  playSoundOff();
                 } else {
-                  playSoundOn(); // ถ้าปิดอยู่แล้วกดเปิด
+                  playSoundOn();
                 }
                 setIsFilterOpen(!isFilterOpen);
               }}
@@ -133,7 +130,7 @@ const QuestBoard = () => {
                           }}
                           className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${
                             statusFilter === s
-                              ? "border-primary text-primary bg-primary/10"
+                              ? "border-gold text-gold bg-gold/10"
                               : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
                           } ${fontClass}`}
                         >
@@ -171,7 +168,7 @@ const QuestBoard = () => {
 
                   {/* Action Button */}
                   <PixelButton
-                    variant="primary"
+                    variant="gold"
                     className="w-full text-[12px] font-pixel"
                     onClick={() => {
                       playSoundSelect();
@@ -188,16 +185,22 @@ const QuestBoard = () => {
 
         {/* Post Quest & Result Count */}
         <div className="mb-6 flex justify-between items-end">
-          <Link to="/create-quest">
-            <PixelButton
-              variant="gold"
-              size="md"
-              className="font-pixel flex items-center gap-2 h-11"
-            >
-              <span className="text-lg">📜</span>
-              <span className={fontClass}>{t("questBoard.postNewQuest")}</span>
-            </PixelButton>
-          </Link>
+          {isSeniorOrEmployer() ? (
+            <Link to="/create-quest">
+              <PixelButton
+                variant="gold"
+                size="md"
+                className="font-pixel flex items-center gap-2 h-11"
+              >
+                <span className="text-lg">📜</span>
+                <span className={fontClass}>
+                  {t("questBoard.postNewQuest")}
+                </span>
+              </PixelButton>
+            </Link>
+          ) : (
+            <div></div>
+          )}
 
           {searchQuery && (
             <p className={`font-pixel text-muted-foreground ${fontClass}`}>

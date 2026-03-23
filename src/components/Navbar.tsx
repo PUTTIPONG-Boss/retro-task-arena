@@ -45,7 +45,6 @@ const Navbar = () => {
   
   if (!user) return null;
 
-  // ⭐️ 1. ปรับ fontClass โดยกำหนดแค่ขนาดและฟอนต์
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[14px]";
 
   const toggleLanguage = () => {
@@ -61,25 +60,11 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  const isSeniorOrEmployer = (role: string) => {
-    const r = role.toLowerCase();
-    return r.includes("senior") || r === "employer";
-  };
-
   const links = [
     { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: "📋" },
-    { to: "/create-quest", label: t("navbar.post_quest", "Post Quest"), icon: "📜", roles: ["employer"] },
     { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: "🏪" },
     { to: "/profile", label: t("navbar.profile", "Profile"), icon: "👤" },
   ];
-
-  const filteredLinks = links.filter((link) => {
-    if (!link.roles) return true;
-    return link.roles.some((r) => {
-      if (r === "employer") return isSeniorOrEmployer(user.role);
-      return user.role === r;
-    });
-  });
 
   return (
     <>
@@ -102,7 +87,7 @@ const Navbar = () => {
 
           <div className="flex items-center gap-6">
             {/* เปลี่ยนตรงนี้จาก links.map เป็น filteredLinks.map ตามตรรกะด้านบน */}
-            {filteredLinks.map((link) => (
+            {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}

@@ -10,7 +10,7 @@
     "subtitle": "Inet Quest Board ✦ New Quests Daily ✦ Accept Your Destiny ✦ Inet Quest Board",
     "guildBoard": "Guild Quest Board",
     "searchPlaceholder": "Search",
-    "postNewQuest": "POST NEW QUEST",
+    "postNewQuest": "ADD NEW QUEST",
     "loading": "Summoning quests from the backend realm...",
     "found": "Found",
     "quests": "quests",
@@ -32,7 +32,7 @@
       "bugfix": "BUG FIX",
       "feature": "FEATURE"
     },
-    "category": "Category",
+    "": "Category",
     "queststatus": "Status",
     "filter": "Filter"
   },

@@ -29,7 +29,7 @@ const makeParticles = (count: number) =>
   }));
 
 const LoginPage = () => {
-  const { isAuthenticated, isLoading, loginWithOneID, login, mockLogin } = useAuth();
+  const { isAuthenticated, isLoading, loginWithOneID, login, mockLogin, mockSeniorLogin, mockAdminLogin } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -268,6 +268,30 @@ const LoginPage = () => {
                   >
                     🛠 Dev Tool: Mock Login
                   </PixelButton>
+                  <div className="flex gap-2 mt-2">
+                    <PixelButton
+                      variant="ghost"
+                      size="sm"
+                      className="w-full font-pixel text-[12px] uppercase tracking-wider text-blue-400 hover:bg-blue-900/20"
+                      onClick={() => mockSeniorLogin && mockSeniorLogin()}
+                      disabled={isLoading}
+                      type="button"
+                    >
+                      🛠 Mock Senior
+                    </PixelButton>
+
+                    <PixelButton
+                      variant="ghost"
+                      size="sm"
+                      className="w-full font-pixel text-[12px] uppercase tracking-wider text-red-400 hover:bg-red-900/20"
+                      onClick={() => mockAdminLogin && mockAdminLogin()}
+                      disabled={isLoading}
+                      type="button"
+                    >
+                      🛠 Mock Admin
+                    </PixelButton>
+                  </div>
+
                 </div>
 
                 <PixelDivider className="mt-6 mb-4" />

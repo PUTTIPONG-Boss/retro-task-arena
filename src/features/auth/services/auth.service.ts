@@ -3,6 +3,7 @@
 
 import { UserProfile } from "@/features/users/types";
 import { mockUser } from "@/data/mockData";
+import { mockSenior, mockAdmin } from "@/data/mockData";
 
 export interface OAuthTokenResponse {
   access_token: string;
@@ -98,4 +99,26 @@ export async function fetchOrCreateUser(
  */
 export async function logout(): Promise<void> {
   await delay(200);
+}
+
+/**
+ * Mock login for Senior role.
+ */
+export async function mockSeniorLogin(): Promise<OAuthTokenResponse> {
+  await delay(400); // ใช้ฟังก์ชัน delay ตัวเดิมของคุณ
+  return {
+    access_token: "mock_senior_token_" + Date.now(),
+    user: mockSenior,
+  };
+}
+
+/**
+ * Mock login for Admin role.
+ */
+export async function mockAdminLogin(): Promise<OAuthTokenResponse> {
+  await delay(400);
+  return {
+    access_token: "mock_admin_token_" + Date.now(),
+    user: mockAdmin,
+  };
 }
