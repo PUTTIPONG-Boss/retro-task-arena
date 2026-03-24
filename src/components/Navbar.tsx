@@ -1,8 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/features/users/store/userStore";
 import { useAuthStore } from "@/features/auth/store/authStore";
-
-
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
   const location = useLocation();
@@ -77,9 +76,22 @@ const Navbar = () => {
             <div className="w-[1px] h-4 bg-border" />
             <div className="flex items-center gap-1">
               <span className="text-lg">🪙</span>
-              <span className="font-pixel text-[10px] text-accent pixel-text-shadow">
-                {user.points.toLocaleString()}
-              </span>
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  key={user.points}
+                  initial={{ y: 10, opacity: 0, scale: 0.5 }}
+                  animate={{ y: 0, opacity: 1, scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 15,
+                    duration: 0.3
+                  }}
+                  className="font-pixel text-[10px] text-accent pixel-text-shadow inline-block"
+                >
+                  {user.points.toLocaleString()}
+                </motion.span>
+              </AnimatePresence>
             </div>
             <div className="w-[1px] h-4 bg-border" />
             <span className="font-pixel text-[8px] text-foreground hidden md:inline">

@@ -8,6 +8,7 @@ import {
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import RatingModal from "@/features/bids/components/RatingModal";
+import { useCreateReview } from "@/features/bids/services/review.service";
 import { toast } from "sonner";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { RepoExplorer } from "../components/RepoExplorer";
@@ -24,6 +25,7 @@ const QuestWorkspace = () => {
   const { data: quest, isLoading: isLoadingQuest } = useGetQuestById(id);
   const { data: bids = [] } = useGetBids(id);
   const updateStatus = useUpdateQuestStatus();
+  const createReview = useCreateReview();
 
   if (isLoadingQuest) {
     return (
@@ -86,8 +88,9 @@ const QuestWorkspace = () => {
     try {
       await updateStatus.mutateAsync({ id: quest.id, status: "review" as any });
       toast.success("Quest submitted for review! The provider will be notified.");
-    } catch {
-      toast.error("Failed to submit for review.");
+    } catch (err: any) {
+      const msg = err.response?.data?.error || "Failed to submit for review.";
+      toast.error(msg);
     }
   };
 
@@ -96,10 +99,27 @@ const QuestWorkspace = () => {
   const handleRatingSubmit = async (rating: number, feedback: string) => {
     setShowRating(false);
     try {
-      await updateStatus.mutateAsync({ id: quest.id, status: "completed" as any });
-      toast.success("Quest approved! Rewards transferred.");
-    } catch {
-      toast.error("Failed to approve quest.");
+      if (!quest.assignedTo) {
+        toast.error("No worker assigned to this quest.");
+        return;
+      }
+
+      await createReview.mutateAsync({
+        taskId: quest.id,
+        revieweeId: quest.assignedTo,
+        rating: rating,
+        comment: feedback,
+        qualityScore: rating, // Simple mapping for now
+        timelinessScore: rating,
+        behaviorScore: rating,
+        pointsAwarded: quest.rewardPoints,
+      });
+
+      toast.success("Quest approved and points awarded!");
+    } catch (err: any) {
+      const msg = err.response?.data?.error || "Failed to approve quest.";
+      const details = err.response?.data?.details;
+      toast.error(`${msg}${details ? `: ${details}` : ""}`);
     }
   };
 
@@ -287,7 +307,7 @@ const QuestWorkspace = () => {
           </PixelFrame>
 
           {/* Action Button for Worker */}
-          {quest.status === "in-progress" && user?.id === quest.assignedTo && (
+          {user?.id === quest.assignedTo && quest.status === "in-progress" && (
             <PixelButton
               variant="gold"
               size="lg"
@@ -296,6 +316,17 @@ const QuestWorkspace = () => {
               isLoading={updateStatus.isPending}
             >
               📤 Submit Work
+            </PixelButton>
+          )}
+
+          {user?.id === quest.assignedTo && quest.status === "review" && (
+            <PixelButton
+              variant="ghost"
+              size="lg"
+              className="w-full py-6 cursor-not-allowed opacity-80"
+              disabled
+            >
+              ⏳ Waiting for Review
             </PixelButton>
           )}
         </div>

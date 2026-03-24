@@ -20,8 +20,9 @@ const priceFilters = [
 // Map product.code to a pixel icon for visual variety
 const getProductIcon = (code: string): string => {
   const icons = ["🧪", "📜", "💎", "⚡", "🏅", "🎫", "👾", "🧥", "🔮", "⚔️"];
+  if (!code) return "📦";
   const index = code.charCodeAt(0) % icons.length;
-  return icons[index];
+  return icons[index] || "📦";
 };
 
 const RewardShop = () => {
