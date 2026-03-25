@@ -185,7 +185,9 @@
       "range2": "51-100 GP",
       "range3": "101-150 GP",
       "range4": "151-200 GP",
-      "range5": "201+ GP"
+      "range5": "201-250 GP",
+      "range6": "251-300 GP",
+      "range7": "300+ GP"
     },
     "stock": "Stock",
     "buy": "Buy",

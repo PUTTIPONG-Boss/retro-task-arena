@@ -8,7 +8,6 @@ import { useQuestStore } from "@/features/quests/store/questStore";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
-// ⭐️ 1. เพิ่ม Import สำหรับ Hooks ที่หายไป (รบกวนตรวจสอบ Path ให้ตรงกับโปรเจกต์ของคุณอีกครั้งนะครับ)
 import { useGetQuestById, useUpdateQuest } from "@/features/quests/services/quest.service"; 
 import { useGetBids } from "@/features/quests/services/quest.service"; 
 
@@ -78,8 +77,9 @@ const EditQuest = () => {
       <div className="min-h-screen flex items-center justify-center">
         <PixelFrame>
           <p className={`font-pixel text-foreground pixel-text-shadow ${fontClass}`}>Quest not found...</p>
-          <PixelButton variant="primary" size="sm" className={`mt-4 font-pixel ${fontClass}`} onClick={() => navigate("/")}>
-            Return to Board
+          <PixelButton variant="danger" size="sm" className={`mt-4 font-pixel ${fontClass}`} 
+            onClick={() => navigate("/")}>
+              ← Return to Board
           </PixelButton>
         </PixelFrame>
       </div>

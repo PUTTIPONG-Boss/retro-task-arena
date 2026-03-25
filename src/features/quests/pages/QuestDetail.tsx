@@ -181,7 +181,7 @@ const QuestDetail = () => {
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-6">
         <Link to="/">
-          <PixelButton variant="ghost" size="sm" className={fontClass}>
+          <PixelButton variant="danger" size="sm" className={fontClass}>
             ← Back to Board
           </PixelButton>
         </Link>
