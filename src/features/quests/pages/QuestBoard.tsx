@@ -1,4 +1,4 @@
-import { useGetQuests } from "@/features/quests/services/quest.service";
+import { mockQuests } from "@/data/mockData";
 import QuestCard from "@/features/quests/components/QuestCard";
 import { useState, useRef, useEffect } from "react";
 import PixelButton from "@/components/PixelButton";
@@ -20,7 +20,8 @@ import {
 const QuestBoard = () => {
   const user = useAuthStore((s) => s.user);
 
-  const { data: quests = [], isLoading, isError } = useGetQuests();
+  const quests = mockQuests;
+  const isLoading = false;
   const { t, i18n } = useTranslation();
 
   // States
@@ -220,7 +221,7 @@ const QuestBoard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
             {filtered.map((quest) => (
-              <QuestCard key={quest.id} quest={quest} />
+              <QuestCard key={quest.id} quest={quest as any} />
             ))}
           </div>
         )}

@@ -83,6 +83,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Quest } from "../types";
 import DifficultyStars from "./DifficultyStars";
 
@@ -100,6 +101,8 @@ const statusConfig: Record<string, { color: string; icon: string; animate?: bool
 };
 
 const QuestCard = ({ quest }: QuestCardProps) => {
+  const { i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
   const status = statusConfig[quest.status] || { color: "#ffffff", icon: "[ ]" };
 
   // ชุดสีสำหรับ Card (เข้ากับ Banner)
@@ -178,15 +181,15 @@ const QuestCard = ({ quest }: QuestCardProps) => {
           {/* หมุดปักกระดาษ (ตกแต่ง) */}
           <div className="pin"></div>
 
-          <div className="retro-card-inner h-full p-4 pt-5 flex flex-col gap-3">
+          <div className={`retro-card-inner h-full p-4 pt-5 flex flex-col gap-3 ${fontClass}`}>
             {/* Header: หมวดหมู่ และ สถานะ */}
             <div className="flex items-center justify-between border-b border-[#332d26] pb-2">
-              <span className="pixel-text text-sm uppercase tracking-widest" style={{ color: theme.muted }}>
+              <span className={`uppercase tracking-widest ${fontClass}`} style={{ color: theme.muted }}>
                 [{quest.category}]
               </span>
 
               <motion.span
-                className="pixel-text text-sm uppercase flex items-center gap-1"
+                className={`uppercase flex items-center gap-1 ${fontClass}`}
                 style={{ color: status.color, textShadow: "1px 1px 0px #000" }}
                 animate={status.animate ? { opacity: [0.7, 1, 0.7] } : {}}
                 transition={{ duration: 1.5, repeat: Infinity }}
@@ -196,25 +199,17 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             </div>
 
             {/* Title: ชื่อเควส พร้อมลูกศรชี้เมื่อ Hover */}
-            <h3 className="pixel-text text-xl leading-tight flex items-start gap-2 relative" style={
-              {
-                fontSize: "20px",
-              }
-            }>
-              <motion.span variants={cursorVariants} className="text-accent absolute -left-4">
+            <h3 className={`leading-tight flex items-start gap-2 relative ${fontClass}`}>
+              <motion.span variants={cursorVariants} className={`text-accent absolute -left-4 ${fontClass}`}>
                 ►
               </motion.span>
-              <span className="gold-text break-words overflow-hidden">
+              <span className={`gold-text break-words overflow-hidden ${fontClass}`}>
                 {quest.title}
               </span>
             </h3>
 
             {/* Description: คำอธิบาย (ใช้ฟอนต์ปกติหรือฟอนต์ที่อ่านง่ายขึ้นเล็กน้อยเพื่อ UX ที่ดี) */}
-            <p className="text-sm leading-relaxed line-clamp-2 flex-1 mt-1" style={{
-              color: theme.muted,
-              fontSize: "16px",
-
-            }}>
+            <p className={`leading-relaxed line-clamp-2 flex-1 mt-1 ${fontClass}`} style={{ color: theme.muted }}>
               {quest.description}
             </p>
 
@@ -224,8 +219,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                 {quest.skills.split(',').map((skill, index) => (
                   <span
                     key={index}
-                    className="pixel-text text-[10px] bg-[#2a241e] border border-[#4a3e2a] px-2 py-0.5 text-[#e3b86a] uppercase"
-                    style={{ fontSize: "12px" }}
+                    className={`pixel-font bg-[#2a241e] border border-[#4a3e2a] px-2 py-0.5 text-[#e3b86a] uppercase ${fontClass}`}
                   >
                     {skill.trim()}
                   </span>
@@ -237,28 +231,25 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             <div className="mt-2 bg-[#1a1714] p-2 border border-[#2a241e] flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <motion.span
-                  className="pixel-text text-lg gold-text flex items-center gap-2"
+                  className={`pixel-font gold-text flex items-center gap-2 ${fontClass}`}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <span className="text-[#f1c40f]">●</span> {quest.rewardPoints} GP
+                  <span className={`text-[#f1c40f] ${fontClass}`}>●</span> {quest.rewardPoints} GP
                 </motion.span>
-                <div className="pixel-text text-lg">
+                <div className={`pixel-text ${fontClass}`}>
                   <DifficultyStars level={quest.difficulty} />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pixel-text text-sm" style={{ color: theme.muted }}>
-                <span>⌛ {quest.estimatedTime}</span>
-                <span>⚔ {quest.bids.length} Total Bids</span>
+              <div className={`flex items-center justify-between pixel-font ${fontClass}`} style={{ color: theme.muted }}>
+                <span className={fontClass}>⌛ {quest.estimatedTime}</span>
+                <span className={fontClass}>⚔ {quest.bids.length} Total Bids</span>
               </div>
             </div>
 
             {/* Footer: ผู้จ้างวาน */}
-            <div className="pixel-text text-xs uppercase text-right mt-1" style={{
-              color: "#5a5a5a",
-              fontSize: "17px",
-            }}>
-              Issued by: <span style={{ color: theme.muted }}>{quest.providerName}</span>
+            <div className={`pixel-font uppercase text-right mt-1 ${fontClass}`} style={{ color: "#5a5a5a" }}>
+              Issued by: <span className={fontClass} style={{ color: theme.muted }}>{quest.providerName}</span>
             </div>
           </div>
         </Link>

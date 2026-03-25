@@ -14,6 +14,8 @@ import { RepoExplorer } from "../components/RepoExplorer";
 import { FileViewer } from "../components/FileViewer";
 import { Layout, Terminal, FileText, FolderTree, CheckCircle2, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { mockQuests } from "@/data/mockData";
 
 const QuestWorkspace = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,14 +23,19 @@ const QuestWorkspace = () => {
   const [activeTab, setActiveTab] = useState<"workflow" | "readme" | "files">("workflow");
   const [showRating, setShowRating] = useState(false);
 
-  const { data: quest, isLoading: isLoadingQuest } = useGetQuestById(id);
-  const { data: bids = [] } = useGetBids(id);
+  const quest = mockQuests.find(q => q.id === id) as any;
+  const isLoadingQuest = false;
+  const bids = quest?.bids || [];
+
+  const { i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+
   const updateStatus = useUpdateQuestStatus();
 
   if (isLoadingQuest) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="font-pixel text-[12px] animate-pulse">Entering Workspace...</p>
+        <p className={`font-pixel animate-pulse ${fontClass}`}>Entering Workspace...</p>
       </div>
     );
   }
@@ -37,9 +44,11 @@ const QuestWorkspace = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <PixelFrame>
-          <p className="font-pixel text-[12px]">Quest not found...</p>
+          <p className={`font-pixel ${fontClass}`}>Quest not found...</p>
           <Link to="/" className="mt-4 block">
-            <PixelButton variant="primary" size="sm">Return to Board</PixelButton>
+            <PixelButton variant="primary" size="sm" className={fontClass}>
+              <span className={fontClass}>Return to Board</span>
+            </PixelButton>
           </Link>
         </PixelFrame>
       </div>
@@ -117,18 +126,20 @@ const QuestWorkspace = () => {
   const isOwner = user?.id === quest.providerId;
 
   return (
-    <div className="max-w-[1280px] mx-auto px-4 py-8">
+    <div className={`max-w-[1280px] mx-auto px-4 py-8 ${fontClass}`}>
       <Link to={`/quest/${quest.id}`}>
-        <PixelButton variant="ghost" size="sm" className="mb-6">← Back to Quest</PixelButton>
+        <PixelButton variant="ghost" size="sm" className={`mb-6 ${fontClass}`}>
+          <span className={fontClass}>← Back to Quest</span>
+        </PixelButton>
       </Link>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Main Content Area */}
         <div className="flex-1 space-y-6">
           <PixelFrame className="relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4">
+            <div className={`absolute top-0 right-0 p-4 ${fontClass}`}>
               <span className={cn(
-                "font-pixel text-[8px] px-2 py-1 bg-background/50 border border-pixel-shadow/20",
+                `font-pixel px-2 py-1 bg-background/50 border border-pixel-shadow/20 ${fontClass}`,
                 quest.status === "review" ? "text-yellow-400" :
                   quest.status === "completed" ? "text-success" : "text-accent"
               )}>
@@ -136,12 +147,12 @@ const QuestWorkspace = () => {
               </span>
             </div>
 
-            <h1 className="font-pixel text-[13px] text-foreground pixel-text-shadow leading-relaxed mb-6">
+            <h1 className={`font-pixel text-foreground pixel-text-shadow leading-relaxed mb-6 ${fontClass}`}>
               {quest.title}
             </h1>
 
             {/* Tabs Navigation */}
-            <div className="flex border-b border-pixel-shadow/20 mb-6">
+            <div className={`flex border-b border-pixel-shadow/20 mb-6 ${fontClass}`}>
               {[
                 { id: "workflow", label: "Workflow", icon: Terminal },
                 { id: "readme", label: "README", icon: FileText },
@@ -151,34 +162,34 @@ const QuestWorkspace = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={cn(
-                    "px-6 py-3 font-pixel text-[9px] flex items-center gap-2 transition-all",
+                    `px-6 py-3 font-pixel flex items-center gap-2 transition-all ${fontClass}`,
                     activeTab === tab.id
                       ? "bg-secondary text-accent border-t-2 border-l-2 border-r-2 border-pixel-shadow"
                       : "text-muted-foreground hover:bg-muted/30"
                   )}
                 >
                   <tab.icon size={14} />
-                  {tab.label}
+                  <span className={fontClass}>{tab.label}</span>
                 </button>
               ))}
             </div>
 
             {/* Tab Content */}
-            <div className="h-[600px] overflow-hidden relative">
+            <div className={`h-[600px] overflow-hidden relative ${fontClass}`}>
               {activeTab === "workflow" && (
-                <div className="h-full overflow-y-auto pr-2 custom-scrollbar space-y-4 animate-in fade-in duration-300">
+                <div className={`h-full overflow-y-auto pr-2 custom-scrollbar space-y-4 animate-in fade-in duration-300 ${fontClass}`}>
                   {workflowSteps.map((step, i) => (
-                    <div key={i} className="pixel-border bg-secondary/50 p-4 group">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="font-pixel text-[9px] text-accent w-8">{i + 1}.</span>
-                        <span className="font-pixel text-[9px] text-foreground group-hover:text-accent transition-colors">{step.label}</span>
+                    <div key={i} className={`pixel-border bg-secondary/50 p-4 group ${fontClass}`}>
+                      <div className={`flex items-center gap-3 mb-2 ${fontClass}`}>
+                        <span className={`font-pixel text-accent w-8 ${fontClass}`}>{i + 1}.</span>
+                        <span className={`font-pixel text-foreground group-hover:text-accent transition-colors ${fontClass}`}>{step.label}</span>
                       </div>
-                      <p className="text-xl text-muted-foreground ml-11 mb-2">{step.desc}</p>
+                      <p className={`text-muted-foreground ml-11 mb-2 ${fontClass}`}>{step.desc}</p>
                       {step.cmd && (
-                        <div className="pixel-inset bg-background px-3 py-2 ml-11 relative">
-                          <code className="text-xl text-accent font-pixel-body whitespace-pre-wrap break-all">{step.cmd}</code>
+                        <div className={`pixel-inset bg-background px-3 py-2 ml-11 relative ${fontClass}`}>
+                          <code className={`text-accent font-pixel-body whitespace-pre-wrap break-all ${fontClass}`}>{step.cmd}</code>
                           <button
-                            className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity text-[8px] font-pixel text-muted-foreground hover:text-accent"
+                            className={`absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity font-pixel text-muted-foreground hover:text-accent ${fontClass}`}
                             onClick={() => {
                               navigator.clipboard.writeText(step.cmd!);
                               toast.success("Command copied!");
@@ -194,11 +205,11 @@ const QuestWorkspace = () => {
               )}
 
               {activeTab === "readme" && (
-                <div className="h-full pixel-border bg-background/50 overflow-hidden animate-in zoom-in-95 duration-300">
+                <div className={`h-full pixel-border bg-background/50 overflow-hidden animate-in zoom-in-95 duration-300 ${fontClass}`}>
                   {repoUrl ? (
                     <FileViewer repoUrl={repoUrl} path="README.md" branch={branch} />
                   ) : (
-                    <div className="h-full flex items-center justify-center font-pixel text-[8px] text-muted-foreground">
+                    <div className={`h-full flex items-center justify-center font-pixel text-muted-foreground ${fontClass}`}>
                       No repository URL provided for this quest.
                     </div>
                   )}
@@ -206,11 +217,11 @@ const QuestWorkspace = () => {
               )}
 
               {activeTab === "files" && (
-                <div className="h-full animate-in slide-in-from-bottom-4 duration-300">
+                <div className={`h-full animate-in slide-in-from-bottom-4 duration-300 ${fontClass}`}>
                   {repoUrl ? (
                     <RepoExplorer repoUrl={repoUrl} branch={branch} />
                   ) : (
-                    <div className="h-full flex items-center justify-center font-pixel text-[8px] text-muted-foreground">
+                    <div className={`h-full flex items-center justify-center font-pixel text-muted-foreground ${fontClass}`}>
                       No repository URL provided for this quest.
                     </div>
                   )}
@@ -221,20 +232,20 @@ const QuestWorkspace = () => {
 
           {/* Provider Review Tools */}
           {isOwner && quest.status === "review" && (
-            <PixelFrame className="border-accent">
-              <div className="flex items-center gap-3 mb-4">
+            <PixelFrame className={`border-accent ${fontClass}`}>
+              <div className={`flex items-center gap-3 mb-4 ${fontClass}`}>
                 <Layout size={20} className="text-accent" />
-                <h2 className="font-pixel text-[11px] text-accent pixel-text-shadow">Review Status</h2>
+                <h2 className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>Review Status</h2>
               </div>
-              <p className="text-xl text-muted-foreground mb-6">
+              <p className={`text-muted-foreground mb-6 ${fontClass}`}>
                 The worker has submitted their work. Please verify the code in the "Files" tab before approving.
               </p>
               <div className="flex gap-4">
-                <PixelButton variant="gold" size="md" onClick={handleApprove} className="flex-1">
-                  ✅ Approve Results
+                <PixelButton variant="gold" size="md" onClick={handleApprove} className={`flex-1 ${fontClass}`}>
+                  <span className={fontClass}>✅ Approve Results</span>
                 </PixelButton>
-                <PixelButton variant="danger" size="md" onClick={handleRequestChanges} className="flex-1">
-                  🔄 Request Changes
+                <PixelButton variant="danger" size="md" onClick={handleRequestChanges} className={`flex-1 ${fontClass}`}>
+                  <span className={fontClass}>🔄 Request Changes</span>
                 </PixelButton>
               </div>
             </PixelFrame>
@@ -242,43 +253,43 @@ const QuestWorkspace = () => {
 
           {/* Completion Banner */}
           {quest.status === "completed" && (
-            <PixelFrame className="bg-success/5 border-success border-2">
+            <PixelFrame className={`bg-success/5 border-success border-2 ${fontClass}`}>
               <div className="text-center py-6">
                 <CheckCircle2 size={48} className="text-success mx-auto mb-4" />
-                <h2 className="font-pixel text-[13px] text-success pixel-text-shadow mb-2">Quest Victory!</h2>
-                <p className="font-pixel text-[9px] text-accent">Reward: {quest.rewardPoints} GP Awarded</p>
+                <h2 className={`font-pixel text-success pixel-text-shadow mb-2 ${fontClass}`}>Quest Victory!</h2>
+                <p className={`font-pixel text-accent ${fontClass}`}>Reward: {quest.rewardPoints} GP Awarded</p>
               </div>
             </PixelFrame>
           )}
         </div>
 
         {/* Info Sidebar */}
-        <div className="w-full lg:w-[320px] space-y-6">
+        <div className={`w-full lg:w-[320px] space-y-6 ${fontClass}`}>
           <PixelFrame>
-            <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline">The Provider</h3>
+            <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>The Provider</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-lg text-muted-foreground uppercase mb-1">Name</p>
-                <p className="text-xl text-foreground font-pixel">{quest.providerName}</p>
+                <p className={`text-muted-foreground uppercase mb-1 ${fontClass}`}>Name</p>
+                <p className={`text-foreground font-pixel ${fontClass}`}>{quest.providerName}</p>
               </div>
               <div>
-                <p className="text-lg text-muted-foreground uppercase mb-1">Contract ID</p>
-                <code className="text-[9px] text-accent bg-background/50 p-1 block truncate">#{quest.id.slice(0, 8)}</code>
+                <p className={`text-muted-foreground uppercase mb-1 ${fontClass}`}>Contract ID</p>
+                <code className={`text-accent bg-background/50 p-1 block truncate ${fontClass}`}>#{quest.id.slice(0, 8)}</code>
               </div>
             </div>
           </PixelFrame>
 
           <PixelFrame>
-            <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline">Status Report</h3>
+            <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>Status Report</h3>
             <div className="space-y-4">
-                <span className="font-pixel text-[10px] text-accent"><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP</span>
+                <span className={`font-pixel text-accent ${fontClass}`}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP</span>
               <div className="flex justify-between items-center">
-                <span className="text-lg text-muted-foreground uppercase">Estimated</span>
-                <span className="text-lg text-foreground">{quest.estimatedTime}</span>
+                <span className={`text-muted-foreground uppercase ${fontClass}`}>Estimated</span>
+                <span className={`text-foreground ${fontClass}`}>{quest.estimatedTime}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-lg text-muted-foreground uppercase">Category</span>
-                <span className="text-lg text-foreground px-2 py-0.5 bg-secondary">{quest.category}</span>
+                <span className={`text-muted-foreground uppercase ${fontClass}`}>Category</span>
+                <span className={`text-foreground px-2 py-0.5 bg-secondary ${fontClass}`}>{quest.category}</span>
               </div>
             </div>
           </PixelFrame>
@@ -288,11 +299,11 @@ const QuestWorkspace = () => {
             <PixelButton
               variant="gold"
               size="lg"
-              className="w-full py-6"
+              className={`w-full py-6 ${fontClass}`}
               onClick={handleSubmitReview}
               isLoading={updateStatus.isPending}
             >
-              📤 Submit Work
+              <span className={fontClass}>📤 Submit Work</span>
             </PixelButton>
           )}
         </div>

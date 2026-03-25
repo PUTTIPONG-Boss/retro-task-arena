@@ -6,24 +6,19 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import RewardBanner from "../components/RewardBanner";
-import { useGetProducts } from "../services/product.service";
 import { useTranslation } from "react-i18next";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelStore from "@/components/icons/PixelStore";
-
-// Map product.code to a pixel icon for visual variety
-const getProductIcon = (code: string): string => {
-  const icons = ["🧪", "📜", "💎", "⚡", "🏅", "🎫", "👾", "🧥", "🔮", "⚔️"];
-  const index = code.charCodeAt(0) % icons.length;
-  return icons[index];
-};
+import { mockRewards } from "@/data/mockData";
 
 const RewardShop = () => {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
-  const { data: products = [], isLoading, isError } = useGetProducts();
+  const products = mockRewards;
+  const isLoading = false;
+  const isError = false;
   const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
@@ -66,7 +61,7 @@ const RewardShop = () => {
       selectedRange.min !== undefined &&
       selectedRange.max !== undefined
     ) {
-      return item.price >= selectedRange.min && item.price <= selectedRange.max;
+      return item.cost >= selectedRange.min && item.cost <= selectedRange.max;
     }
     return true;
   });
@@ -161,16 +156,16 @@ const RewardShop = () => {
                     transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   >
                     <PixelFrame className="h-full flex flex-col">
-                      {/* Icon derived from product code */}
+                      {/* Icon */}
                       <div className="text-center mb-3">
                         <span className="text-4xl">
-                          {getProductIcon(item.code)}
+                          {item.icon}
                         </span>
                       </div>
 
-                      {/* Code badge */}
+                      {/* ID badge */}
                       <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
-                        [{item.code}]
+                        [{item.id}]
                       </p>
 
                       {/* Name */}
@@ -181,7 +176,7 @@ const RewardShop = () => {
                       </h3>
 
                       {/* Description */}
-                      <p className="text-lg text-muted-foreground text-center flex-1 mb-3">
+                      <p className={`text-muted-foreground text-center flex-1 mb-3 ${fontClass}`}>
                         {item.description}
                       </p>
 
@@ -190,7 +185,7 @@ const RewardShop = () => {
                         <span
                           className={`text-accent pixel-text-shadow ${fontClass}`}
                         >
-                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.price.toLocaleString()}{" "}
+                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.cost.toLocaleString()}{" "}
                         </span>
                         <span className={`text-muted-foreground ${fontClass}`}>
                           {t("rewardShop.stock")}: {item.stock}
@@ -200,16 +195,16 @@ const RewardShop = () => {
                       {/* Buy Button */}
                       <PixelButton
                         variant={
-                          user.points >= item.price ? "primary" : "ghost"
+                          user.points >= item.cost ? "primary" : "ghost"
                         }
                         size="sm"
                         className={`w-full ${fontClass}`}
-                        onClick={() => handleBuy(item.name, item.price)}
+                        onClick={() => handleBuy(item.name, item.cost)}
                         disabled={item.stock === 0}
                       >
                         {item.stock === 0
-                          ? "Out of Stock" // คุณอาจต้องเพิ่มคำแปล "Out of Stock" ใน JSON
-                          : user.points >= item.price
+                          ? "Out of Stock"
+                          : user.points >= item.cost
                             ? t("rewardShop.buy")
                             : t("rewardShop.needMore")}
                       </PixelButton>
