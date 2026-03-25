@@ -1,0 +1,228 @@
+{
+  "navbar": {
+    "quest_board": "Quest Board",
+    "post_quest": "Post Quest",
+    "reward_shop": "Reward Shop",
+    "profile": "Profile"
+  },
+  "questBoard": {
+    "title": "Inet Quest Board",
+    "subtitle": "Inet Quest Board ✦ New Quests Daily ✦ Accept Your Destiny ✦ Inet Quest Board",
+    "guildBoard": "Guild Quest Board",
+    "searchPlaceholder": "Search",
+    "postNewQuest": "ADD NEW QUEST",
+    "loading": "Summoning quests from the backend realm...",
+    "found": "Found",
+    "quests": "quests",
+    "noQuests": "No quests found matching your criteria...",
+    "clearFilters": "CLEAR ALL FILTERS",
+    "error": {
+      "title": "Failed to connect to the backend API.",
+      "subtitle": "Is the Go Fiber server running on port 5000?"
+    },
+    "queststatuses": {
+      "active": "ACTIVE",
+      "completed": "COMPLETED",
+      "all": "ALL"
+    },
+    "categories": {
+      "all": "ALL",
+      "frontend": "FRONTEND",
+      "backend": "BACKEND",
+      "bugfix": "BUG FIX",
+      "feature": "FEATURE"
+    },
+    "": "Category",
+    "queststatus": "Status",
+    "filter": "Filter"
+  },
+  "questCard": {
+    "reward": "GP",
+    "estimatedTime": "Cycles",
+    "bids": "bids",
+    "bid": "bid",
+    "difficulty": "Difficulty",
+    "provider": "Posted by"
+  },
+
+  "userProfile": {
+    "editProfile": "[ EDIT PROFILE ]",
+    "joined": "Joined",
+    "level": "LEVEL",
+    "stats": {
+      "gold": "Gold",
+      "questsDone": "Quests Done",
+      "rating": "Rating",
+      "reviews": "Reviews"
+    },
+    "skills": "Skills",
+    "links": "Links",
+    "activeQuests": "Active Quests",
+    "noActiveQuests": "No active quests. Visit the board to find your next adventure",
+    "postQuests": "Posted Quests",
+    "noPostedQuests": "You haven't posted any quests yet.",
+    "editPostedQuests": "Edit",
+    "completedQuests": "Completed Quests",
+    "done": "DONE",
+    "btn": {
+      "quests": "QUESTS",
+      "financials": "FINANCIALS",
+      "activity": "ACTIVITY"
+    },
+    "financials": {
+      "title": "Financial Ledger",
+      "currentBalance": "CURRENT BALANCE",
+      "recentTransactions": "RECENT TRANSACTIONS",
+      "noTransactions": "No transactions found."
+    },
+    "activity": {
+      "title": "Your quest applications",
+      "noApplications": "You haven't applied for any quests yet.",
+      "unknownQuest": "Unknown Quest",
+      "bid": "Bid:",
+      "wait": "Wait:",
+      "status": {
+        "pending": "PENDING",
+        "accepted": "ACCEPTED",
+        "rejected": "REJECTED"
+      }
+    }
+  },
+
+  "editProfile": {
+    "cancel": "< CANCEL",
+    "title": "EDIT ADVENTURER",
+    "labels": {
+      "username": "USERNAME",
+      "adventurerTitle": "ADVENTURER TITLE"
+    },
+    "skills": {
+      "title": "Edit Skills",
+      "placeholder": "Add new skill...",
+      "addBtn": "ADD"
+    },
+    "githubUrl": "GitHub URL",
+    "githubPlaceholder": "https://github.com/username",
+    "confirmBtn": "CONFIRM UPDATES",
+    "successMsg": "Profile Updated!"
+  },
+
+  "createQuest": {
+    "back": "Back to Board",
+    "title": "Post New Quest",
+    "subtitle": "Define a task for adventurers to complete.",
+    "labels": {
+      "questTitle": "Quest Title",
+      "questDesc": "Quest Description",
+      "baseReward": "Base Reward (GP)",
+      "estimatedTime": "Estimated Time",
+      "difficulty": "Difficulty",
+      "category": "Category",
+      "repoUrl": "Git Repository URL",
+      "repoUrlPlaceholder": "https://github.com/org/repo",
+      "branchName": "Required Branch Name",
+      "branchNamePlaceholder": "e.g. feature/quest-42",
+      "requiredSkills": "Required Skills"
+    },
+    "placeholders": {
+      "questTitle": "e.g. Slay the Authentication Dragon",
+      "questDesc": "Describe the quest requirements...",
+      "reward": "1000",
+      "time": "e.g. 8",
+      "customSkill": "Add other skills (e.g. Rust, Docker)"
+    },
+    "buttons": {
+      "add": "ADD"
+    },
+    "messages": {
+      "noSkills": "No skills selected"
+    },
+    "difficulties": {
+      "Easy": "Easy",
+      "Medium": "Medium",
+      "Hard": "Hard"
+    },
+    "categories": {
+      "Frontend": "Frontend",
+      "Backend": "Backend",
+      "Bug Fix": "Bug Fix",
+      "Feature": "Feature"
+    },
+    "submitBtn": "Post Quest",
+    "successMsg": "Quest posted to the board!"
+  },
+  "editQuest": {
+    "back": "Back to Quest",
+    "title": "Edit Quest",
+    "subtitle": "Modify the details of your requested task.",
+    "labels": {
+      "questTitle": "Quest Title",
+      "questDesc": "Quest Description",
+      "baseReward": "Base Reward (GP)",
+      "estimatedTime": "Estimated Time (Cycles)",
+      "difficulty": "Difficulty",
+      "category": "Category",
+      "repoUrl": "Git Repository URL"
+    },
+    "difficulties": {
+      "Easy": "Easy",
+      "Medium": "Medium",
+      "Hard": "Hard"
+    },
+    "saveBtn": "Save Changes",
+    "successMsg": "Quest updated successfully!"
+  },
+
+  "rewardShop": {
+    "title": "Inet Reward Shop",
+    "subtitle": "Trade your gold for legendary items",
+    "balance": "Your Balance",
+    "currency": "GP",
+    "addProduct": "Add Product",
+    "filters": {
+      "all": "ALL ITEMS",
+      "range1": "0-50 GP",
+      "range2": "51-100 GP",
+      "range3": "101-150 GP",
+      "range4": "151-200 GP",
+      "range5": "201+ GP"
+    },
+    "stock": "Stock",
+    "buy": "Buy",
+    "needMore": "Need More GP",
+    "empty": "No items found in this price range...",
+    "toastSuccess": "You acquired: {{name}}!",
+    "toastError": "Not enough gold! Complete more quests.",
+    "loaditem": "Failed to load items from the shop.",
+    "running": "Make sure the backend is running and try again."
+  },
+  "createReward": {
+    "back": "BACK TO SHOP",
+    "title": "Add New Product",
+    "subtitle": "List a new item in the Reward Shop.",
+    "labels": {
+      "code": "Product Code",
+      "name": "Product Name",
+      "description": "Description",
+      "price": "Price (GP)",
+      "stock": "Stock"
+    },
+    "placeholders": {
+      "code": "e.g. PROD-2026-001",
+      "name": "e.g. Mechanical Keyboard G3",
+      "description": "RGB Backlit, Blue Switches, Wireless 2.4GHz...",
+      "price": "2500",
+      "stock": "50"
+    },
+    "hints": {
+      "code": "Must be unique. Will be auto-uppercased."
+    },
+    "submitBtn": "ADD PRODUCT",
+    "successMsg": "Product added successfully!",
+    "errorMsg": "Failed to add product."
+  },
+  "rewardBanner": {
+    "marquee": "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦",
+    "description": "Trade your hard-earned gold for items."
+  }
+}

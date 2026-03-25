@@ -9,15 +9,9 @@ import RewardBanner from "../components/RewardBanner";
 import { useGetProducts } from "../services/product.service";
 import { useCreateOrder } from "../services/order.service";
 import { useGetProfile } from "@/features/users/services/user.service";
-
-const priceFilters = [
-  { id: "all", label: "ALL ITEMS" },
-  { id: "0-500", label: "0-500 GP", min: 0, max: 500 },
-  { id: "501-1000", label: "501-1000 GP", min: 501, max: 1000 },
-  { id: "1001-2000", label: "1001-2000 GP", min: 1001, max: 2000 },
-  { id: "2001-5000", label: "2001-5000 GP", min: 2001, max: 5000 },
-  { id: "5001+", label: "5001+ GP", min: 5001, max: Infinity },
-];
+import { useTranslation } from "react-i18next";
+import PixelCoin from "@/components/icons/PixelCoin";
+import PixelStore from "@/components/icons/PixelStore";
 
 // Map product.code to a pixel icon for visual variety
 const getProductIcon = (code: string): string => {
@@ -34,7 +28,18 @@ const RewardShop = () => {
 
   const { data: products = [], isLoading, isError } = useGetProducts();
   const { mutate: createOrder, isPending: isRedeeming } = useCreateOrder();
-  
+  const { t, i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+
+  const priceFilters = [
+    { id: "all", labelKey: "all", min: 0, max: Infinity },
+    { id: "0-500", labelKey: "range1", min: 0, max: 500 },
+    { id: "501-1000", labelKey: "range2", min: 501, max: 1000 },
+    { id: "1001-2000", labelKey: "range3", min: 1001, max: 2000 },
+    { id: "2001-5000", labelKey: "range4", min: 2001, max: 5000 },
+    { id: "5001+", labelKey: "range5", min: 5001, max: Infinity },
+  ];
+
   // Sync user profile (GP balance)
   useGetProfile(!!user);
 
@@ -42,8 +47,11 @@ const RewardShop = () => {
 
   const handleBuy = (productId: string, name: string, price: number) => {
     if (user.points < price) {
-      toast.error("Not enough GP! Complete more quests.", {
-        style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+      toast.error(t("rewardShop.toastError"), {
+        style: {
+          fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
+          fontSize: "10px",
+        },
       });
       return;
     }
@@ -55,19 +63,26 @@ const RewardShop = () => {
       },
       {
         onSuccess: () => {
-          toast.success(`You acquired: ${name}!`, {
-            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+          toast.success(t("rewardShop.toastSuccess", { name }), {
+            style: {
+              fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
+              fontSize: "10px",
+            },
           });
         },
         onError: (error: any) => {
           const message = error.response?.data?.error || "Failed to redeem reward.";
           toast.error(message, {
-            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+            style: {
+              fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
+              fontSize: "10px",
+            },
           });
         },
       }
     );
   };
+
 
   const filteredProducts = products.filter((item) => {
     if (activeFilter === "all") return true;
@@ -83,28 +98,38 @@ const RewardShop = () => {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen ${fontClass}`}>
       <RewardBanner />
 
       <div className="max-w-[1280px] mx-auto px-4 py-8">
-        {/* User Balance + Add Product button */}
         <PixelFrame className="mb-6 flex items-center justify-between">
-          <span className="font-pixel text-[10px] text-foreground pixel-text-shadow">
-            Your Balance
+          <span className={`text-foreground pixel-text-shadow ${fontClass}`}>
+            {t("rewardShop.balance")}
           </span>
           <div className="flex items-center gap-4">
-            <span className="font-pixel text-[14px] text-accent pixel-text-shadow">
-              🪙 {user.points.toLocaleString()} GP
+            <span
+              className={`text-accent pixel-text-shadow flex items-center gap-1.5 ${fontClass}`}
+            >
+              <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {user.points.toLocaleString()}
+
+              <span className={fontClass}>{t("rewardShop.currency")}</span>
             </span>
-            {(user.role === 'employer' || user.role.toLowerCase().includes('senior')) && (
-              <PixelButton
-                variant="gold"
-                size="sm"
-                onClick={() => navigate("/add-product")}
-              >
-                + Add Product
-              </PixelButton>
-            )}
+            {(user.role === "employer" ||
+              user.role.toLowerCase().includes("senior")) && (
+                <PixelButton
+                  variant="gold"
+                  size="sm"
+                  className={fontClass}
+                  onClick={() => navigate("/add-product")}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <PixelStore size={18} />
+                    <span className="leading-none">
+                      {t("rewardShop.addProduct")}
+                    </span>
+                  </div>
+                </PixelButton>
+              )}
           </div>
         </PixelFrame>
 
@@ -115,9 +140,10 @@ const RewardShop = () => {
               key={filter.id}
               variant={activeFilter === filter.id ? "gold" : "ghost"}
               size="sm"
+              className={fontClass}
               onClick={() => setActiveFilter(filter.id)}
             >
-              {filter.label}
+              {t(`rewardShop.filters.${filter.labelKey}`)}
             </PixelButton>
           ))}
         </div>
@@ -138,11 +164,13 @@ const RewardShop = () => {
         {isError && !isLoading && (
           <div className="text-center py-20 pixel-border bg-secondary/50">
             <span className="text-4xl mb-4 block">⚠️</span>
-            <p className="font-pixel text-[10px] text-destructive pixel-text-shadow mb-4">
-              Failed to load items from the shop.
+            <p
+              className={`text-destructive pixel-text-shadow mb-4 ${fontClass}`}
+            >
+              {t("rewardShop.loaditem")}
             </p>
-            <p className="font-pixel text-[8px] text-muted-foreground">
-              Make sure the backend is running and try again.
+            <p className={`text-muted-foreground ${fontClass}`}>
+              {t("rewardShop.running")}
             </p>
           </div>
         )}
@@ -161,16 +189,20 @@ const RewardShop = () => {
                     <PixelFrame className="h-full flex flex-col">
                       {/* Icon derived from product code */}
                       <div className="text-center mb-3">
-                        <span className="text-4xl">{getProductIcon(item.code)}</span>
+                        <span className="text-4xl">
+                          {getProductIcon(item.code)}
+                        </span>
                       </div>
 
                       {/* Code badge */}
-                      <p className="font-pixel text-[7px] text-muted-foreground text-center mb-1 tracking-widest uppercase">
+                      <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
                         [{item.code}]
                       </p>
 
                       {/* Name */}
-                      <h3 className="font-pixel text-[9px] text-foreground pixel-text-shadow text-center mb-2">
+                      <h3
+                        className={`text-foreground pixel-text-shadow text-center mb-2 ${fontClass}`}
+                      >
                         {item.name}
                       </h3>
 
@@ -181,19 +213,23 @@ const RewardShop = () => {
 
                       {/* Price + Stock */}
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-pixel text-[9px] text-accent pixel-text-shadow">
-                          🪙 {item.price.toLocaleString()} GP
+                        <span
+                          className={`text-accent pixel-text-shadow ${fontClass}`}
+                        >
+                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.price.toLocaleString()}{" "}
                         </span>
-                        <span className="text-base text-muted-foreground">
-                          Stock: {item.stock}
+                        <span className={`text-muted-foreground ${fontClass}`}>
+                          {t("rewardShop.stock")}: {item.stock}
                         </span>
                       </div>
 
                       {/* Buy Button */}
                       <PixelButton
-                        variant={user.points >= item.price ? "primary" : "ghost"}
+                        variant={
+                          user.points >= item.price ? "primary" : "ghost"
+                        }
                         size="sm"
-                        className="w-full"
+                        className={`w-full ${fontClass}`}
                         onClick={() => handleBuy(item.id, item.name, item.price)}
                         disabled={item.stock === 0 || isRedeeming}
                       >
@@ -202,8 +238,8 @@ const RewardShop = () => {
                           : isRedeeming 
                             ? "Processing..."
                             : user.points >= item.price
-                              ? "Buy"
-                              : "Need More GP"}
+                              ? t("rewardShop.buy")
+                              : t("rewardShop.needMore")}
                       </PixelButton>
                     </PixelFrame>
                   </motion.div>
@@ -212,10 +248,12 @@ const RewardShop = () => {
             ) : (
               <div className="text-center py-20 pixel-border bg-secondary/50">
                 <span className="text-4xl mb-4 block">🕸️</span>
-                <p className="font-pixel text-[12px] text-muted-foreground pixel-text-shadow">
+                <p
+                  className={`text-muted-foreground pixel-text-shadow ${fontClass}`}
+                >
                   {products.length === 0
                     ? "The shop is empty. Check back later!"
-                    : "No items found in this price range..."}
+                    : t("rewardShop.empty")}
                 </p>
               </div>
             )}

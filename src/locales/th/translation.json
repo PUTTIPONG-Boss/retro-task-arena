@@ -1,0 +1,212 @@
+{
+  "navbar": {
+    "quest_board": "กระดานภารกิจ",
+    "post_quest": "ลงภารกิจใหม่",
+    "reward_shop": "ร้านค้ารางวัล",
+    "profile": "โปรไฟล์"
+  },
+  "questBoard": {
+    "title": "กระดานภารกิจ",
+    "subtitle": "กระดานภารกิจ ✦ มีเควสต์ใหม่ทุกวัน ✦ ยอมรับโชคชะตาของคุณ ✦ กระดานภารกิจ",
+    "guildBoard": "กระดานภารกิจกิลด์",
+    "searchPlaceholder": "ค้นหา",
+    "postNewQuest": "ประกาศภารกิจใหม่",
+    "loading": "กำลังอัญเชิญภารกิจจากต่างมิติ...",
+    "found": "พบ",
+    "quests": "ภารกิจ",
+    "noQuests": "ไม่พบภารกิจที่ตรงกับเงื่อนไขที่ค้นหา...",
+    "clearFilters": "ล้างตัวกรองทั้งหมด",
+    "error": {
+      "title": "ไม่สามารถเชื่อมต่อกับโลก Backend ได้",
+      "subtitle": "เซิร์ฟเวอร์ Go Fiber ทำงานอยู่ที่พอร์ต 5000 หรือเปล่า?"
+    },
+    "queststatuses": {
+      "active": "เปิด",
+      "completed": "เสร็จสิ้น",
+      "all": "ทั้งหมด"
+    },
+    "category": "หมวดหมู่",
+    "queststatus": "สถานะภารกิจ",
+    "filter": "ฟิลเตอร์"
+  },
+  "questCard": {
+    "reward": "ทอง",
+    "estimatedTime": "รอบ",
+    "bids": "เสนอ",
+    "bid": "เสนอ",
+    "difficulty": "ความยาก",
+    "provider": "โพสต์โดย"
+  },
+  "userProfile": {
+    "editProfile": "[ แก้ไขโปรไฟล์ ]",
+    "joined": "เข้าร่วมเมื่อ",
+    "level": "เลเวล",
+    "stats": {
+      "gold": "ทอง",
+      "questsDone": "เควสต์สำเร็จ",
+      "rating": "เรตติ้ง",
+      "reviews": "รีวิว"
+    },
+    "skills": "สกิล",
+    "links": "ลิงก์ GitHub",
+    "activeQuests": "เควสต์ที่กำลังทำ",
+    "noActiveQuests": "ไม่มีเควสต์ที่กำลังทำอยู่ ไปที่กระดานเพื่อเริ่มการผจญภัยครั้งใหม่สิ",
+    "postQuests": "เควสต์ที่เคยสร้าง",
+    "noPostedQuests": "คุณยังไม่ได้สร้างเควสต์ใดๆ เลย",
+    "editPostedQuests": "แก้ไข",
+    "completedQuests": "เควสต์ที่สำเร็จแล้ว",
+    "done": "สำเร็จ",
+    "btn": {
+      "quests": "เควสต์",
+      "financials": "การเงิน",
+      "activity": "กิจกรรม"
+    },
+    "financials": {
+      "title": "บันทึกการเงิน",
+      "currentBalance": "ยอดเงินคงเหลือ",
+      "recentTransactions": "ธุรกรรมล่าสุด",
+      "noTransactions": "ไม่พบประวัติการทำธุรกรรม"
+    },
+    "activity": {
+      "title": "เควสต์ที่สมัครไว้",
+      "noApplications": "คุณยังไม่ได้สมัครทำเควสต์ใดๆ เลย",
+      "unknownQuest": "เควสต์ที่ไม่รู้จัก",
+      "bid": "เสนอราคา:",
+      "wait": "รอ:",
+      "status": {
+        "pending": "รอพิจารณา",
+        "accepted": "ยอมรับแล้ว",
+        "rejected": "ถูกปฏิเสธ"
+      }
+    }
+  },
+  "editProfile": {
+    "cancel": "< ยกเลิก",
+    "title": "แก้ไขข้อมูล",
+    "labels": {
+      "username": "ชื่อผู้ใช้",
+      "adventurerTitle": "ฉายานักผจญภัย"
+    },
+    "skills": {
+      "title": "แก้ไขสกิล",
+      "placeholder": "เพิ่มสกิลใหม่",
+      "addBtn": "เพิ่ม"
+    },
+    "githubUrl": "ลิงก์ GitHub",
+    "githubPlaceholder": "https://github.com/username",
+    "confirmBtn": "บันทึกการเปลี่ยนแปลง",
+    "successMsg": "อัปเดตโปรไฟล์แล้ว!"
+  },
+
+  "createQuest": {
+    "back": "กลับสู่กระดาน",
+    "title": "ลงภารกิจใหม่",
+    "subtitle": "กำหนดรายละเอียดภารกิจให้นักผจญภัย",
+    "labels": {
+      "questTitle": "ชื่อภารกิจ",
+      "questDesc": "รายละเอียดภารกิจ",
+      "baseReward": "ทอง",
+      "estimatedTime": "เวลาที่ใช้หรือรอบ",
+      "difficulty": "ความยาก",
+      "category": "หมวดหมู่",
+      "repoUrl": "URL ของ Git Repository",
+      "branchName": "ชื่อ Branch ที่กำหนด",
+      "branchNamePlaceholder": "เช่น feature/quest-42",
+      "requiredSkills": "สกิลที่ต้องการ"
+    },
+    "placeholders": {
+      "questTitle": "เช่น ปราบมังกร Authentication",
+      "questDesc": "อธิบายสิ่งที่ต้องการในภารกิจนี้",
+      "reward": "1000",
+      "time": "เช่น 8",
+      "customSkill": "เพิ่มสกิลอื่น ๆ (เช่น Rust, Docker)"
+    },
+    "buttons": {
+      "add": "เพิ่ม"
+    },
+    "messages": {
+      "noSkills": "ยังไม่ได้เลือกสกิล"
+    },
+    "difficulties": {
+      "Easy": "ง่าย",
+      "Medium": "ปานกลาง",
+      "Hard": "ยาก"
+    },
+    "submitBtn": "ลงภารกิจ",
+    "successMsg": "ลงภารกิจบนกระดานสำเร็จ!"
+  },
+  "editQuest": {
+    "back": "กลับไปหน้าเควสต์",
+    "title": "แก้ไขเควสต์",
+    "subtitle": "แก้ไขรายละเอียดเควสต์",
+    "labels": {
+      "questTitle": "ชื่อเควสต์",
+      "questDesc": "รายละเอียดเควสต์",
+      "baseReward": "ทอง",
+      "estimatedTime": "เวลาที่ใช้หรือรอบ",
+      "difficulty": "ความยาก",
+      "category": "หมวดหมู่",
+      "repoUrl": "URL ของ Git Repository"
+    },
+    "difficulties": {
+      "Easy": "ง่าย",
+      "Medium": "ปานกลาง",
+      "Hard": "ยาก"
+    },
+    "saveBtn": "บันทึกการเปลี่ยนแปลง",
+    "successMsg": "แก้ไขเควสต์บนกระดานสำเร็จ!"
+  },
+
+  "rewardShop": {
+    "title": "ร้านค้ารางวัล",
+    "subtitle": "แลกทองของคุณเป็นไอเทมระดับตำนาน",
+    "balance": "ยอดคงเหลือของคุณ",
+    "currency": "ทอง",
+    "addProduct": "เพิ่มรางวัล",
+    "filters": {
+      "all": "ทั้งหมด",
+      "range1": "0-50 ทอง",
+      "range2": "51-100 ทอง",
+      "range3": "101-150 ทอง",
+      "range4": "151-200 ทอง",
+      "range5": "201+ ทอง"
+    },
+    "stock": "จำนวน",
+    "buy": "ซื้อ",
+    "needMore": "GP ไม่พอ",
+    "empty": "ไม่พบไอเทมในช่วงราคานี้...",
+    "toastSuccess": "คุณได้รับ: {{name}}!",
+    "toastError": "ทองไม่พอ! ไปทำเควสต์เพิ่มสิ",
+    "loaditem": "เกิดข้อผิดพลาดในการโหลดไอเทมจากร้านค้า",
+    "running": "โปรดเช็คให้แน่ใจว่าเซิร์ฟเวอร์หลังบ้านทำงานอยู่ แล้วลองใหม่อีกครั้ง"
+  },
+  "createReward": {
+    "back": "กลับไปหน้าร้านค้า",
+    "title": "เพิ่มสินค้าใหม่",
+    "subtitle": "ลงรายการสินค้าชิ้นใหม่ในร้านค้ารางวัล",
+    "labels": {
+      "code": "รหัสสินค้า",
+      "name": "ชื่อสินค้า",
+      "description": "รายละเอียดสินค้า",
+      "price": "ราคา (ทอง)",
+      "stock": "สต็อก (จำนวน)"
+    },
+    "placeholders": {
+      "code": "เช่น PROD-2026-001",
+      "name": "เช่น คีย์บอร์ด Mechanical G3",
+      "description": "มีไฟ RGB, Blue Switches, ไร้สาย 2.4GHz...",
+      "price": "2500",
+      "stock": "50"
+    },
+    "hints": {
+      "code": "ห้ามซ้ำกัน ระบบจะแปลงเป็นตัวพิมพ์ใหญ่อัตโนมัติ"
+    },
+    "submitBtn": "เพิ่มสินค้า",
+    "successMsg": "เพิ่มสินค้าเข้าร้านค้าสำเร็จ!",
+    "errorMsg": "เกิดข้อผิดพลาดในการเพิ่มสินค้า"
+  },
+  "rewardBanner": {
+    "marquee": "✦ ไอเทมระดับตำนานอันล้ำค่า ✦ สินค้าหายาก ✦ ไอเทมรุ่นลิมิเต็ด ✦ รางวัลสุดพิเศษ ✦",
+    "description": "นำทองที่คุณหามาอย่างยากลำบากมาแลกเปลี่ยนเป็นไอเทม"
+  }
+}

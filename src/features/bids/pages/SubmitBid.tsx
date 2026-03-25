@@ -7,6 +7,7 @@ import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Coins } from "lucide-react";
 
 const SubmitBid = () => {
   const { id } = useParams();
@@ -62,7 +63,7 @@ const SubmitBid = () => {
           Quest: {quest.title}
         </p>
         <p className="font-pixel text-[9px] text-accent pixel-text-shadow mb-6">
-          Base Reward: 🪙 {quest.rewardPoints} GP
+          Base Reward: <Coins size={14} className="inline mr-1 text-yellow-400" /> {quest.rewardPoints} GP
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">

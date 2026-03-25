@@ -53,7 +53,7 @@
 //           <div className="border-t-2 border-border pt-3 flex flex-col gap-2">
 //             <div className="flex items-center justify-between">
 //               <span className="font-pixel text-[9px] text-accent pixel-text-shadow flex items-center gap-1">
-//                 🪙 {quest.rewardPoints} GP
+//                 <Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP
 //               </span>
 //               <DifficultyStars level={quest.difficulty} />
 //             </div>
@@ -213,6 +213,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             <p className="text-sm leading-relaxed line-clamp-2 flex-1 mt-1" style={{
               color: theme.muted,
               fontSize: "16px",
+
             }}>
               {quest.description}
             </p>

@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { RepoExplorer } from "../components/RepoExplorer";
 import { FileViewer } from "../components/FileViewer";
-import { Layout, Terminal, FileText, FolderTree, CheckCircle2 } from "lucide-react";
+import { Layout, Terminal, FileText, FolderTree, CheckCircle2, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const QuestWorkspace = () => {
@@ -291,10 +291,7 @@ const QuestWorkspace = () => {
           <PixelFrame>
             <h3 className="font-pixel text-[10px] text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline">Status Report</h3>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-lg text-muted-foreground uppercase">Reward</span>
-                <span className="font-pixel text-[10px] text-accent">🪙 {quest.rewardPoints} GP</span>
-              </div>
+                <span className="font-pixel text-[10px] text-accent"><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP</span>
               <div className="flex justify-between items-center">
                 <span className="text-lg text-muted-foreground uppercase">Estimated</span>
                 <span className="text-lg text-foreground">{quest.estimatedTime}</span>

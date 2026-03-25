@@ -6,11 +6,13 @@ import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
 import { useQuestStore } from "@/features/quests/store/questStore";
+import { useTranslation } from "react-i18next";
 import { useCreateQuest } from "@/features/quests/services/quest.service";
 import { CreateQuestPayload } from "@/features/quests/types";
 import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import PixelClipboardList from "@/components/icons/PixelClipboardList";
 
 const difficulties: { label: string; value: number }[] = [
   { label: "Easy", value: 1 },
@@ -25,7 +27,7 @@ const CreateQuest = () => {
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('senior'))) {
+    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('admin') || user.role.toLowerCase().includes('senior'))) {
       toast.error("Access denied. Only Senior Adventurers or Employers can post quests.");
       navigate("/");
     }
@@ -44,6 +46,9 @@ const CreateQuest = () => {
   const [customSkill, setCustomSkill] = useState("");
 
   const { mutate: createQuest, isPending } = useCreateQuest();
+
+  const { t, i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
 
   const toggleSkill = (skill: string) => {
     if (selectedSkills.includes(skill)) {
@@ -97,17 +102,17 @@ const CreateQuest = () => {
 
     createQuest(newQuest, {
       onSuccess: () => {
-        toast.success("Quest posted to the board!", {
-          style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+        toast.success(t("createQuest.successMsg"), {
+          style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
         });
         navigate("/");
       },
       onError: (error) => {
         console.error("Failed to post quest:", error);
         toast.error("Failed to post the quest. Ensure the API is running.", {
-          style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+          style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
         });
-      }
+      },
     });
   };
 
@@ -115,43 +120,91 @@ const CreateQuest = () => {
 
   return (
     <div className="max-w-[700px] mx-auto px-4 py-8">
-      <PixelButton variant="ghost" size="sm" className="mb-6" onClick={() => navigate("/")}>
-        ← Back to Board
+      <PixelButton
+        variant="ghost"
+        size="sm"
+        className={`mb-6 font-pixel ${fontClass}`}
+        onClick={() => navigate("/")}
+      >
+        ← {t("createQuest.back")}
       </PixelButton>
 
       <PixelFrame>
-        <h1 className="font-pixel text-[13px] text-foreground pixel-text-shadow mb-2">
-          📜 Post New Quest
+        <h1
+          className={`flex items-center gap-2 font-pixel text-foreground pixel-text-shadow mb-2 ${fontClass}`}
+        >
+          <PixelClipboardList size={24} className="text-yellow-400" /> {t("createQuest.title")}
         </h1>
-        <p className="text-xl text-muted-foreground mb-6">
-          Define a task for adventurers to complete.
+        <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>
+          {t("createQuest.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">Quest Title</label>
-            <PixelInput placeholder="e.g. Slay the Authentication Dragon" value={title} onChange={(e) => setTitle(e.target.value)} required />
+            <label
+              className={`font-pixel text-foreground block mb-2 ${fontClass}`}
+            >
+              {" "}
+              {t("createQuest.labels.questTitle")}
+            </label>
+            <PixelInput
+              placeholder={t("createQuest.placeholders.questTitle")}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className={`font-pixel ${fontClass}`}
+              required
+            />
           </div>
 
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">Quest Description</label>
-            <PixelTextarea rows={6} placeholder="Describe the quest requirements..." value={description} onChange={(e) => setDescription(e.target.value)} required />
+            <label
+              className={`font-pixel text-foreground block mb-2 ${fontClass}`}
+            >
+              {t("createQuest.labels.questDesc")}
+            </label>
+            <PixelTextarea
+              rows={6}
+              placeholder={t("createQuest.placeholders.questDesc")}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={`font-pixel ${fontClass}`}
+              required
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">Base Reward (GP)</label>
-              <PixelInput type="number" placeholder="1000" value={rewardPoints} onChange={(e) => setRewardPoints(e.target.value)} required />
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createQuest.labels.baseReward")}
+              </label>
+              <PixelInput
+                type="number"
+                placeholder={t("createQuest.placeholders.reward")}
+                value={rewardPoints}
+                onChange={(e) => setRewardPoints(e.target.value)}
+                className={`font-pixel ${fontClass}`}
+                required
+              />
             </div>
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">Estimated Time</label>
-              <PixelInput placeholder="e.g. 8" value={estimatedTime} onChange={(e) => setEstimatedTime(e.target.value)} required />
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createQuest.labels.estimatedTime")}
+              </label>
+              <PixelInput
+                placeholder={t("createQuest.placeholders.time")}
+                value={estimatedTime}
+                onChange={(e) => setEstimatedTime(e.target.value)}
+                className={`font-pixel ${fontClass}`}
+                required
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">Difficulty</label>
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createQuest.labels.difficulty")}
+              </label>
               <div className="flex gap-2">
                 {difficulties.map((d) => (
                   <PixelButton
@@ -160,14 +213,17 @@ const CreateQuest = () => {
                     variant={difficulty === d.value ? "gold" : "ghost"}
                     size="sm"
                     onClick={() => setDifficulty(d.value)}
+                    className={`font-pixel ${fontClass}`}
                   >
-                    {d.label}
+                    {t(`createQuest.difficulties.${d.label}`)}
                   </PixelButton>
                 ))}
               </div>
             </div>
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">Category</label>
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createQuest.labels.category")}
+              </label>
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => (
                   <PixelButton
@@ -176,8 +232,9 @@ const CreateQuest = () => {
                     variant={category === cat ? "gold" : "ghost"}
                     size="sm"
                     onClick={() => setCategory(cat)}
+                    className={`font-pixel ${fontClass}`}
                   >
-                    {cat}
+                    {t(`createQuest.categories.${cat}`, cat)}
                   </PixelButton>
                 ))}
               </div>
@@ -187,7 +244,7 @@ const CreateQuest = () => {
           {/* Skill Selection Section */}
           <div className="space-y-4 pt-2">
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">Required Skills</label>
+              <label className={`font-pixel text-foreground block mb-2" ${fontClass}`}>{t("createQuest.labels.requiredSkills")}</label>
               <div className="flex flex-wrap gap-2 mb-3">
                 {mainSkills.map((skill) => (
                   <PixelButton
@@ -195,6 +252,7 @@ const CreateQuest = () => {
                     type="button"
                     variant={selectedSkills.includes(skill) ? "gold" : "ghost"}
                     size="sm"
+                    className={`font-pixel ${fontClass}`}
                     onClick={() => toggleSkill(skill)}
                   >
                     {skill}
@@ -206,21 +264,22 @@ const CreateQuest = () => {
               <div className="flex gap-2 items-end mb-4">
                 <div className="flex-1">
                   <PixelInput
-                    placeholder="Add other skills (e.g. Rust, Docker)"
+                    placeholder={t("createQuest.placeholders.customSkill")}
                     value={customSkill}
                     onChange={(e) => setCustomSkill(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomSkill())}
+                    className={`font-pixel ${fontClass}`}
                   />
                 </div>
-                <PixelButton type="button" variant="primary" size="sm" onClick={addCustomSkill}>
-                  Add
+                <PixelButton type="button" variant="gold" size="sm" onClick={addCustomSkill} className={`font-pixel ${fontClass}`}>
+                  {t("createQuest.buttons.add")}
                 </PixelButton>
               </div>
 
               {/* Selected Skills Badges */}
               <div className="flex flex-wrap gap-2 min-h-[30px] p-2 bg-secondary/30 pixel-border border-dashed">
                 {selectedSkills.length === 0 ? (
-                  <span className="text-xs text-muted-foreground italic">No skills selected</span>
+                  <span className={`font-pixeltext-xs text-muted-foreground italic ${fontClass}`}>{t("createQuest.messages.noSkills")}</span>
                 ) : (
                   selectedSkills.map((skill) => (
                     <motion.div
@@ -229,7 +288,7 @@ const CreateQuest = () => {
                       key={skill}
                       className="flex items-center gap-2 bg-accent/20 border border-accent/50 px-2 py-1"
                     >
-                      <span className="font-pixel text-[8px] text-accent">{skill}</span>
+                      <span className={`font-pixel ${fontClass}`}>{skill}</span>
                       <button
                         type="button"
                         onClick={() => toggleSkill(skill)}
@@ -245,17 +304,47 @@ const CreateQuest = () => {
           </div>
 
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">Git Repository URL</label>
-            <PixelInput placeholder="https://github.com/org/repo" value={repoUrl} onChange={(e) => setRepoUrl(e.target.value)} />
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createQuest.labels.repoUrl")}
+            </label>
+            <PixelInput
+              placeholder={t("createQuest.labels.repoUrlPlaceholder")}
+              value={repoUrl}
+              onChange={(e) => setRepoUrl(e.target.value)}
+              className={`font-pixel ${fontClass}`}
+            />
           </div>
 
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">Required Branch Name</label>
-            <PixelInput placeholder="e.g. feature/quest-42" value={branchName} onChange={(e) => setBranchName(e.target.value)} />
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createQuest.labels.branchName")}
+            </label>
+            <PixelInput
+              placeholder={t("createQuest.labels.branchNamePlaceholder")}
+              value={branchName}
+              onChange={(e) => setBranchName(e.target.value)}
+              className={`font-pixel ${fontClass}`}
+            />
           </div>
 
-          <PixelButton type="submit" variant="gold" size="lg" className="w-full" disabled={isPending}>
-            {isPending ? "📜 Posting..." : "📜 Post Quest"}
+          <PixelButton
+            type="submit"
+            variant="gold"
+            size="lg"
+            className="w-full font-pixel h-14"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <div className="flex items-center justify-center gap-2">
+                <PixelClipboardList size={18} />
+                <span className={fontClass}>{t("createQuest.submitBtn")}</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2">
+                <PixelClipboardList size={18} />
+                <span className={fontClass}>{t("createQuest.submitBtn")}</span>
+              </div>
+            )}
           </PixelButton>
         </form >
       </PixelFrame >

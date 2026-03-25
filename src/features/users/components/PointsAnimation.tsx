@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useUiStore } from "@/store/uiStore";
+import { Coins } from "lucide-react";
 
 const PointsAnimation = () => {
   const { pointsAnimation, clearPointsAnimation } = useUiStore();
@@ -25,7 +26,7 @@ const PointsAnimation = () => {
             animationDelay: `${i * 0.15}s`,
           }}
         >
-          🪙
+          <Coins className="w-8 h-8 text-yellow-400" />
         </span>
       ))}
       {/* Points text */}

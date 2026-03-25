@@ -4,17 +4,19 @@ import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
-import { useCreateProduct } from "../services/product.service";
+import { useCreateProduct } from "../../services/product.service";
 import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import PixelStore from "@/components/icons/PixelStore";
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('senior'))) {
+    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('admin') || user.role.toLowerCase().includes('senior'))) {
       toast.error("Access denied. Only Senior Adventurers or Shopkeepers can list products.");
       navigate("/reward-shop");
     }
@@ -26,10 +28,20 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
 
+  const { t, i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+
   const { mutate: createProduct, isPending } = useCreateProduct();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!code.trim() || !name.trim() || !description.trim() || !price || !stock) {
+      toast.error("Please fill in all required fields.", {
+        style: { fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]" },
+      });
+      return;
+    }
 
     const parsedPrice = parseInt(price);
     const parsedStock = parseInt(stock);
@@ -53,15 +65,15 @@ const AddProduct = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Product added to the shop!", {
-            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+          toast.success(t("createReward.successMsg"), {
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
           navigate("/reward-shop");
         },
         onError: (error: any) => {
-          const msg = error?.response?.data?.error || "Failed to add product. Check the API.";
+          const msg = error?.response?.data?.error || t("createReward.errorMsg");
           toast.error(msg, {
-            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
         },
       }
@@ -69,96 +81,95 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-[700px] mx-auto px-4 py-8">
+    <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       {/* Back Button */}
       <PixelButton
         variant="ghost"
         size="sm"
-        className="mb-6"
+        className={`mb-6 font-pixel ${fontClass}`}
         onClick={() => navigate("/reward-shop")}
       >
-        ← Back to Shop
+        ← {t("createReward.back")}
       </PixelButton>
 
       <PixelFrame>
-        {/* Header */}
-        <h1 className="font-pixel text-[13px] text-foreground pixel-text-shadow mb-2">
-          🏪 Add New Product
+        <h1 className={`flex items-center gap-2 font-pixel pixel-text-shadow mb-2 ${fontClass}`}>
+          <PixelStore size={24} className="text-yellow-500" /> {t("createReward.title")}
         </h1>
-        <p className="text-xl text-muted-foreground mb-6">
-          List a new item in the Reward Shop.
+        <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>
+          {t("createReward.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Product Code */}
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">
-              Product Code
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createReward.labels.code")}
             </label>
             <PixelInput
-              placeholder="e.g. PROD-2026-001"
+              placeholder={t("createReward.placeholders.code")}
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              required
+              className={`font-pixel ${fontClass}`}
             />
-            <p className="font-pixel text-[7px] text-muted-foreground mt-1">
-              Must be unique. Will be auto-uppercased.
+            <p className={`font-pixel text-muted-foreground mt-1 ${fontClass}`}>
+              {t("createReward.hints.code")}
             </p>
           </div>
 
           {/* Product Name */}
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">
-              Product Name
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createReward.labels.name")}
             </label>
             <PixelInput
-              placeholder="e.g. Mechanical Keyboard G3"
+              placeholder={t("createReward.placeholders.name")}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
+              className={`font-pixel ${fontClass}`}
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">
-              Description
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createReward.labels.description")}
             </label>
             <PixelTextarea
               rows={4}
-              placeholder="RGB Backlit, Blue Switches, Wireless 2.4GHz..."
+              placeholder={t("createReward.placeholders.description")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              required
+              className={`font-pixel ${fontClass}`}
             />
           </div>
 
           {/* Price + Stock side by side */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">
-                Price (GP)
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createReward.labels.price")}
               </label>
               <PixelInput
                 type="number"
-                placeholder="2500"
+                placeholder={t("createReward.placeholders.price")}
                 min="0"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                required
+                className={`font-pixel ${fontClass}`}
               />
             </div>
             <div>
-              <label className="font-pixel text-[9px] text-foreground block mb-2">
-                Stock
+              <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+                {t("createReward.labels.stock")}
               </label>
               <PixelInput
                 type="number"
-                placeholder="50"
+                placeholder={t("createReward.placeholders.stock")}
                 min="0"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
-                required
+                className={`font-pixel ${fontClass}`}
               />
             </div>
           </div>
@@ -168,10 +179,20 @@ const AddProduct = () => {
             type="submit"
             variant="gold"
             size="lg"
-            className="w-full"
+            className="w-full font-pixel h-14"
             disabled={isPending}
           >
-            {isPending ? "🏪 Adding..." : "🏪 Add Product"}
+            {isPending ? (
+              <div className="flex items-center justify-center gap-2">
+                <PixelStore size={18} className="animate-pulse" />
+                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2">
+                <PixelStore size={18} />
+                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+              </div>
+            )}
           </PixelButton>
         </form>
       </PixelFrame>

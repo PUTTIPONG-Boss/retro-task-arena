@@ -10,6 +10,8 @@
     /* /* --background: 30 15% 10%; */
     /* --background: 220 20% 10%; */
     /* --background: 0 0% 5%; */
+    --background: 220 20% 10%;
+    --foreground: 0 0% 75%;
 
     /* ม่วง */
     /* --background: 260 15% 7%; */
@@ -249,7 +251,9 @@
   .animate-coin-rain {
     animation: coin-rain 1.2s steps(6, end) forwards;
   }
+
 }
+
 
 /* ═══════════════════════════════════════════
    GLOBAL 8-BIT PIXEL BACKGROUND SYSTEM
@@ -404,4 +408,27 @@
     radial-gradient(3px 3px at 700px 420px, hsl(var(--gold) / 0.18) 100%, transparent 100%);
   background-size: 960px 600px;
   opacity: 0.5;
+}
+
+@font-face {
+  font-family: 'TA_8bit';
+  src: url('/fonts/TA_8bit.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+.font-pixel {
+  font-family: 'TA_8bit', sans-serif;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -webkit-font-smoothing: none; 
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+  text-rendering: optimizeSpeed; 
+}
+.pixel-text-shadow {
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+}
+.pixel-text-shadow-accent {
+  text-shadow: 1px 1px 0px #4a3300;
 }
