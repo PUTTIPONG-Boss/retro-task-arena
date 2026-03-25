@@ -29,3 +29,15 @@ export interface CreateProductPayload {
   stock: number;
   category?: string;
 }
+
+// ── Payload for creating an order (POST /order) ───────────────────────────────
+export interface OrderItemPayload {
+  productId: string;
+  quantity: number;
+  pricePerUnit: number;
+}
+
+export interface CreateOrderPayload {
+  orderItems: OrderItemPayload[];
+  paymentMethod: 'POINTS' | 'THB'; // We use 'POINTS' for reward redemption
+}

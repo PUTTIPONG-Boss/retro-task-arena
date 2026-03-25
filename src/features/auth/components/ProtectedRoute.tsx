@@ -3,10 +3,14 @@ import { useAuthStore } from "../store/authStore";
 import { ReactNode, useEffect } from "react";
 import { useGetUnseenPoints, useMarkPointsAsSeen } from "@/features/users/services/point.service";
 import { useUiStore } from "@/store/uiStore";
+import { useGetProfile } from "@/features/users/services/user.service";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const showPointsAnimation = useUiStore((s) => s.showPointsAnimation);
+
+  // Sync user profile data on mount and whenever it's invalidated
+  useGetProfile(isAuthenticated);
 
   const { data: unseenData } = useGetUnseenPoints(isAuthenticated);
   const markAsSeen = useMarkPointsAsSeen();

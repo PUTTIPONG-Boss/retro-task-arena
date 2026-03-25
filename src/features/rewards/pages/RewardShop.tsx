@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import RewardBanner from "../components/RewardBanner";
 import { useGetProducts } from "../services/product.service";
+import { useCreateOrder } from "../services/order.service";
+import { useGetProfile } from "@/features/users/services/user.service";
 
 const priceFilters = [
   { id: "all", label: "ALL ITEMS" },
@@ -31,19 +33,40 @@ const RewardShop = () => {
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
   const { data: products = [], isLoading, isError } = useGetProducts();
+  const { mutate: createOrder, isPending: isRedeeming } = useCreateOrder();
+  
+  // Sync user profile (GP balance)
+  useGetProfile(!!user);
 
   if (!user) return null;
 
-  const handleBuy = (name: string, cost: number) => {
-    if (user.points >= cost) {
-      toast.success(`You acquired: ${name}!`, {
+  const handleBuy = (productId: string, name: string, price: number) => {
+    if (user.points < price) {
+      toast.error("Not enough GP! Complete more quests.", {
         style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
       });
-    } else {
-      toast.error("Not enough gold! Complete more quests.", {
-        style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
-      });
+      return;
     }
+
+    createOrder(
+      {
+        orderItems: [{ productId, quantity: 1, pricePerUnit: price }],
+        paymentMethod: "POINTS",
+      },
+      {
+        onSuccess: () => {
+          toast.success(`You acquired: ${name}!`, {
+            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+          });
+        },
+        onError: (error: any) => {
+          const message = error.response?.data?.error || "Failed to redeem reward.";
+          toast.error(message, {
+            style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+          });
+        },
+      }
+    );
   };
 
   const filteredProducts = products.filter((item) => {
@@ -171,14 +194,16 @@ const RewardShop = () => {
                         variant={user.points >= item.price ? "primary" : "ghost"}
                         size="sm"
                         className="w-full"
-                        onClick={() => handleBuy(item.name, item.price)}
-                        disabled={item.stock === 0}
+                        onClick={() => handleBuy(item.id, item.name, item.price)}
+                        disabled={item.stock === 0 || isRedeeming}
                       >
                         {item.stock === 0
                           ? "Out of Stock"
-                          : user.points >= item.price
-                            ? "Buy"
-                            : "Need More GP"}
+                          : isRedeeming 
+                            ? "Processing..."
+                            : user.points >= item.price
+                              ? "Buy"
+                              : "Need More GP"}
                       </PixelButton>
                     </PixelFrame>
                   </motion.div>
