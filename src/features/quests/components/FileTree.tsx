@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGetRepoTree, GitTreeItem } from '../services/git.service';
-import { ChevronRight, ChevronDown, Folder, FileCode, Search } from 'lucide-react';
+import { ChevronRight, ChevronDown, Folder, FileCode } from 'lucide-react';
+import PixelSearch from "@/components/icons/PixelSearch";
 import { cn } from '@/lib/utils';
 
 interface FileTreeProps {
@@ -141,7 +142,7 @@ export const FileTree = ({ repoUrl, onFileSelect, selectedPath, branch }: FileTr
     <div className="flex flex-col h-full bg-background/50 border-r border-pixel-shadow/20">
       <div className="p-3 border-b border-pixel-shadow/10 flex items-center justify-between">
         <span className="font-pixel text-[8px] text-accent uppercase tracking-tighter">Repository</span>
-        <Search size={12} className="text-muted-foreground cursor-help" />
+        <PixelSearch size={12} className="text-muted-foreground cursor-help" />
       </div>
       <div className="flex-1 overflow-y-auto py-2 custom-scrollbar">
         <FileTreeLevel repoUrl={repoUrl} onFileSelect={onFileSelect} selectedPath={selectedPath} branch={branch} />

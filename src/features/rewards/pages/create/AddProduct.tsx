@@ -9,6 +9,7 @@ import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import PixelStore from "@/components/icons/PixelStore";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -28,14 +29,19 @@ const AddProduct = () => {
   const [stock, setStock] = useState("");
 
   const { t, i18n } = useTranslation();
-  
-  // ⭐️ 1. กำหนด fontClass ตามแบบที่คุณให้จำไว้ (ไม่มีชื่อ font ข้างใน)
   const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
 
   const { mutate: createProduct, isPending } = useCreateProduct();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!code.trim() || !name.trim() || !description.trim() || !price || !stock) {
+      toast.error("Please fill in all required fields.", {
+        style: { fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]" },
+      });
+      return;
+    }
 
     const parsedPrice = parseInt(price);
     const parsedStock = parseInt(stock);
@@ -59,14 +65,12 @@ const AddProduct = () => {
       },
       {
         onSuccess: () => {
-          // ⭐️ 2. ดึงคำแปล Success Message และเปลี่ยนฟอนต์ตามภาษา
           toast.success(t("createReward.successMsg"), {
             style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
           navigate("/reward-shop");
         },
         onError: (error: any) => {
-          // ⭐️ 3. ดึงคำแปล Error Message เป็น Default 
           const msg = error?.response?.data?.error || t("createReward.errorMsg");
           toast.error(msg, {
             style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
@@ -77,51 +81,38 @@ const AddProduct = () => {
   };
 
   return (
-    // ⭐️ 4. เพิ่มคลาส font-['TA_8bit'] ที่ Container หลักเพื่อให้คลุมทั้งหน้า
     <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       {/* Back Button */}
       <PixelButton
         variant="ghost"
         size="sm"
-        // ⭐️ 5. เพิ่ม font-pixel และ fontClass
         className={`mb-6 font-pixel ${fontClass}`}
         onClick={() => navigate("/reward-shop")}
       >
-        {/* ⭐️ 6. ดึงคำแปล */}
         ← {t("createReward.back")}
       </PixelButton>
 
       <PixelFrame>
-        {/* Header */}
-        {/* ⭐️ 7. เพิ่ม fontClass */}
-        <h1 className={`font-pixel text-[13px] text-foreground pixel-text-shadow mb-2 ${fontClass}`}>
-          {/* ⭐️ 8. ดึงคำแปล */}
-          🏪 {t("createReward.title")}
+        <h1 className={`flex items-center gap-2 font-pixel pixel-text-shadow mb-2 ${fontClass}`}>
+          <PixelStore size={24} className="text-yellow-500" /> {t("createReward.title")}
         </h1>
-        {/* ⭐️ 9. เพิ่ม font-pixel และ fontClass */}
         <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>
-          {/* ⭐️ 10. ดึงคำแปล */}
           {t("createReward.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Product Code */}
           <div>
-            {/* ⭐️ 11. เพิ่ม fontClass ลงใน Label ทั้งหมด */}
             <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-              {/* ⭐️ 12. ดึงคำแปล Label */}
               {t("createReward.labels.code")}
             </label>
             <PixelInput
-              // ⭐️ 13. ดึงคำแปล Placeholder และเพิ่ม fontClass
               placeholder={t("createReward.placeholders.code")}
               value={code}
               onChange={(e) => setCode(e.target.value)}
               className={`font-pixel ${fontClass}`}
-              required
             />
-            {/* ⭐️ 14. เพิ่ม fontClass ให้ Hint และดึงคำแปล */}
-            <p className={`font-pixel text-[7px] text-muted-foreground mt-1 ${fontClass}`}>
+            <p className={`font-pixel text-muted-foreground mt-1 ${fontClass}`}>
               {t("createReward.hints.code")}
             </p>
           </div>
@@ -136,7 +127,6 @@ const AddProduct = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={`font-pixel ${fontClass}`}
-              required
             />
           </div>
 
@@ -151,7 +141,6 @@ const AddProduct = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className={`font-pixel ${fontClass}`}
-              required
             />
           </div>
 
@@ -168,7 +157,6 @@ const AddProduct = () => {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 className={`font-pixel ${fontClass}`}
-                required
               />
             </div>
             <div>
@@ -182,7 +170,6 @@ const AddProduct = () => {
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
                 className={`font-pixel ${fontClass}`}
-                required
               />
             </div>
           </div>
@@ -192,12 +179,20 @@ const AddProduct = () => {
             type="submit"
             variant="gold"
             size="lg"
-            // ⭐️ 15. เพิ่ม font-pixel และ fontClass
-            className={`w-full font-pixel ${fontClass}`}
+            className="w-full font-pixel h-14"
             disabled={isPending}
           >
-            {/* ⭐️ 16. ดึงคำแปลปุ่ม */}
-            {isPending ? `🏪 ${t("createReward.submitBtn")}...` : `🏪 ${t("createReward.submitBtn")}`}
+            {isPending ? (
+              <div className="flex items-center justify-center gap-2">
+                <PixelStore size={18} className="animate-pulse" />
+                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2">
+                <PixelStore size={18} />
+                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+              </div>
+            )}
           </PixelButton>
         </form>
       </PixelFrame>

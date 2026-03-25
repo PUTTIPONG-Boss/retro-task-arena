@@ -13,6 +13,7 @@ import {
   useUpdateBid,
 } from "../services/quest.service";
 import { toast } from "sonner";
+import { Coins } from "lucide-react";
 
 const statusLabel: Record<string, string> = {
   open: "OPEN",
@@ -205,9 +206,7 @@ const QuestDetail = () => {
             </h1>
 
             <div className="flex flex-wrap gap-4 mb-6">
-              <span className="font-pixel text-[10px] text-accent pixel-text-shadow">
-                🪙 {quest.rewardPoints} GP
-              </span>
+                <Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP
               <DifficultyStars level={quest.difficulty} />
               <span className="font-pixel text-[9px] text-muted-foreground">
                 ⏳ {quest.estimatedTime}
@@ -273,9 +272,7 @@ const QuestDetail = () => {
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="font-pixel text-[10px] text-accent pixel-text-shadow mb-1">
-                          🪙 {bid.bidAmount} GP
-                        </p>
+                          <Coins size={12} className="inline mr-1" /> {bid.bidAmount} GP
                         <p className="text-base text-muted-foreground mb-3">
                           ⏳ {bid.waitDuration}
                         </p>

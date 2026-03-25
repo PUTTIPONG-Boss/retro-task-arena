@@ -93,26 +93,23 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { Sword, Shield} from "lucide-react";
+import PixelHeart from "@/components/icons/PixelHeart";
 
 const EnhancedGuildBanner = () => {
   const { t, i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]"; 
 
-  // 1. กำหนด Font Family และ ขนาดตัวอักษรหลัก (Base Size) ที่นี่ที่เดียว!
-  // คุณสามารถเปลี่ยน text-[24px] เป็นขนาดอื่นได้เลย แล้วทุกอย่างด้านล่างจะย่อ/ขยายตามสัดส่วนอัตโนมัติ
-  const fontClass = i18n.language === "th" ? "text-[24px]" : "text-[24px]"; 
-  
-  // 2. กำหนดอนุภาคเป็นเหรียญทองพิกเซลที่จะลอยขึ้นและกะพริบ
   const particleCount = 15;
   const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
     left: `${10 + Math.random() * 80}%`,
     delay: Math.random() * 5,
     duration: 3 + Math.random() * 4,
-    size: Math.random() > 0.5 ? 0.25 : 0.15, // เปลี่ยนจาก px เป็นสัดส่วน em
+    size: Math.random() > 0.5 ? 0.25 : 0.15,
     rotation: Math.random() * 360,
   }));
 
-  // 3. กำหนดสีสำหรับธีมมืดสไตล์ย้อนยุค
   const colors = {
     bg: "#1a1a1a", 
     border: "#4a3e2a", 
@@ -122,7 +119,6 @@ const EnhancedGuildBanner = () => {
     glow: "#f1c40f",
   };
 
-  // 4. CSS Styles สำหรับสไตล์พิกเซล (ใช้หน่วย em เพื่อให้ขยายตาม fontClass)
   const styleTag = `
     @font-face {
       font-family: 'TA_8bit';
@@ -179,10 +175,8 @@ const EnhancedGuildBanner = () => {
     <>
       <style>{styleTag}</style>
       
-      {/* 5. ดึงแค่ fontClass มาใช้ที่ตัวครอบหลักที่เดียวโค้ดด้านในจะไม่มีการตั้งค่า fontSize อีกแล้ว */}
       <div className={`retro-banner p-10 flex flex-col items-center justify-center gap-4 ${fontClass}`}>
-        
-        {/* การตกแต่งพื้นหลังและขอบ */}
+
         <div className="pixel-border-top"></div>
         <div className="pixel-border-bottom"></div>
         <div className="pixel-corner top-2 left-3">┌─</div>
@@ -190,7 +184,6 @@ const EnhancedGuildBanner = () => {
         <div className="pixel-corner bottom-2 left-3">└─</div>
         <div className="pixel-corner bottom-2 right-3">─┘</div>
 
-        {/* อนุภาคเหรียญทองพิกเซลลอยขึ้น */}
         {particles.map((p) => (
           <motion.span
             key={p.id}
@@ -198,7 +191,7 @@ const EnhancedGuildBanner = () => {
             style={{
               left: p.left,
               bottom: "10%",
-              fontSize: `${p.size}em`, // ใช้หน่วย em
+              fontSize: `${p.size}em`,
               color: colors.textAccent,
               pointerEvents: "none",
             }}
@@ -220,27 +213,23 @@ const EnhancedGuildBanner = () => {
           </motion.span>
         ))}
 
-        {/* เนื้อหาหลัก */}
-        
-        {/* เส้นตกแต่งด้านบน */}
         <div className="flex items-center gap-3">
           <span className="deco-line">━━━</span>
           <span className="deco-icon">⚜</span>
           <span className="deco-line">━━━</span>
         </div>
 
-        {/* แถวชื่อเรื่อง */}
         <div className="flex items-center gap-6">
           <motion.span
             className="title-icon"
             animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
             transition={{ duration: 1, delay: 1, repeat: Infinity, repeatType: "mirror" }}
           >
-            ⚔
+            <Sword size={30} className="text-yellow-400"/>
           </motion.span>
           <motion.h1
-            className="title-glow title-text font-bold tracking-wide"
-            style={{ color: colors.textAccent }}
+            className="title-glow font-bold tracking-wide"
+            style={{ color: colors.textAccent, fontSize: '2em'}}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
@@ -252,11 +241,10 @@ const EnhancedGuildBanner = () => {
             animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 10, 0] }}
             transition={{ duration: 1, delay: 1, repeat: Infinity, repeatType: "mirror" }}
           >
-            🛡
+            <PixelHeart size={30} className="text-yellow-400"/>
           </motion.span>
         </div>
 
-        {/* ซับไทเทิลเลื่อน (Scrolling Marquee) */}
         <div className="scrolling-text-container">
           <span
             className="scrolling-text subtitle-text uppercase"
@@ -266,7 +254,6 @@ const EnhancedGuildBanner = () => {
           </span>
         </div>
 
-        {/* ดาวกะพริบและขยาย (Pulse) */}
         <div className="flex gap-2">
           {[0, 1, 2, 3, 4].map((i) => (
             <motion.span
@@ -281,7 +268,6 @@ const EnhancedGuildBanner = () => {
           ))}
         </div>
 
-        {/* เส้นตกแต่งด้านล่าง */}
         <div className="flex items-center gap-3">
           <span className="deco-line">━━━</span>
           <span className="deco-icon">⚜</span>

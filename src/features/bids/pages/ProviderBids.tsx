@@ -3,6 +3,7 @@ import { useQuestStore } from "@/features/quests/store/questStore";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import { toast } from "sonner";
+import { Coins } from "lucide-react";
 
 const ProviderBids = () => {
   const { id } = useParams();
@@ -70,7 +71,7 @@ const ProviderBids = () => {
 
                   <div className="flex flex-col items-end gap-3 min-w-[140px]">
                     <div className="text-right">
-                      <p className="font-pixel text-[11px] text-accent pixel-text-shadow">🪙 {bid.requestedPoints} GP</p>
+                      <p className="font-pixel text-[11px] text-accent pixel-text-shadow"><Coins size={14} className="inline mr-1 text-yellow-400" /> {bid.requestedPoints} GP</p>
                       <p className="text-base text-muted-foreground">⏳ {bid.estimatedTime}</p>
                     </div>
                     {quest.status === "open" && (

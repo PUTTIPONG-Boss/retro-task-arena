@@ -4,6 +4,10 @@ import { useAuthStore } from "@/features/auth/store/authStore";
 import { useTranslation } from "react-i18next";
 import PixelButton from "@/components/PixelButton";
 import { playPageTurnSound } from "@/lib/sound/pageTurnSound";
+import PixelStore from "@/components/icons/PixelStore";
+import PixelUser from "@/components/icons/PixelUser";
+import PixelCoin from "@/components/icons/PixelCoin";
+import PixelClipboardList from "@/components/icons/PixelClipboardList";
 
 const InetQuestLogo = () => (
   <svg
@@ -42,10 +46,10 @@ const Navbar = () => {
   const user = useUserStore((state) => state.user);
   const logout = useAuthStore((s) => s.logout);
   const { t, i18n } = useTranslation();
-  
+
   if (!user) return null;
 
-  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[14px]";
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[18px]";
 
   const toggleLanguage = () => {
     playPageTurnSound();
@@ -61,23 +65,23 @@ const Navbar = () => {
   };
 
   const links = [
-    { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: "📋" },
-    { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: "🏪" },
-    { to: "/profile", label: t("navbar.profile", "Profile"), icon: "👤" },
+    { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
+    { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: <PixelStore className="text-yellow-400" size={20} /> },
+    { to: "/profile", label: t("navbar.profile", "Profile"), icon: <PixelUser className="text-yellow-400" size={20} /> },
   ];
 
   return (
     <>
       <nav className={`bg-card pixel-border sticky top-0 z-50 ${fontClass}`}>
         <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between h-14">
-          
+
           <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2" onClick={playPageTurnSound}>
             <img
               src="/src/assets/logoinetquest.png"
               alt="INETQUEST"
               className="h-10 w-auto"
               style={{
-                imageRendering: "pixelated", // สำคัญมาก: ทำให้พิกเซลไม่เบลอ
+                imageRendering: "pixelated",
                 filter: "drop-shadow(2px 2px 0px rgba(0,0,0,0.5))",
                 width: "100px",
                 height: "80px",
@@ -86,20 +90,17 @@ const Navbar = () => {
           </Link>
 
           <div className="flex items-center gap-6">
-            {/* เปลี่ยนตรงนี้จาก links.map เป็น filteredLinks.map ตามตรรกะด้านบน */}
             {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={playPageTurnSound}
-                // ⭐️ 3. เพิ่ม font-pixel (สำหรับภาษาอังกฤษ) และ fontClass
-                className={`font-pixel ${fontClass} uppercase tracking-wider transition-none ${
-                  location.pathname === link.to
+                className={`flex items-center gap-2 font-pixel ${fontClass} uppercase tracking-wider transition-none ${location.pathname === link.to
                     ? "text-accent pixel-text-shadow"
                     : "text-foreground hover:text-accent"
-                }`}
+                  }`}
               >
-                <span className="mr-1">{link.icon}</span>
+                {link.icon}
                 <span className="hidden sm:inline">{link.label}</span>
               </Link>
             ))}
@@ -107,7 +108,6 @@ const Navbar = () => {
             {/* User HUD */}
             <div className="pixel-border bg-secondary px-3 py-1 flex items-center gap-3">
               <div className="flex items-center gap-1">
-                {/* ⭐️ 4. เพิ่ม fontClass ให้ส่วนของเลเวลเผื่อมีการแปลในอนาคต */}
                 <span className={`font-pixel text-muted-foreground ${fontClass}`}>
                   LV
                 </span>
@@ -117,7 +117,7 @@ const Navbar = () => {
               </div>
               <div className="w-[1px] h-4 bg-border" />
               <div className="flex items-center gap-1">
-                <span className="text-lg">🪙</span>
+                <PixelCoin className="text-yellow-400 -mt-0.5" size={20} />
                 <span className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>
                   {user.points.toLocaleString()}
                 </span>
@@ -133,13 +133,12 @@ const Navbar = () => {
                 ⏻
               </button>
             </div>
-            
-            {/* ⭐️ 5. ปุ่มสลับภาษา ให้คงฟอนต์พิกเซลไว้เพื่อความสวยงาม */}
+
             <PixelButton
               onClick={toggleLanguage}
               variant="ghost"
               size="sm"
-              className="font-pixel text-[11px] min-w-[50px]" 
+              className="font-pixel text-[11px] min-w-[50px]"
             >
               {i18n.language === "th" ? "ENG" : "TH"}
             </PixelButton>

@@ -7,6 +7,9 @@ import GuildBanner from "@/features/quests/components/GuildBanner";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
+import { ListFilter, X } from "lucide-react";
+import PixelSearch from "@/components/icons/PixelSearch";
+import PixelClipboardList from "@/components/icons/PixelClipboardList";
 
 import {
   playSoundOn,
@@ -79,9 +82,9 @@ const QuestBoard = () => {
       <div className="max-w-[1280px] mx-auto px-4 mt-6">
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="relative w-full max-w-md group">
-              <div className="absolute inset-0 bg-background/50 border-2 border-amber-400 pointer-events-none group-focus-within:border-amber-300"></div>
+            <div className="absolute inset-0 bg-background/50 border-2 border-amber-400 pointer-events-none group-focus-within:border-amber-300"></div>
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm z-10">
-              🔍
+              <PixelSearch size={20} className="inline mr-1 text-yellow-400" />
             </span>
             <PixelInput
               type="text"
@@ -105,7 +108,7 @@ const QuestBoard = () => {
               }}
               className="font-pixel flex items-center gap-2 h-full"
             >
-              <span>{isFilterOpen ? "✖" : "⚙️"}</span>
+              {isFilterOpen ? <X size={18} strokeWidth={2.5} /> : <ListFilter size={18} />}
               <span className={`hidden sm:inline ${fontClass}`}>
                 {t("questBoard.filter")}
               </span>
@@ -128,11 +131,10 @@ const QuestBoard = () => {
                             setStatusFilter(s);
                             playSoundSelect();
                           }}
-                          className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${
-                            statusFilter === s
+                          className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${statusFilter === s
                               ? "border-gold text-gold bg-gold/10"
                               : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
-                          } ${fontClass}`}
+                            } ${fontClass}`}
                         >
                           {t(`questBoard.queststatuses.${s}`)}
                         </button>
@@ -154,11 +156,10 @@ const QuestBoard = () => {
                             setFilter(cat);
                             playSoundSelect();
                           }}
-                          className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${
-                            filter === cat
+                          className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${filter === cat
                               ? "border-gold text-gold bg-gold/10"
                               : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
-                          } ${fontClass}`}
+                            } ${fontClass}`}
                         >
                           {cat.toUpperCase()}
                         </button>
@@ -175,7 +176,7 @@ const QuestBoard = () => {
                       setIsFilterOpen(false);
                     }}
                   >
-                    {t("questBoard.searchPlaceholder")}
+                    <PixelSearch size={20} className="text-black" /> {t("questBoard.searchPlaceholder")}
                   </PixelButton>
                 </div>
               </div>
@@ -192,7 +193,7 @@ const QuestBoard = () => {
                 size="md"
                 className="font-pixel flex items-center gap-2 h-11"
               >
-                <span className="text-lg">📜</span>
+                <PixelClipboardList size={22} />
                 <span className={fontClass}>
                   {t("questBoard.postNewQuest")}
                 </span>

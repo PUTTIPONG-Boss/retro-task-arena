@@ -8,6 +8,8 @@ import { useState } from "react";
 import RewardBanner from "../components/RewardBanner";
 import { useGetProducts } from "../services/product.service";
 import { useTranslation } from "react-i18next";
+import PixelCoin from "@/components/icons/PixelCoin";
+import PixelStore from "@/components/icons/PixelStore";
 
 // Map product.code to a pixel icon for visual variety
 const getProductIcon = (code: string): string => {
@@ -38,20 +40,18 @@ const RewardShop = () => {
 
   const handleBuy = (name: string, cost: number) => {
     if (user.points >= cost) {
-      // ⭐️ 4. ดึงคำแปลและส่งตัวแปร {{name}} เข้าไปใน toastSuccess
       toast.success(t("rewardShop.toastSuccess", { name }), {
         style: {
           fontFamily:
-            i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"',
+            i18n.language === "th" ? "text-[16px]" : "text-[16px]",
           fontSize: "10px",
         },
       });
     } else {
-      // ⭐️ 5. ดึงคำแปล toastError
       toast.error(t("rewardShop.toastError"), {
         style: {
           fontFamily:
-            i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"',
+            i18n.language === "th" ? "text-[16px]" : "text-[16px]",
           fontSize: "10px",
         },
       });
@@ -83,24 +83,27 @@ const RewardShop = () => {
           <div className="flex items-center gap-4">
             <span
               className={`text-accent pixel-text-shadow flex items-center gap-1.5 ${fontClass}`}
-            >  
-              <span className={fontClass}>
-                🪙 {user.points.toLocaleString()}
-              </span>
-              
+            >
+              <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {user.points.toLocaleString()}
+
               <span className={fontClass}>{t("rewardShop.currency")}</span>
             </span>
             {(user.role === "employer" ||
               user.role.toLowerCase().includes("senior")) && (
-              <PixelButton
-                variant="gold"
-                size="sm"
-                className={fontClass}
-                onClick={() => navigate("/add-product")}
-              >
-                + {t("rewardShop.addProduct")}
-              </PixelButton>
-            )}
+                <PixelButton
+                  variant="gold"
+                  size="sm"
+                  className={fontClass}
+                  onClick={() => navigate("/add-product")}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <PixelStore size={18} />
+                    <span className="leading-none">
+                      {t("rewardShop.addProduct")}
+                    </span>
+                  </div>
+                </PixelButton>
+              )}
           </div>
         </PixelFrame>
 
@@ -111,10 +114,9 @@ const RewardShop = () => {
               key={filter.id}
               variant={activeFilter === filter.id ? "gold" : "ghost"}
               size="sm"
-              className={fontClass} // ⭐️
+              className={fontClass}
               onClick={() => setActiveFilter(filter.id)}
             >
-              {/* ⭐️ 9. ดึงคำแปล Filter ตาม labelKey */}
               {t(`rewardShop.filters.${filter.labelKey}`)}
             </PixelButton>
           ))}
@@ -188,12 +190,9 @@ const RewardShop = () => {
                         <span
                           className={`text-accent pixel-text-shadow ${fontClass}`}
                         >
-                          {/* ⭐️ 10. ดึงคำแปล Currency */}
-                          🪙 {item.price.toLocaleString()}{" "}
-                          {t("rewardShop.currency")}
+                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.price.toLocaleString()}{" "}
                         </span>
                         <span className={`text-muted-foreground ${fontClass}`}>
-                          {/* ⭐️ 11. ดึงคำแปล Stock */}
                           {t("rewardShop.stock")}: {item.stock}
                         </span>
                       </div>
@@ -204,11 +203,10 @@ const RewardShop = () => {
                           user.points >= item.price ? "primary" : "ghost"
                         }
                         size="sm"
-                        className={`w-full ${fontClass}`} // ⭐️
+                        className={`w-full ${fontClass}`}
                         onClick={() => handleBuy(item.name, item.price)}
                         disabled={item.stock === 0}
                       >
-                        {/* ⭐️ 12. ดึงคำแปลสำหรับสถานะปุ่ม */}
                         {item.stock === 0
                           ? "Out of Stock" // คุณอาจต้องเพิ่มคำแปล "Out of Stock" ใน JSON
                           : user.points >= item.price
@@ -225,7 +223,6 @@ const RewardShop = () => {
                 <p
                   className={`text-muted-foreground pixel-text-shadow ${fontClass}`}
                 >
-                  {/* ⭐️ 13. ดึงคำแปลเมื่อไม่มีไอเทม */}
                   {products.length === 0
                     ? "The shop is empty. Check back later!"
                     : t("rewardShop.empty")}

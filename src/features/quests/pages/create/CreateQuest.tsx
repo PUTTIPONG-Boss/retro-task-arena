@@ -12,6 +12,7 @@ import { CreateQuestPayload } from "@/features/quests/types";
 import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import PixelClipboardList from "@/components/icons/PixelClipboardList";
 
 const difficulties: { label: string; value: number }[] = [
   { label: "Easy", value: 1 },
@@ -47,9 +48,8 @@ const CreateQuest = () => {
   const { mutate: createQuest, isPending } = useCreateQuest();
 
   const { t, i18n } = useTranslation();
-
-  // ⭐️ 1. สร้าง fontClass สำหรับสลับฟอนต์ไทย-อังกฤษ
   const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+
   const toggleSkill = (skill: string) => {
     if (selectedSkills.includes(skill)) {
       if (selectedSkills.length === 1 && selectedSkills[0] === "General") return; // Keep at least one
@@ -102,7 +102,6 @@ const CreateQuest = () => {
 
     createQuest(newQuest, {
       onSuccess: () => {
-        // ⭐️ 2. ดึงคำแปล successMsg และเปลี่ยนฟอนต์ของ toast ให้สอดคล้องกัน
         toast.success(t("createQuest.successMsg"), {
           style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
         });
@@ -132,9 +131,9 @@ const CreateQuest = () => {
 
       <PixelFrame>
         <h1
-          className={`font-pixel text-foreground pixel-text-shadow mb-2 ${fontClass}`}
+          className={`flex items-center gap-2 font-pixel text-foreground pixel-text-shadow mb-2 ${fontClass}`}
         >
-          📜 {t("createQuest.title")}
+          <PixelClipboardList size={24} className="text-yellow-400" /> {t("createQuest.title")}
         </h1>
         <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>
           {t("createQuest.subtitle")}
@@ -272,7 +271,7 @@ const CreateQuest = () => {
                     className={`font-pixel ${fontClass}`}
                   />
                 </div>
-                <PixelButton type="button" variant="primary" size="sm" onClick={addCustomSkill} className={`font-pixel ${fontClass}`}>
+                <PixelButton type="button" variant="gold" size="sm" onClick={addCustomSkill} className={`font-pixel ${fontClass}`}>
                   {t("createQuest.buttons.add")}
                 </PixelButton>
               </div>
@@ -332,10 +331,20 @@ const CreateQuest = () => {
             type="submit"
             variant="gold"
             size="lg"
-            className={`w-full font-pixel flex items-center justify-center gap-2 h-11 ${i18n.language === "th" ? "pb-1.5 pt-0" : "pt-0.5 pb-0"} ${fontClass}`}
+            className="w-full font-pixel h-14"
             disabled={isPending}
           >
-            {isPending ? `📜 ${t("createQuest.submitBtn")}...` : `📜 ${t("createQuest.submitBtn")}`}
+            {isPending ? (
+              <div className="flex items-center justify-center gap-2">
+                <PixelClipboardList size={18} />
+                <span className={fontClass}>{t("createQuest.submitBtn")}</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2">
+                <PixelClipboardList size={18} />
+                <span className={fontClass}>{t("createQuest.submitBtn")}</span>
+              </div>
+            )}
           </PixelButton>
         </form >
       </PixelFrame >

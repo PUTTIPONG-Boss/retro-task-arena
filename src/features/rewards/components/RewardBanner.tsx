@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import PixelStore from "@/components/icons/PixelStore";
+import PixelGem from "@/components/icons/PixelGem";
 
 const RewardBanner = () => {
   const { t, i18n } = useTranslation();
-
-  // ⭐️ 1. ใช้แพทเทิร์นเดียวกับ GuildBanner (กำหนดแค่ขนาด)
   const fontClass = i18n.language === "th" ? "text-[24px]" : "text-[24px]";
 
   // Define particles (gold coins and sparkles)
@@ -33,7 +33,6 @@ const RewardBanner = () => {
 
   const styleTag = `
     .retro-banner-shop {
-      /* ⭐️ 2. ฝังการบังคับใช้ฟอนต์ TA_8bit ไว้ใน CSS เหมือนหน้า GuildBanner */
       font-family: 'TA_8bit', sans-serif !important;
       -webkit-font-smoothing: none;
       font-smooth: never;
@@ -105,7 +104,9 @@ const RewardBanner = () => {
         {/* Top line decoration */}
         <div className="flex items-center gap-4 opacity-50" style={{ fontSize: '0.8em' }}>
           <span style={{ color: colors.textMuted }}>━━━━━</span>
-          <span className="text-xl">💰</span>
+          <span className="text-xl text-yellow-400 flex items-center justify-center">
+            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M20 20H8v-2h12v2ZM8 18H6v-2H4v-2h2v-4h2v8Zm14 0h-2v-8h2v8Zm-6-2h-4v-4h4v4ZM4 14H2V6h2v8Zm14-6h2v2H8V8h8V6h2v2Zm-2-2H4V4h12v2Z"/></svg>
+          </span>
           <span style={{ color: colors.textMuted }}>━━━━━</span>
         </div>
 
@@ -116,7 +117,7 @@ const RewardBanner = () => {
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            🏪
+            <PixelStore size={36} className="text-yellow-400" />
           </motion.span>
           <motion.h1
             className="shop-title-glow font-bold tracking-wide"
@@ -132,7 +133,7 @@ const RewardBanner = () => {
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 2, delay: 0.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            💎
+            <PixelGem size={36} className="text-yellow-400" />
           </motion.span>
         </div>
 
@@ -143,7 +144,7 @@ const RewardBanner = () => {
             style={{
               color: colors.textMuted,
               textAlign: "center",
-              fontSize: i18n.language === "th" ? "0.6em" : "0.5em", 
+              fontSize: i18n.language === "th" ? "20px" : "20px", 
             }}
           >
             {t("rewardBanner.marquee", "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦")}
