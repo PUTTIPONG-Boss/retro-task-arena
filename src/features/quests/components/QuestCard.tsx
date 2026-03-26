@@ -86,6 +86,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Quest } from "../types";
 import DifficultyStars from "./DifficultyStars";
+import { useGetBids } from "../services/quest.service";
 
 interface QuestCardProps {
   quest: Quest;
@@ -101,7 +102,8 @@ const statusConfig: Record<string, { color: string; icon: string; animate?: bool
 };
 
 const QuestCard = ({ quest }: QuestCardProps) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { data: bids = [] } = useGetBids(quest.id);
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
   const status = statusConfig[quest.status] || { color: "#ffffff", icon: "[ ]" };
 
@@ -194,7 +196,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                 animate={status.animate ? { opacity: [0.7, 1, 0.7] } : {}}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
-                {status.icon} {quest.status}
+                {status.icon} {t(`questDetail.status.${quest.status}`)}
               </motion.span>
             </div>
 
@@ -243,13 +245,13 @@ const QuestCard = ({ quest }: QuestCardProps) => {
 
               <div className={`flex items-center justify-between pixel-font ${fontClass}`} style={{ color: theme.muted }}>
                 <span className={fontClass}>⌛ {quest.estimatedTime}</span>
-                <span className={fontClass}>⚔ {quest.bids.length} Total Bids</span>
+                <span className={fontClass}>⚔ {bids.length} {t("questCard.totalBids")}</span>
               </div>
             </div>
 
             {/* Footer: ผู้จ้างวาน */}
             <div className={`pixel-font uppercase text-right mt-1 ${fontClass}`} style={{ color: "#5a5a5a" }}>
-              Issued by: <span className={fontClass} style={{ color: theme.muted }}>{quest.providerName}</span>
+              {t("questCard.issuedBy")} <span className={fontClass} style={{ color: theme.muted }}>{quest.providerName}</span>
             </div>
           </div>
         </Link>

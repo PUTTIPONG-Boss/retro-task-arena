@@ -10,19 +10,12 @@ import {
   useSubmitBid,
   useAcceptBid,
   useUpdateBid,
+  useGetQuestById,
+  useUpdateQuest,
 } from "../services/quest.service";
 import { toast } from "sonner";
 import { Coins } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { mockQuests } from "@/data/mockData";
-
-const statusLabel: Record<string, string> = {
-  open: "OPEN",
-  bidding: "BIDDING",
-  "in-progress": "IN PROGRESS",
-  review: "REVIEW",
-  completed: "COMPLETED",
-};
 
 const statusColor: Record<string, string> = {
   open: "text-success",
@@ -38,18 +31,17 @@ const QuestDetail = () => {
   const user = useAuthStore((state) => state.user);
 
   // --- Fetch quest directly from API ---
-  const quest = mockQuests.find(q => q.id === id) as any;
-  const questLoading = false;
+  const { data: quest, isLoading: questLoading } = useGetQuestById(id);
 
   const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   // --- Hooks ---
   const updateStatus = useUpdateQuestStatus();
-  const bids = quest?.bids || [];
-  const bidsLoading = false;
+  const { data: bids = [], isLoading: bidsLoading } = useGetBids(id);
   const submitBid = useSubmitBid();
   const acceptBid = useAcceptBid();
+  const updateQuestMutation = useUpdateQuest();
 
   // --- Bid form state ---
   const [bidAmount, setBidAmount] = useState<number>(0);
@@ -133,8 +125,21 @@ const QuestDetail = () => {
   };
 
   const handleAcceptBid = async (appId: string) => {
+    const selectedBid = bids.find((b) => b.id === appId);
+    if (!selectedBid) return;
+
     try {
+      // 1. รับข้อเสนอ (Accept Bid)
       await acceptBid.mutateAsync({ taskId: quest.id, appId });
+
+      // 2. อัปเดตเวลาของ Quest ให้ตรงกับที่ตกลงกันใน Bid (ทำแบบเดียวกับที่ระบบอัปเดต Point)
+      await updateQuestMutation.mutateAsync({
+        id: quest.id,
+        payload: {
+          estimated_time: selectedBid.waitDuration || "",
+        },
+      });
+
       toast.success("✅ Bid accepted! Quest is now In Progress.");
     } catch {
       toast.error("Failed to accept bid.");
@@ -168,11 +173,11 @@ const QuestDetail = () => {
           note: editNote,
         },
       });
-      toast.success("✏ Bid updated successfully!");
+      toast.success(t("questDetail.editbid.SuccessMsg"));
       setEditMode(false);
     } catch (e: unknown) {
       const err = e as { response?: { data?: { error?: string } } };
-      toast.error(err?.response?.data?.error || "Failed to update bid");
+      toast.error(err?.response?.data?.error || t("questDetail.editbid.FailMsg"));
     }
   };
 
@@ -182,13 +187,13 @@ const QuestDetail = () => {
       <div className="flex justify-between items-center mb-6">
         <Link to="/">
           <PixelButton variant="danger" size="sm" className={fontClass}>
-            ← Back to Board
+            ← {t("questDetail.back")}
           </PixelButton>
         </Link>
         {isOwner && (
           <Link to={`/quest/${quest.id}/edit`}>
             <button className={`pixel-border bg-secondary hover:bg-muted px-4 py-2 font-pixel text-accent transition-colors ${fontClass}`}>
-              EDIT QUEST
+              {t("questDetail.edit")}
             </button>
           </Link>
         )}
@@ -203,7 +208,7 @@ const QuestDetail = () => {
                 {quest.category}
               </span>
               <span className={`font-pixel uppercase ${statusColor[quest.status] || "text-success"} ${fontClass}`}>
-                ● {statusLabel[quest.status] || quest.status}
+                ● {t(`questDetail.status.${quest.status}`)}
               </span>
             </div>
 
@@ -212,7 +217,7 @@ const QuestDetail = () => {
             </h1>
 
             <div className={`flex items-center gap-4 mb-6 ${fontClass}`}>
-                <Coins size={14} className="inline mr-1 text-gold" /> {quest.rewardPoints} GP
+              <Coins size={14} className="inline mr-1 text-gold" /> {quest.rewardPoints} {t("questDetail.GP")}
               <DifficultyStars level={quest.difficulty} />
               <span className={`font-pixel text-muted-foreground ${fontClass}`}>
                 ⏳ {quest.estimatedTime}
@@ -234,7 +239,7 @@ const QuestDetail = () => {
 
             <div className="border-t-2 border-border pt-4">
               <h2 className={`font-pixel text-foreground mb-3 ${fontClass}`}>
-                Quest Details
+                {t("questDetail.questdetailboard")}
               </h2>
               <div className={`leading-relaxed text-foreground/80 whitespace-pre-line break-all overflow-hidden ${fontClass}`}>
                 {quest.fullDescription}
@@ -247,16 +252,16 @@ const QuestDetail = () => {
           {isOwner && quest.status === "open" && (
             <PixelFrame>
               <h2 className={`font-pixel text-foreground pixel-text-shadow mb-4 ${fontClass}`}>
-                📋 Adventurer Bids
+                📋 {t("questDetail.OwnerQuest.aventurerbids")}
                 {bidsLoading ? (
-                  <span className={`text-muted-foreground ml-2 ${fontClass}`}>Loading...</span>
+                  <span className={`text-muted-foreground ml-2 ${fontClass}`}>{t("questBoard.loading")}</span>
                 ) : (
                   <span className={`text-muted-foreground ml-2 ${fontClass}`}>({bids.length})</span>
                 )}
               </h2>
 
               {bids.length === 0 ? (
-                <p className={`font-pixel text-muted-foreground ${fontClass}`}>No bids yet. Share this quest with adventurers!</p>
+                <p className={`font-pixel text-muted-foreground ${fontClass}`}>{t("questDetail.OwnerQuest.nobid")}</p>
               ) : (
                 <div className="space-y-4">
                   {bids.map((bid) => (
@@ -269,7 +274,7 @@ const QuestDetail = () => {
                           ⚔ {bid.username}
                         </p>
                         <p className={`text-muted-foreground ${fontClass}`}>
-                          📜 {bid.questsCompleted} quests · ★ {bid.rating.toFixed(1)}
+                          📜 {bid.questsCompleted} {t("questDetail.OwnerQuest.quest")} · ★ {bid.rating.toFixed(1)}
                         </p>
                         {bid.note && (
                           <p className={`text-foreground/70 mt-1 italic break-words overflow-hidden ${fontClass}`}>
@@ -278,7 +283,7 @@ const QuestDetail = () => {
                         )}
                       </div>
                       <div className="text-right">
-                          <Coins size={12} className="inline mr-1" /> {bid.bidAmount} GP
+                        <Coins size={12} className="inline mr-1" /> {bid.bidAmount} {t("questDetail.OwnerQuest.GP")}
                         <p className={`text-muted-foreground mb-3 ${fontClass}`}>
                           ⏳ {bid.waitDuration}
                         </p>
@@ -290,14 +295,14 @@ const QuestDetail = () => {
                             onClick={() => handleAcceptBid(bid.id)}
                             disabled={acceptBid.isPending}
                           >
-                            <span className={fontClass}>✅ Accept Bid</span>
+                            <span className={fontClass}>✅ {t("questDetail.acceptbid")}</span>
                           </PixelButton>
                         )}
                         {bid.status === "ACCEPTED" && (
-                          <span className={`font-pixel text-success ${fontClass}`}>✅ ACCEPTED</span>
+                          <span className={`font-pixel text-success ${fontClass}`}>✅ {t("questDetail.accept")}</span>
                         )}
                         {bid.status === "REJECTED" && (
-                          <span className={`font-pixel text-muted-foreground ${fontClass}`}>✗ Rejected</span>
+                          <span className={`font-pixel text-muted-foreground ${fontClass}`}>✗ {t("questDetail.reject")}</span>
                         )}
                       </div>
                     </div>
@@ -311,10 +316,10 @@ const QuestDetail = () => {
           {!isOwner && quest.status === "open" && (
             <PixelFrame>
               <h2 className={`font-pixel text-foreground pixel-text-shadow mb-2 ${fontClass}`}>
-                👥 {bids.length} Adventurer(s) have bid on this quest
+                👥 {bids.length} {t("questDetail.ownerbids")}
               </h2>
               <p className={`text-muted-foreground mb-4 ${fontClass}`}>
-                Bid details are hidden to ensure fair competition.
+                {t("questDetail.bidsdetail")}
               </p>
 
               {myBid ? (
@@ -322,9 +327,9 @@ const QuestDetail = () => {
                   {editMode ? (
                     /* ── EDIT FORM ── */
                     <div className="space-y-3">
-                      <p className={`font-pixel text-accent mb-2 ${fontClass}`}>✏ Edit Your Bid</p>
+                      <p className={`font-pixel text-accent mb-2 ${fontClass}`}> {t("questDetail.editbid.editbids")}</p>
                       <div>
-                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>BID AMOUNT (GP)</label>
+                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.bidamount")}</label>
                         <input
                           type="number"
                           value={editBidAmount}
@@ -334,7 +339,7 @@ const QuestDetail = () => {
                         />
                       </div>
                       <div>
-                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>ESTIMATED DURATION</label>
+                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.waitduration")}</label>
                         <input
                           type="text"
                           value={editWaitDuration}
@@ -344,7 +349,7 @@ const QuestDetail = () => {
                         />
                       </div>
                       <div>
-                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>NOTE (OPTIONAL)</label>
+                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.note")}</label>
                         <textarea
                           value={editNote}
                           onChange={(e) => setEditNote(e.target.value)}
@@ -360,10 +365,10 @@ const QuestDetail = () => {
                           onClick={handleUpdateBid}
                           disabled={updateBid.isPending}
                         >
-                          <span className={fontClass}>{updateBid.isPending ? "Saving..." : "💾 Save Changes"}</span>
+                          <span className={fontClass}>{updateBid.isPending ? t("questDetail.editbid.Saving") : t("questDetail.editbid.SuccessSave")}</span>
                         </PixelButton>
                         <PixelButton variant="ghost" size="sm" className={fontClass} onClick={() => setEditMode(false)}>
-                          <span className={fontClass}>Cancel</span>
+                          <span className={fontClass}>{t("questDetail.editbid.btncancel")}</span>
                         </PixelButton>
                       </div>
                     </div>
@@ -371,21 +376,21 @@ const QuestDetail = () => {
                     /* ── VIEW MODE ── */
                     <>
                       <div className="flex justify-between items-start">
-                        <p className={`font-pixel text-success mb-1 ${fontClass}`}>⚔ Your Bid Submitted!</p>
+                        <p className={`font-pixel text-success mb-1 ${fontClass}`}>⚔ {t("questDetail.viewmode.yourbidsub")}</p>
                         {myBid.status === "PENDING" && (
                           <button
                             onClick={handleEditBid}
                             className={`font-pixel text-accent hover:text-foreground border border-accent px-2 py-1 transition-colors ${fontClass}`}
                           >
-                            ✏ Edit Bid
+                            {t("questDetail.editbid.editbids")}
                           </button>
                         )}
                       </div>
-                      <p className={`text-foreground ${fontClass}`}>Amount: <span className="text-accent">{myBid.bidAmount} GP</span></p>
-                      <p className={`text-muted-foreground ${fontClass}`}>Duration: {myBid.waitDuration}</p>
-                      {myBid.note && <p className={`text-muted-foreground mt-1 break-words overflow-hidden ${fontClass}`}>Note: {myBid.note}</p>}
+                      <p className={`text-foreground ${fontClass}`}>{t("questDetail.viewmode.amount")} : <span className="text-accent">{myBid.bidAmount} {t("questDetail.viewmode.GP")}</span></p>
+                      <p className={`text-muted-foreground ${fontClass}`}>{t("questDetail.viewmode.duration")}: {myBid.waitDuration}</p>
+                      {myBid.note && <p className={`text-muted-foreground mt-1 break-words overflow-hidden ${fontClass}`}>{t("questDetail.viewmode.note")}: {myBid.note}</p>}
                       <p className={`mt-2 ${fontClass}`}>
-                        Status:{" "}
+                        {t("questDetail.viewmode.status")}:
                         <span className={myBid.status === "ACCEPTED" ? "text-success font-semibold" : myBid.status === "REJECTED" ? "text-red-400" : "text-muted-foreground"}>
                           {myBid.status}
                         </span>
@@ -396,7 +401,7 @@ const QuestDetail = () => {
               ) : showBidForm ? (
                 <div className={`space-y-4 mt-3 ${fontClass}`}>
                   <div>
-                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>BID AMOUNT (GP)</label>
+                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.bidamount")}</label>
                     <input
                       type="number"
                       value={bidAmount}
@@ -407,7 +412,7 @@ const QuestDetail = () => {
                     />
                   </div>
                   <div>
-                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>ESTIMATED DURATION</label>
+                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.waitduration")}</label>
                     <input
                       type="text"
                       value={waitDuration}
@@ -417,13 +422,13 @@ const QuestDetail = () => {
                     />
                   </div>
                   <div>
-                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>NOTE (OPTIONAL)</label>
+                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.note")}</label>
                     <textarea
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       rows={3}
                       className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent resize-none ${fontClass}`}
-                      placeholder="What solution you can provide?"
+                      placeholder={t("questDetail.whatsolution")}
                     />
                   </div>
                   <div className="flex gap-3">
@@ -434,7 +439,7 @@ const QuestDetail = () => {
                       onClick={handleSubmitBid}
                       disabled={submitBid.isPending}
                     >
-                      <span className={fontClass}>{submitBid.isPending ? "Submitting..." : "⚔ Submit Bid"}</span>
+                      <span className={fontClass}>{submitBid.isPending ? t("questDetail.Submitting") : "⚔ " + t("questDetail.btnbids")}</span>
                     </PixelButton>
                     <PixelButton
                       variant="ghost"
@@ -442,7 +447,7 @@ const QuestDetail = () => {
                       className={fontClass}
                       onClick={() => setShowBidForm(false)}
                     >
-                      <span className={fontClass}>Cancel</span>
+                      <span className={fontClass}> {t("questDetail.btncancel")}</span>
                     </PixelButton>
                   </div>
                 </div>
@@ -453,10 +458,11 @@ const QuestDetail = () => {
                   className={`w-full mt-2 ${fontClass}`}
                   onClick={() => {
                     setBidAmount(quest.rewardPoints);
+                    setWaitDuration(quest.estimatedTime);
                     setShowBidForm(true);
                   }}
                 >
-                  <span className={fontClass}>⚔ Submit Bid</span>
+                  <span className={fontClass}>⚔ {t("questDetail.btnbids")}</span>
                 </PixelButton>
               )}
             </PixelFrame>
@@ -467,7 +473,7 @@ const QuestDetail = () => {
         <div className="space-y-6">
           <PixelFrame>
             <h3 className={`font-pixel text-foreground pixel-text-shadow mb-3 ${fontClass}`}>
-              Quest Provider
+              {t("questDetail.sidebar.providerTitle")}
             </h3>
             <p className={`text-foreground mb-1 break-words ${fontClass}`}>{quest.providerName}</p>
             {quest.contact && (
@@ -484,7 +490,7 @@ const QuestDetail = () => {
                 )}
                 {quest.contact.line && (
                   <p className={`text-muted-foreground ${fontClass}`}>
-                    📱 LINE: {quest.contact.line}
+                    📱 {t("questDetail.sidebar.line")}: {quest.contact.line}
                   </p>
                 )}
               </div>
@@ -494,12 +500,12 @@ const QuestDetail = () => {
           {quest.repoUrl && (
             <PixelFrame>
               <h3 className={`font-pixel text-foreground pixel-text-shadow mb-3 ${fontClass}`}>
-                Repository
+                {t("questDetail.sidebar.repoTitle")}
               </h3>
               <p className={`text-accent break-all ${fontClass}`}>{quest.repoUrl}</p>
               {quest.branchName && (
                 <p className={`text-muted-foreground mt-2 break-words ${fontClass}`}>
-                  Branch: <span className="text-accent">{quest.branchName}</span>
+                  {t("questDetail.sidebar.branch")} <span className="text-accent">{quest.branchName}</span>
                 </p>
               )}
             </PixelFrame>
@@ -509,12 +515,12 @@ const QuestDetail = () => {
           {(quest.status === "in-progress" || quest.status === "review") && (user?.id === quest.assignedTo || isOwner) && (
             <div className="space-y-3">
               <PixelButton
-                variant="primary"
+                variant="gold"
                 size="lg"
                 className={`w-full ${fontClass}`}
                 onClick={() => navigate(`/quest/${quest.id}/workspace`)}
               >
-                <span className={fontClass}>🛠 Open Workspace</span>
+                <span className={fontClass}>{t("questDetail.sidebar.openWorkspace")}</span>
               </PixelButton>
 
               {isSeniorOrEmployer && quest.status === "review" && (
@@ -525,7 +531,7 @@ const QuestDetail = () => {
                   onClick={handleCompleteQuest}
                   disabled={updateStatus.isPending}
                 >
-                  <span className={fontClass}>🏆 Complete Quest & Award Points</span>
+                  <span className={fontClass}>{t("questDetail.sidebar.completeQuest")}</span>
                 </PixelButton>
               )}
             </div>
@@ -535,7 +541,7 @@ const QuestDetail = () => {
             <PixelFrame>
               <div className="text-center py-3">
                 <span className={`font-pixel text-success pixel-text-shadow ${fontClass}`}>
-                  🏆 QUEST COMPLETED
+                  {t("questDetail.sidebar.questCompleted")}
                 </span>
               </div>
             </PixelFrame>

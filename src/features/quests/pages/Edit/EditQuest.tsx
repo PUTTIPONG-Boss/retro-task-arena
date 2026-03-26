@@ -24,7 +24,7 @@ const EditQuest = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[14px]";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
   
   const quests = useQuestStore((state) => state.quests);
   const updateQuest = useQuestStore((state) => state.updateQuest);
@@ -38,7 +38,6 @@ const EditQuest = () => {
   const [description, setDescription] = useState("");
   const [rewardPoints, setRewardPoints] = useState("");
   
-  // ⭐️ 2. แก้ไขให้ useState รองรับทั้ง string (จากค่าเริ่มต้น/Backend) และ number (จากการคลิกเลือก)
   const [difficulty, setDifficulty] = useState<string | number>("EASY");
   
   const [estimatedTime, setEstimatedTime] = useState("");
@@ -79,7 +78,7 @@ const EditQuest = () => {
           <p className={`font-pixel text-foreground pixel-text-shadow ${fontClass}`}>Quest not found...</p>
           <PixelButton variant="danger" size="sm" className={`mt-4 font-pixel ${fontClass}`} 
             onClick={() => navigate("/")}>
-              ← Return to Board
+              ← {t("editQuest.back")}
           </PixelButton>
         </PixelFrame>
       </div>
@@ -103,12 +102,12 @@ const EditQuest = () => {
 
   return (
     <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
-      <PixelButton variant="ghost" size="sm" className={`mb-6 font-pixel ${fontClass}`} onClick={() => navigate(`/quest/${quest.id}`)}>
+      <PixelButton variant="danger" size="sm" className={`mb-6 font-pixel ${fontClass}`} onClick={() => navigate(`/quest/${quest.id}`)}>
         ← {t("editQuest.back")}
       </PixelButton>
 
       <PixelFrame>
-        <h1 className={`font-pixel text-foreground pixel-text-shadow mb-2 ${fontClass}`}>
+        <h1 className={`font-pixel text-[16px] pixel-text-shadow mb-2 ${fontClass}`}>
           ⚙️ {t("editQuest.title")}
         </h1>
         <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>

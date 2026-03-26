@@ -15,13 +15,14 @@
     "found": "Found",
     "quests": "quests",
     "noQuests": "No quests found matching your criteria...",
-    "clearFilters": "CLEAR ALL FILTERS",
+    "clearFilters": "CLEAR",
     "error": {
       "title": "Failed to connect to the backend API.",
       "subtitle": "Is the Go Fiber server running on port 5000?"
     },
     "queststatuses": {
-      "active": "ACTIVE",
+      "active": "OPEN",
+      "in-progress": "IN PROGRESS",
       "completed": "COMPLETED",
       "all": "ALL"
     },
@@ -32,7 +33,7 @@
       "bugfix": "BUG FIX",
       "feature": "FEATURE"
     },
-    "": "Category",
+    "category": "Category",
     "queststatus": "Status",
     "filter": "Filter"
   },
@@ -42,9 +43,139 @@
     "bids": "bids",
     "bid": "bid",
     "difficulty": "Difficulty",
-    "provider": "Posted by"
+    "provider": "Posted by",
+    "totalBids": "Total Bids",
+    "issuedBy": "Quest Giver:"
   },
-
+  "questDetail": {
+    "back": "Back to Board",
+    "edit": "EDIT QUEST",
+    "questdetailboard": "Quest Details",
+    "OwnerQuest": {
+      "aventurerbids": "Adventurer Bids",
+      "nobid": "No bids yet. Share this quest with adventurers!",
+      "quest": "quests",
+      "GP": "Gold"
+    },
+    "viewmode" : {
+      "yourbidsub": "Your bid has been submitted!",
+      "amount": "Amount",
+      "GP": "Gold",
+      "duration": "Duration",
+      "note": "Note",
+      "status": "Status"
+    },
+    "GP": "Gold",
+    "acceptbid": "Accept Bid",
+    "ownerbids" : "Adventurer(s) have bid on this quest",
+    "accept": "ACCEPTED",
+    "reject": "REJECTED",
+    "bidsdetail": "Bid details are hidden to ensure fair competition.",
+    "btnbids": "SUBMIT BID",
+    "whatsolution": "What solution you can provide?",
+    "bidamount": "Bid Amount",
+    "waitduration": "Wait Duration",
+    "note": "Note",
+    "Submitting": "Submitting...",
+    "btncancel" : "CANCEL",
+    "editbid" : {
+      "editbids": "Edit Your Bid",
+      "bidamount": "BID AMOUNT (GP)",
+      "waitduration": "ESTIMATED DURATION",
+      "note": "NOTE (OPTIONAL)",
+      "btncancel" : "CANCEL",
+      "Saving": "Saving...",
+      "SuccessSave": "Save Changes",
+      "SuccessMsg": "Bid updated successfully!",
+      "FailMsg": "Failed to update bid"
+    },
+    "status": {
+      "open": "OPEN",
+      "bidding": "BIDDING",
+      "in-progress": "IN PROGRESS",
+      "review": "REVIEW",
+      "completed": "COMPLETED"
+    },
+    "sidebar": {
+      "providerTitle": "Quest Giver",
+      "line": "LINE",
+      "repoTitle": "Repository",
+      "branch": "Branch:",
+      "openWorkspace": "Open Workspace",
+      "completeQuest": "Complete Quest & Award Points",
+      "questCompleted": "QUEST COMPLETED"
+    }
+  },
+  "questWorkspace": {
+    "loading": "Entering Workspace...",
+    "notFound": "Quest not found...",
+    "backToQuest": "← Back to Quest",
+    "tabs": {
+      "workflow": "Workflow",
+      "readme": "README",
+      "files": "Files"
+    },
+    "workflow": {
+      "steps": {
+        "clone": {
+          "label": "Clone Repository",
+          "desc": "Download the project to your local machine."
+        },
+        "branch": {
+          "label": "Create Branch",
+          "desc": "Create and switch to the quest branch."
+        },
+        "solve": {
+          "label": "Implement Solution",
+          "desc": "Make the required changes according to the quest description."
+        },
+        "commit": {
+          "label": "Commit Changes",
+          "desc": "Stage and commit your work."
+        },
+        "push": {
+          "label": "Push Branch",
+          "desc": "Push your branch to the remote repository."
+        },
+        "submit": {
+          "label": "Submit for Review",
+          "desc": "Once pushed, click the 'Submit for Review' button on this page."
+        }
+      },
+      "copyBtn": "[ COPY ]",
+      "copied": "Command copied!"
+    },
+    "noRepo": "No repository URL provided for this quest.",
+    "review": {
+      "title": "Review Status",
+      "desc": "The worker has submitted their work. Please verify the code in the 'Files' tab before approving.",
+      "approveBtn": "✅ Approve Results",
+      "requestChangesBtn": "🔄 Request Changes"
+    },
+    "victory": "Quest Victory!",
+    "rewardAwarded": "Reward: {{reward}} GP Awarded",
+    "sidebar": {
+      "provider": "Quest Giver",
+      "name": "Name",
+      "contractId": "Contract ID",
+      "statusReport": "Status Report",
+      "estimated": "Estimated",
+      "category": "Category"
+    },
+    "actions": {
+      "submitWork": "📤 Submit Work",
+      "waitingReview": "⏳ Waiting for Review"
+    },
+    "toasts": {
+      "submitted": "Quest submitted for review! The provider will be notified.",
+      "submitFailed": "Failed to submit for review.",
+      "noWorker": "No worker assigned to this quest.",
+      "approved": "Quest approved and points awarded!",
+      "approveFailed": "Failed to approve quest.",
+      "changesRequested": "Changes requested. Quest status returned to IN PROGRESS.",
+      "requestFailed": "Failed to request changes."
+    }
+  },
   "userProfile": {
     "editProfile": "[ EDIT PROFILE ]",
     "joined": "Joined",
@@ -127,9 +258,9 @@
     "placeholders": {
       "questTitle": "e.g. Slay the Authentication Dragon",
       "questDesc": "Describe the quest requirements...",
-      "reward": "1000",
-      "time": "e.g. 8",
-      "customSkill": "Add other skills (e.g. Rust, Docker)"
+      "reward": "e.g. 100 Gold",
+      "time": "e.g. 8 Days or 8 Hours",
+      "customSkill": "Add other skills (e.g. Golang, Angular)"
     },
     "buttons": {
       "add": "ADD"
@@ -164,11 +295,13 @@
       "category": "Category",
       "repoUrl": "Git Repository URL"
     },
+    "requiredSkills": "Required Skills (comma separated)",
     "difficulties": {
       "Easy": "Easy",
       "Medium": "Medium",
       "Hard": "Hard"
     },
+    "errorMsg": "Cannot edit a quest that already has bids.",
     "saveBtn": "Save Changes",
     "successMsg": "Quest updated successfully!"
   },

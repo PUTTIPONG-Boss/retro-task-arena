@@ -10,8 +10,8 @@ export interface Transaction {
 }
 
 export async function getTransactions(): Promise<Transaction[]> {
-  const response = await apiClient.get("/user/transactions");
-  return response.data;
+  const response = await apiClient.get<{ message: string; data: Transaction[] | null }>("/user/transactions");
+  return response.data?.data || [];
 }
 
 // Add more finance-related functions here (e.g., withdraw, top-up)

@@ -92,7 +92,7 @@ const CreateQuest = () => {
       title,
       description,
       point: parseInt(rewardPoints) || 0,
-      estimated_time: `${estimatedTime} Cycles`,
+      estimated_time: `${estimatedTime}`,
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
@@ -121,7 +121,7 @@ const CreateQuest = () => {
   return (
     <div className="max-w-[700px] mx-auto px-4 py-8">
       <PixelButton
-        variant="ghost"
+        variant="danger"
         size="sm"
         className={`mb-6 font-pixel ${fontClass}`}
         onClick={() => navigate("/")}

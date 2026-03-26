@@ -6,19 +6,28 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import RewardBanner from "../components/RewardBanner";
+import { useGetProducts } from "../services/product.service";
+import { useCreateOrder } from "../services/order.service";
+import { useGetProfile } from "@/features/users/services/user.service";
 import { useTranslation } from "react-i18next";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelStore from "@/components/icons/PixelStore";
-import { mockRewards } from "@/data/mockData";
+
+// Map product.code to a pixel icon for visual variety
+const getProductIcon = (code: string): string => {
+  const icons = ["🧪", "📜", "💎", "⚡", "🏅", "🎫", "👾", "🧥", "🔮", "⚔️"];
+  if (!code) return "📦";
+  const index = code.charCodeAt(0) % icons.length;
+  return icons[index] || "📦";
+};
 
 const RewardShop = () => {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
-  const products = mockRewards;
-  const isLoading = false;
-  const isError = false;
+  const { data: products = [], isLoading, isError } = useGetProducts();
+  const { mutate: createOrder, isPending: isRedeeming } = useCreateOrder();
   const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
@@ -35,8 +44,8 @@ const RewardShop = () => {
 
   if (!user) return null;
 
-  const handleBuy = (name: string, cost: number) => {
-    if (user.points >= cost) {
+  const handleBuy = (productId: string, name: string, price: number) => {
+    if (user.points >= price) {
       toast.success(t("rewardShop.toastSuccess", { name }), {
         style: {
           fontFamily:
@@ -52,8 +61,36 @@ const RewardShop = () => {
           fontSize: "10px",
         },
       });
+      return;
     }
+
+    createOrder(
+      {
+        orderItems: [{ productId, quantity: 1, pricePerUnit: price }],
+        paymentMethod: "POINTS",
+      },
+      {
+        onSuccess: () => {
+          toast.success(t("rewardShop.toastSuccess", { name }), {
+            style: {
+              fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
+              fontSize: "10px",
+            },
+          });
+        },
+        onError: (error: any) => {
+          const message = error.response?.data?.error || "Failed to redeem reward.";
+          toast.error(message, {
+            style: {
+              fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
+              fontSize: "10px",
+            },
+          });
+        },
+      }
+    );
   };
+
 
   const filteredProducts = products.filter((item) => {
     if (activeFilter === "all") return true;
@@ -63,7 +100,7 @@ const RewardShop = () => {
       selectedRange.min !== undefined &&
       selectedRange.max !== undefined
     ) {
-      return item.cost >= selectedRange.min && item.cost <= selectedRange.max;
+      return item.price >= selectedRange.min && item.price <= selectedRange.max;
     }
     return true;
   });
@@ -161,13 +198,18 @@ const RewardShop = () => {
                       {/* Icon */}
                       <div className="text-center mb-3">
                         <span className="text-4xl">
-                          {item.icon}
+                          {getProductIcon(item.code)}
                         </span>
                       </div>
 
                       {/* ID badge */}
                       <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
                         [{item.id}]
+                      </p>
+
+                      {/* Code badge */}
+                      <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
+                        [{item.code}]
                       </p>
 
                       {/* Name */}
@@ -187,7 +229,7 @@ const RewardShop = () => {
                         <span
                           className={`text-accent pixel-text-shadow ${fontClass}`}
                         >
-                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.cost.toLocaleString()}{" "}
+                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.price.toLocaleString()}{" "}
                         </span>
                         <span className={`text-muted-foreground ${fontClass}`}>
                           {t("rewardShop.stock")}: {item.stock}
@@ -197,18 +239,20 @@ const RewardShop = () => {
                       {/* Buy Button */}
                       <PixelButton
                         variant={
-                          user.points >= item.cost ? "gold" : "ghost"
+                          user.points >= item.price ? "primary" : "ghost"
                         }
                         size="sm"
                         className={`w-full ${fontClass}`}
-                        onClick={() => handleBuy(item.name, item.cost)}
-                        disabled={item.stock === 0}
+                        onClick={() => handleBuy(item.id, item.name, item.price)}
+                        disabled={item.stock === 0 || isRedeeming}
                       >
                         {item.stock === 0
                           ? "Out of Stock"
-                          : user.points >= item.cost
-                            ? t("rewardShop.buy")
-                            : t("rewardShop.needMore")}
+                          : isRedeeming 
+                            ? "Processing..."
+                            : user.points >= item.price
+                              ? t("rewardShop.buy")
+                              : t("rewardShop.needMore")}
                       </PixelButton>
                     </PixelFrame>
                   </motion.div>

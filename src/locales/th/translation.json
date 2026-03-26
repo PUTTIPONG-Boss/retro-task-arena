@@ -15,15 +15,23 @@
     "found": "พบ",
     "quests": "ภารกิจ",
     "noQuests": "ไม่พบภารกิจที่ตรงกับเงื่อนไขที่ค้นหา...",
-    "clearFilters": "ล้างตัวกรองทั้งหมด",
+    "clearFilters": "ล้าง",
     "error": {
       "title": "ไม่สามารถเชื่อมต่อกับโลก Backend ได้",
       "subtitle": "เซิร์ฟเวอร์ Go Fiber ทำงานอยู่ที่พอร์ต 5000 หรือเปล่า?"
     },
     "queststatuses": {
       "active": "เปิด",
+      "in-progress": "กำลังดำเนินการ",
       "completed": "เสร็จสิ้น",
       "all": "ทั้งหมด"
+    },
+    "categories": {
+      "all": "ทั้งหมด",
+      "frontend": "FRONTEND",
+      "backend": "BACKEND",
+      "BUG FIX": "BUG FIX",
+      "FEATURE": "FEATURE"
     },
     "category": "หมวดหมู่",
     "queststatus": "สถานะภารกิจ",
@@ -35,7 +43,137 @@
     "bids": "เสนอ",
     "bid": "เสนอ",
     "difficulty": "ความยาก",
-    "provider": "โพสต์โดย"
+    "provider": "โพสต์โดย",
+    "totalBids": "คำเสนอรวม",
+    "issuedBy": "ผู้มอบภารกิจ:"
+  },
+  "questDetail": {
+    "back": "กลับสู่กระดาน",
+    "edit": "แก้ไขเควสต์",
+    "GP": "ทอง",
+    "questdetailboard": "รายละเอียดเควสต์",
+    "OwnerQuest": {
+      "aventurerbids": "การยื่นข้อเสนอของนักผจญภัย",
+      "nobid": "ยังไม่มีข้อเสนอ แบ่งปันเควสต์นี้ให้กับนักผจญภัย!",
+      "quest": "เควสต์",
+      "GP": "ทอง"
+    },
+    "viewmode" : {
+      "yourbidsub": "ส่งข้อเสนอรับเควสเรียบร้อย!",
+      "amount": "จำนวนข้อเสนอ",
+      "GP": "ทอง",
+      "duration": "ระยะเวลาที่ใช้",
+      "note": "หมายเหตุ",
+      "status": "สถานะ"
+    },
+    "acceptbid": "ยอมรับข้อเสนอ",
+    "ownerbids": "นักผจญภัยยื่นข้อเสนอในเควสนี้แล้ว",
+    "bidsdetail": "รายละเอียดถูกซ่อนไว้เพื่อความเป็นธรรม",
+    "btnbids": "ยื่นข้อเสนอ",
+    "whatsolution": "แนวทางการดำเนินงานของคุณ?",
+    "bidamount": "จำนวนที่เสนอ",
+    "waitduration": "ระยะเวลาที่ใช้",
+    "note": "หมายเหตุ",
+    "btncancel" : "ยกเลิก",
+    "Submitting": "กำลังยื่นข้อเสนอ...",
+    "editbid" : {
+      "editbids": "แก้ไขข้อเสนอ",
+      "bidamount": "จำนวนที่เสนอ (ทอง)",
+      "waitduration": "ระยะเวลาที่ใช้",
+      "note": "หมายเหตุ",
+      "btncancel" : "ยกเลิก",
+      "Submitting": "กำลังยื่นข้อเสนอ...",
+      "Saving": "กำลังบันทึก...",
+      "SuccessSave": "บันทึกการเปลี่ยนแปลง",
+      "SuccessMsg": "อัปเดตข้อเสนอสำเร็จ!",
+      "FailMsg": "อัปเดตข้อเสนอไม่สำเร็จ"  
+    },
+    "status": {
+      "open": "เปิด",
+      "bidding": "กำลังประมูล",
+      "in-progress": "กำลังดำเนินการ",
+      "review": "รอตรวจสอบ",
+      "completed": "เสร็จสิ้น"
+    },
+    "sidebar": {
+      "providerTitle": "ผู้มอบภารกิจ",
+      "line": "ไลน์",
+      "repoTitle": "Repository",
+      "branch": "Branch:",
+      "openWorkspace": "เปิดขั้นตอนการทำงาน",
+      "completeQuest": "ยืนยันผลและมอบรางวัล",
+      "questCompleted": "ภารกิจเสร็จสมบูรณ์"
+    } 
+  },
+  "questWorkspace": {
+    "loading": "กำลังเข้าสู่พื้นที่ทำงาน...",
+    "notFound": "ไม่พบภารกิจ...",
+    "backToQuest": "← กลับสู่หน้าเควสต์",
+    "tabs": {
+      "workflow": "ขั้นตอนการทำงาน",
+      "readme": "README",
+      "files": "ไฟล์"
+    },
+    "workflow": {
+      "steps": {
+        "clone": {
+          "label": "คัดลอก Repository",
+          "desc": "ดาวน์โหลดโปรเจกต์ลงเครื่องคอมพิวเตอร์ของคุณ"
+        },
+        "branch": {
+          "label": "สร้าง Branch",
+          "desc": "สร้างและสลับไปยัง Branch สำหรับภารกิจนี้"
+        },
+        "solve": {
+          "label": "ลงมือแก้ไขงาน",
+          "desc": "ดำเนินการแก้ไขโค้ดตามรายละเอียดที่ได้รับมอบหมาย"
+        },
+        "commit": {
+          "label": "บันทึกการเปลี่ยนแปลง",
+          "desc": "เตรียมและบันทึกผลงานของคุณเข้าระบบ"
+        },
+        "push": {
+          "label": "ส่งงานขึ้นระบบ",
+          "desc": "ส่งสาขางานของคุณไปยัง Repository กลาง"
+        },
+        "submit": {
+          "label": "ส่งให้ตรวจสอบ",
+          "desc": "เมื่อส่งโค้ดแล้ว ให้กดปุ่ม 'ส่งงานให้ตรวจสอบ' ในหน้านี้"
+        }
+      },
+      "copyBtn": "[ คัดลอก ]",
+      "copied": "คัดลอกคำสั่งแล้ว!"
+    },
+    "noRepo": "ไม่ได้ระบุ URL ของ Repository สำหรับภารกิจนี้",
+    "review": {
+      "title": "สถานะการตรวจสอบ",
+      "desc": "นักผจญภัยส่งงานแล้ว โปรดตรวจสอบโค้ดในแท็บ 'ไฟล์งาน' ก่อนอนุมัติ",
+      "approveBtn": "✅ อนุมัติผลงาน",
+      "requestChangesBtn": "🔄 ขอให้แก้ไขงาน"
+    },
+    "victory": "ชัยชนะในภารกิจ!",
+    "rewardAwarded": "รางวัล: {{reward}} GP ได้รับแล้ว",
+    "sidebar": {
+      "provider": "ผู้จ้างวาน",
+      "name": "ชื่อ",
+      "contractId": "รหัสสัญญา",
+      "statusReport": "รายงานสถานะ",
+      "estimated": "ระยะเวลาที่ใช้",
+      "category": "หมวดหมู่"
+    },
+    "actions": {
+      "submitWork": "📤 ส่งงาน",
+      "waitingReview": "⏳ รอการตรวจสอบ"
+    },
+    "toasts": {
+      "submitted": "ส่งงานให้ตรวจสอบแล้ว! ผู้จ้างวานจะได้รับแจ้งเตือน",
+      "submitFailed": "ส่งงานไม่สำเร็จ",
+      "noWorker": "ไม่มีผู้รับผิดชอบภารกิจนี้",
+      "approved": "อนุมัติภารกิจและมอบรางวัลเรียบร้อย!",
+      "approveFailed": "อนุมัติภารกิจไม่สำเร็จ",
+      "changesRequested": "แจ้งขอแก้ไขงานแล้ว สถานะภารกิจกลับเป็น 'กำลังดำเนินการ'",
+      "requestFailed": "แจ้งขอแก้ไขงานไม่สำเร็จ"
+    }
   },
   "userProfile": {
     "editProfile": "[ แก้ไขโปรไฟล์ ]",
@@ -117,9 +255,9 @@
     "placeholders": {
       "questTitle": "เช่น ปราบมังกร Authentication",
       "questDesc": "อธิบายสิ่งที่ต้องการในภารกิจนี้",
-      "reward": "1000",
-      "time": "เช่น 8",
-      "customSkill": "เพิ่มสกิลอื่น ๆ (เช่น Rust, Docker)"
+      "reward": "เช่น 100 ทอง",
+      "time": "เช่น 8 วัน หรือ 8 ชั่วโมง",
+      "customSkill": "เพิ่มสกิลอื่น ๆ (เช่น Golang, Angular)"
     },
     "buttons": {
       "add": "เพิ่ม"
@@ -148,11 +286,13 @@
       "category": "หมวดหมู่",
       "repoUrl": "URL ของ Git Repository"
     },
+    "requiredSkills": "สกิลที่ต้องการ",
     "difficulties": {
       "Easy": "ง่าย",
       "Medium": "ปานกลาง",
       "Hard": "ยาก"
     },
+    "errorMsg": "ไม่สามารถแก้ไขเควสต์ที่มีการเสนอราคาแล้วได้",
     "saveBtn": "บันทึกการเปลี่ยนแปลง",
     "successMsg": "แก้ไขเควสต์บนกระดานสำเร็จ!"
   },

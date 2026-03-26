@@ -8,6 +8,7 @@ import {
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import RatingModal from "@/features/bids/components/RatingModal";
+import { useCreateReview } from "@/features/bids/services/review.service";
 import { toast } from "sonner";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { RepoExplorer } from "../components/RepoExplorer";
@@ -15,7 +16,6 @@ import { FileViewer } from "../components/FileViewer";
 import { Layout, Terminal, FileText, FolderTree, CheckCircle2, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { mockQuests } from "@/data/mockData";
 
 const QuestWorkspace = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,19 +23,19 @@ const QuestWorkspace = () => {
   const [activeTab, setActiveTab] = useState<"workflow" | "readme" | "files">("workflow");
   const [showRating, setShowRating] = useState(false);
 
-  const quest = mockQuests.find(q => q.id === id) as any;
-  const isLoadingQuest = false;
-  const bids = quest?.bids || [];
+  const { data: quest, isLoading: isLoadingQuest } = useGetQuestById(id);
+  const { data: bids = [] } = useGetBids(id);
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   const updateStatus = useUpdateQuestStatus();
+  const createReview = useCreateReview();
 
   if (isLoadingQuest) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className={`font-pixel animate-pulse ${fontClass}`}>Entering Workspace...</p>
+        <p className={`font-pixel animate-pulse ${fontClass}`}>{t("questWorkspace.loading")}</p>
       </div>
     );
   }
@@ -44,10 +44,10 @@ const QuestWorkspace = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <PixelFrame>
-          <p className={`font-pixel ${fontClass}`}>Quest not found...</p>
+          <p className={`font-pixel ${fontClass}`}>{t("questWorkspace.notFound")}</p>
           <Link to="/" className="mt-4 block">
             <PixelButton variant="primary" size="sm" className={fontClass}>
-              <span className={fontClass}>Return to Board</span>
+              <span className={fontClass}>{t("questWorkspace.notFound")}</span>
             </PixelButton>
           </Link>
         </PixelFrame>
@@ -60,43 +60,44 @@ const QuestWorkspace = () => {
 
   const workflowSteps = [
     {
-      label: "Clone Repository",
+      label: t("questWorkspace.workflow.steps.clone.label"),
       cmd: `git clone ${repoUrl}`,
-      desc: "Download the project to your local machine.",
+      desc: t("questWorkspace.workflow.steps.clone.desc"),
     },
     {
-      label: "Create Branch",
+      label: t("questWorkspace.workflow.steps.branch.label"),
       cmd: `git checkout -b ${branch}`,
-      desc: "Create and switch to the quest branch.",
+      desc: t("questWorkspace.workflow.steps.branch.desc"),
     },
     {
-      label: "Implement Solution",
+      label: t("questWorkspace.workflow.steps.solve.label"),
       cmd: null,
-      desc: "Make the required changes according to the quest description.",
+      desc: t("questWorkspace.workflow.steps.solve.desc"),
     },
     {
-      label: "Commit Changes",
+      label: t("questWorkspace.workflow.steps.commit.label"),
       cmd: `git add .\ngit commit -m "Complete quest task"`,
-      desc: "Stage and commit your work.",
+      desc: t("questWorkspace.workflow.steps.commit.desc"),
     },
     {
-      label: "Push Branch",
+      label: t("questWorkspace.workflow.steps.push.label"),
       cmd: `git push origin ${branch}`,
-      desc: "Push your branch to the remote repository.",
+      desc: t("questWorkspace.workflow.steps.push.desc"),
     },
     {
-      label: "Submit for Review",
+      label: t("questWorkspace.workflow.steps.submit.label"),
       cmd: null,
-      desc: "Once pushed, click the 'Submit for Review' button on this page.",
+      desc: t("questWorkspace.workflow.steps.submit.desc"),
     },
   ];
 
   const handleSubmitReview = async () => {
     try {
       await updateStatus.mutateAsync({ id: quest.id, status: "review" as any });
-      toast.success("Quest submitted for review! The provider will be notified.");
-    } catch {
-      toast.error("Failed to submit for review.");
+      toast.success(t("questWorkspace.toasts.submitted"));
+    } catch (err: any) {
+      const msg = err.response?.data?.error || t("questWorkspace.toasts.submitFailed");
+      toast.error(msg);
     }
   };
 
@@ -105,19 +106,36 @@ const QuestWorkspace = () => {
   const handleRatingSubmit = async (rating: number, feedback: string) => {
     setShowRating(false);
     try {
-      await updateStatus.mutateAsync({ id: quest.id, status: "completed" as any });
-      toast.success("Quest approved! Rewards transferred.");
-    } catch {
-      toast.error("Failed to approve quest.");
+      if (!quest.assignedTo) {
+        toast.error(t("questWorkspace.toasts.noWorker"));
+        return;
+      }
+
+      await createReview.mutateAsync({
+        taskId: quest.id,
+        revieweeId: quest.assignedTo,
+        rating: rating,
+        comment: feedback,
+        qualityScore: rating, // Simple mapping for now
+        timelinessScore: rating,
+        behaviorScore: rating,
+        pointsAwarded: quest.rewardPoints,
+      });
+
+      toast.success(t("questWorkspace.toasts.approved"));
+    } catch (err: any) {
+      const msg = err.response?.data?.error || t("questWorkspace.toasts.approveFailed");
+      const details = err.response?.data?.details;
+      toast.error(`${msg}${details ? `: ${details}` : ""}`);
     }
   };
 
   const handleRequestChanges = async () => {
     try {
       await updateStatus.mutateAsync({ id: quest.id, status: "in-progress" as any });
-      toast("Changes requested. Quest status returned to IN PROGRESS.");
+      toast(t("questWorkspace.toasts.changesRequested"));
     } catch {
-      toast.error("Failed to request changes.");
+      toast.error(t("questWorkspace.toasts.requestFailed"));
     }
   };
 
@@ -129,7 +147,7 @@ const QuestWorkspace = () => {
     <div className={`max-w-[1280px] mx-auto px-4 py-8 ${fontClass}`}>
       <Link to={`/quest/${quest.id}`}>
         <PixelButton variant="ghost" size="sm" className={`mb-6 ${fontClass}`}>
-          <span className={fontClass}>← Back to Quest</span>
+          <span className={fontClass}>{t("questWorkspace.backToQuest")}</span>
         </PixelButton>
       </Link>
 
@@ -143,7 +161,7 @@ const QuestWorkspace = () => {
                 quest.status === "review" ? "text-yellow-400" :
                   quest.status === "completed" ? "text-success" : "text-accent"
               )}>
-                ● {quest.status.toUpperCase()}
+                ● {t(`questDetail.status.${quest.status}`)}
               </span>
             </div>
 
@@ -154,9 +172,9 @@ const QuestWorkspace = () => {
             {/* Tabs Navigation */}
             <div className={`flex border-b border-pixel-shadow/20 mb-6 ${fontClass}`}>
               {[
-                { id: "workflow", label: "Workflow", icon: Terminal },
-                { id: "readme", label: "README", icon: FileText },
-                { id: "files", label: "Files", icon: FolderTree },
+                { id: "workflow", label: t("questWorkspace.tabs.workflow"), icon: Terminal },
+                { id: "readme", label: t("questWorkspace.tabs.readme"), icon: FileText },
+                { id: "files", label: t("questWorkspace.tabs.files"), icon: FolderTree },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -192,10 +210,10 @@ const QuestWorkspace = () => {
                             className={`absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity font-pixel text-muted-foreground hover:text-accent ${fontClass}`}
                             onClick={() => {
                               navigator.clipboard.writeText(step.cmd!);
-                              toast.success("Command copied!");
+                              toast.success(t("questWorkspace.workflow.copied"));
                             }}
                           >
-                            [COPY]
+                            {t("questWorkspace.workflow.copyBtn")}
                           </button>
                         </div>
                       )}
@@ -235,17 +253,17 @@ const QuestWorkspace = () => {
             <PixelFrame className={`border-accent ${fontClass}`}>
               <div className={`flex items-center gap-3 mb-4 ${fontClass}`}>
                 <Layout size={20} className="text-accent" />
-                <h2 className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>Review Status</h2>
+                <h2 className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>{t("questWorkspace.review.title")}</h2>
               </div>
               <p className={`text-muted-foreground mb-6 ${fontClass}`}>
-                The worker has submitted their work. Please verify the code in the "Files" tab before approving.
+                {t("questWorkspace.review.desc")}
               </p>
               <div className="flex gap-4">
                 <PixelButton variant="gold" size="md" onClick={handleApprove} className={`flex-1 ${fontClass}`}>
-                  <span className={fontClass}>✅ Approve Results</span>
+                  <span className={fontClass}>{t("questWorkspace.review.approveBtn")}</span>
                 </PixelButton>
                 <PixelButton variant="danger" size="md" onClick={handleRequestChanges} className={`flex-1 ${fontClass}`}>
-                  <span className={fontClass}>🔄 Request Changes</span>
+                  <span className={fontClass}>{t("questWorkspace.review.requestChangesBtn")}</span>
                 </PixelButton>
               </div>
             </PixelFrame>
@@ -256,8 +274,8 @@ const QuestWorkspace = () => {
             <PixelFrame className={`bg-success/5 border-success border-2 ${fontClass}`}>
               <div className="text-center py-6">
                 <CheckCircle2 size={48} className="text-success mx-auto mb-4" />
-                <h2 className={`font-pixel text-success pixel-text-shadow mb-2 ${fontClass}`}>Quest Victory!</h2>
-                <p className={`font-pixel text-accent ${fontClass}`}>Reward: {quest.rewardPoints} GP Awarded</p>
+                <h2 className={`font-pixel text-success pixel-text-shadow mb-2 ${fontClass}`}>{t("questWorkspace.victory")}</h2>
+                <p className={`font-pixel text-accent ${fontClass}`}>{t("questWorkspace.rewardAwarded", { reward: quest.rewardPoints })}</p>
               </div>
             </PixelFrame>
           )}
@@ -266,36 +284,36 @@ const QuestWorkspace = () => {
         {/* Info Sidebar */}
         <div className={`w-full lg:w-[320px] space-y-6 ${fontClass}`}>
           <PixelFrame>
-            <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>The Provider</h3>
+            <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>{t("questWorkspace.sidebar.provider")}</h3>
             <div className="space-y-4">
               <div>
-                <p className={`text-muted-foreground uppercase mb-1 ${fontClass}`}>Name</p>
+                <p className={`text-muted-foreground uppercase mb-1 ${fontClass}`}>{t("questWorkspace.sidebar.name")}</p>
                 <p className={`text-foreground font-pixel ${fontClass}`}>{quest.providerName}</p>
               </div>
               <div>
-                <p className={`text-muted-foreground uppercase mb-1 ${fontClass}`}>Contract ID</p>
-                <code className={`text-accent bg-background/50 p-1 block truncate ${fontClass}`}>#{quest.id.slice(0, 8)}</code>
+                <p className={`text-muted-foreground uppercase mb-1 ${fontClass}`}>{t("questWorkspace.sidebar.contractId")}</p>
+                <code className={`font-pixel text-accent bg-background/50 p-1 block truncate ${fontClass}`}>#{quest.id.slice(0, 8)}</code>
               </div>
             </div>
           </PixelFrame>
 
           <PixelFrame>
-            <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>Status Report</h3>
+            <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>{t("questWorkspace.sidebar.statusReport")}</h3>
             <div className="space-y-4">
                 <span className={`font-pixel text-accent ${fontClass}`}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP</span>
               <div className="flex justify-between items-center">
-                <span className={`text-muted-foreground uppercase ${fontClass}`}>Estimated</span>
+                <span className={`text-muted-foreground uppercase ${fontClass}`}>{t("questWorkspace.sidebar.estimated")}</span>
                 <span className={`text-foreground ${fontClass}`}>{quest.estimatedTime}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className={`text-muted-foreground uppercase ${fontClass}`}>Category</span>
+                <span className={`text-muted-foreground uppercase ${fontClass}`}>{t("questWorkspace.sidebar.category")}</span>
                 <span className={`text-foreground px-2 py-0.5 bg-secondary ${fontClass}`}>{quest.category}</span>
               </div>
             </div>
           </PixelFrame>
 
           {/* Action Button for Worker */}
-          {quest.status === "in-progress" && user?.id === quest.assignedTo && (
+          {user?.id === quest.assignedTo && quest.status === "in-progress" && (
             <PixelButton
               variant="gold"
               size="lg"
@@ -303,7 +321,18 @@ const QuestWorkspace = () => {
               onClick={handleSubmitReview}
               isLoading={updateStatus.isPending}
             >
-              <span className={fontClass}>📤 Submit Work</span>
+              <span className={fontClass}>{t("questWorkspace.actions.submitWork")}</span>
+            </PixelButton>
+          )}
+
+          {user?.id === quest.assignedTo && quest.status === "review" && (
+            <PixelButton
+              variant="ghost"
+              size="lg"
+              className="w-full py-6 cursor-not-allowed opacity-80"
+              disabled
+            >
+              {t("questWorkspace.actions.waitingReview")}
             </PixelButton>
           )}
         </div>

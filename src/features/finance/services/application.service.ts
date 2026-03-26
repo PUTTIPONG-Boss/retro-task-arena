@@ -26,8 +26,8 @@ export interface MyBid {
 }
 
 export async function getMyApplications(): Promise<TaskApplication[]> {
-  const response = await apiClient.get("/user/applications");
-  return response.data;
+  const response = await apiClient.get<{ message: string; data: TaskApplication[] | null }>("/user/applications");
+  return response.data?.data || [];
 }
 
 export async function getMyBids(): Promise<MyBid[]> {
@@ -36,14 +36,14 @@ export async function getMyBids(): Promise<MyBid[]> {
   if (!data || !Array.isArray(data)) return [];
   // Map PascalCase backend response to camelCase
   return data.map((b: any) => ({
-    id: b.ID ?? b.id,
-    taskId: b.TaskID ?? b.taskId,
-    userId: b.UserID ?? b.userId,
-    bidAmount: b.BidAmount ?? b.bidAmount ?? 0,
-    waitDuration: b.WaitDuration ?? b.waitDuration ?? "",
-    note: b.Note ?? b.note ?? "",
-    status: b.Status ?? b.status ?? "PENDING",
-    createdAt: b.CreatedAt ?? b.createdAt ?? "",
-    taskTitle: b.TaskTitle ?? b.taskTitle ?? "Unknown Quest",
+    id: b.id || b.ID,
+    taskId: b.taskId || b.TaskID,
+    userId: b.userId || b.UserID,
+    bidAmount: b.bidAmount ?? b.BidAmount ?? 0,
+    waitDuration: b.waitDuration || b.WaitDuration || "",
+    note: b.note || b.Note || "",
+    status: b.status || b.Status || "PENDING",
+    createdAt: b.createdAt || b.CreatedAt || "",
+    taskTitle: b.taskTitle || b.TaskTitle || "Unknown Quest",
   }));
 }

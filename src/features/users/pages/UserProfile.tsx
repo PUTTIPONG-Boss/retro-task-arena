@@ -242,7 +242,7 @@ const UserProfile = () => {
           {isSeniorOrEmployer(user.role) && (
             <PixelFrame className="mb-6">
               <h2
-                className={`font-pixel text-foreground pixel-text-shadow ${fontClass} flex items-center gap-2`}
+                className={`font-pixel mb-3 text-foreground pixel-text-shadow ${fontClass} flex items-center gap-2`}
               >
                 <Archive size={20} className="text-white" /> {t("userProfile.postQuests")}
               </h2>
@@ -263,7 +263,7 @@ const UserProfile = () => {
                       <Link to={`/quest/${q.id}`} className="flex-1">
                         <div>
                           <p
-                            className={`font-pixel text-[9px] text-foreground group-hover:text-accent transition-colors ${fontClass}`}
+                            className={`font-pixel text-[18px] text-foreground group-hover:text-accent transition-colors ${fontClass}`}
                           >
                             {q.title}
                           </p>
@@ -277,7 +277,7 @@ const UserProfile = () => {
                       <div className={`flex gap-2 font-pixel ${fontClass}`}>
                         <Link to={`/quest/${q.id}/edit`}>
                           <PixelButton variant="gold" size="sm">
-                            {t("userProfile.editPostedQuests")}
+                            <span className="text-[16px]">{t("userProfile.editPostedQuests")}</span>
                           </PixelButton>
                         </Link>
                       </div>
@@ -294,7 +294,7 @@ const UserProfile = () => {
               <h2
                 className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}
               >
-                <PixelTrophy size={20} className="inline-block mr-1 text-yellow-400"/>  {t("userProfile.completedQuests")}
+                <PixelTrophy size={20} className="inline-block mr-1 text-white-400"/>  {t("userProfile.completedQuests")}
               </h2>
               <div className="space-y-3">
                 {completedQuests.map((q) => (
@@ -303,7 +303,7 @@ const UserProfile = () => {
                     className="pixel-border bg-secondary p-3 flex justify-between items-center opacity-70"
                   >
                     <div>
-                      <p className={`text-foreground font-pixel ${fontClass}`}>
+                      <p className={`text-[18px] text-foreground font-pixel ${fontClass}`}>
                         {q.title}
                       </p>
                       <p

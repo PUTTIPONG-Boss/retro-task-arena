@@ -57,7 +57,7 @@ const AddProduct = () => {
 
     createProduct(
       {
-        code: code.trim().toUpperCase(),
+        sku: code.trim().toUpperCase(),
         name: name.trim(),
         description: description.trim(),
         price: parsedPrice,

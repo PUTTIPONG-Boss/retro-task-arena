@@ -12,6 +12,9 @@ const AuthSyncProvider = () => {
   useEffect(() => {
     if (authUser) {
       setUser(authUser);
+    } else {
+      // Clear userStore on logout
+      setUser(null as any);
     }
   }, [authUser, setUser]);
 
