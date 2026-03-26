@@ -1,42 +1,31 @@
 import React, { useState } from "react";
-// เปิดใช้งาน Custom Components ของโปรเจกต์
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelFrame from "@/components/PixelFrame";
-
-// 1. กำหนด Type สำหรับข้อมูล Junior
-interface JuniorUser {
-  id: string;
-  username: string;
-  email: string;
-  level: number;
-  status: "Active" | "Suspended" | "Pending";
-}
-
-// 2. Mock Data (จำลองข้อมูลจาก Database สำหรับ Junior)
-const initialJuniors: JuniorUser[] = [
-  { id: "JUN-001", username: "CodeNovice", email: "novice@guild.com", level: 5, status: "Active" },
-  { id: "JUN-002", username: "PixelApprentice", email: "apprentice@guild.com", level: 8, status: "Active" },
-  { id: "JUN-003", username: "BugHunter_99", email: "bughunter@guild.com", level: 2, status: "Pending" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { getAllUsers } from "../services/admin.service";
 
 const ManageJunior = () => {
-  const [juniors, setJuniors] = useState<JuniorUser[]>(initialJuniors);
+  const { data: allUsers, isLoading } = useQuery({
+    queryKey: ["admin", "users"],
+    queryFn: getAllUsers,
+  });
+
+  const juniors = allUsers?.filter(u => u.role?.toUpperCase().includes("JUNIOR")) || [];
   
   // State สำหรับจัดการ Modal การแก้ไข
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentEdit, setCurrentEdit] = useState<JuniorUser | null>(null);
+  const [currentEdit, setCurrentEdit] = useState<any | null>(null);
 
   // --- ฟังก์ชัน Delete ---
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this junior?")) {
       // TODO: ใส่โค้ดเรียก API ลบข้อมูลตรงนี้
-      setJuniors(juniors.filter((junior) => junior.id !== id));
     }
   };
 
   // --- ฟังก์ชันเปิดหน้าต่าง Edit ---
-  const openEditModal = (junior: JuniorUser) => {
+  const openEditModal = (junior: any) => {
     setCurrentEdit(junior);
     setIsEditModalOpen(true);
   };
@@ -47,14 +36,11 @@ const ManageJunior = () => {
     if (!currentEdit) return;
 
     // TODO: ใส่โค้ดเรียก API อัปเดตข้อมูลตรงนี้
-    setJuniors(
-      juniors.map((junior) =>
-        junior.id === currentEdit.id ? currentEdit : junior
-      )
-    );
     setIsEditModalOpen(false);
     setCurrentEdit(null);
   };
+
+  if (isLoading) return <div className="p-6 font-pixel text-accent">Loading Juniors...</div>;
 
   return (
     <div className="p-6 max-w-6xl mx-auto text-foreground font-pixel">
@@ -70,8 +56,8 @@ const ManageJunior = () => {
               <th className="p-3">ID</th>
               <th className="p-3">Username</th>
               <th className="p-3">Email</th>
-              <th className="p-3 text-center">Level</th>
-              <th className="p-3 text-center">Status</th>
+              <th className="p-3 text-center">Quests</th>
+              <th className="p-3 text-center">Role</th>
               <th className="p-3 text-center">Actions</th>
             </tr>
           </thead>
@@ -85,21 +71,13 @@ const ManageJunior = () => {
             ) : (
               juniors.map((junior) => (
                 <tr key={junior.id} className="border-b border-[#333]/30 hover:bg-white/5 transition-colors">
-                  <td className="p-3 text-muted-foreground text-sm">{junior.id}</td>
+                  <td className="p-3 text-muted-foreground text-sm">{junior.id.substring(0, 8)}...</td>
                   <td className="p-3 text-foreground text-sm">{junior.username}</td>
                   <td className="p-3 text-muted-foreground text-sm">{junior.email}</td>
-                  <td className="p-3 text-center text-accent text-sm">{junior.level}</td>
+                  <td className="p-3 text-center text-accent text-sm">{junior.questsCompleted}</td>
                   <td className="p-3 text-center">
-                    <span
-                      className={`px-2 py-1 text-[10px] uppercase tracking-wider ${
-                        junior.status === "Active"
-                          ? "bg-green-900/50 text-green-400 border border-green-800"
-                          : junior.status === "Suspended"
-                          ? "bg-red-900/50 text-red-400 border border-red-800"
-                          : "bg-yellow-900/50 text-yellow-400 border border-yellow-800"
-                      }`}
-                    >
-                      {junior.status}
+                    <span className="px-2 py-1 text-[10px] uppercase tracking-wider bg-green-900/50 text-green-400 border border-green-800">
+                      {junior.role}
                     </span>
                   </td>
                   <td className="p-3 flex justify-center gap-2">
@@ -130,8 +108,6 @@ const ManageJunior = () => {
       {/* --- ส่วน Modal สำหรับ Edit ข้อมูล --- */}
       {isEditModalOpen && currentEdit && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          
-          {/* กรอบ Modal */}
           <PixelFrame variant="dark" className="relative p-8 w-full max-w-md">
             <h2 className="text-xl text-accent mb-6 pixel-text-shadow text-center">
               Edit Junior Profile
@@ -160,26 +136,13 @@ const ManageJunior = () => {
 
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <label className="block text-[10px] text-muted-foreground mb-2 uppercase">Level</label>
+                  <label className="block text-[10px] text-muted-foreground mb-2 uppercase">Quests Completed</label>
                   <PixelInput
                     type="number"
-                    value={currentEdit.level}
-                    onChange={(e) => setCurrentEdit({ ...currentEdit, level: Number(e.target.value) })}
+                    value={currentEdit.questsCompleted}
+                    onChange={(e) => setCurrentEdit({ ...currentEdit, questsCompleted: Number(e.target.value) })}
                     required
                   />
-                </div>
-                
-                <div className="flex-1">
-                  <label className="block text-[10px] text-muted-foreground mb-2 uppercase">Status</label>
-                  <select
-                    value={currentEdit.status}
-                    onChange={(e) => setCurrentEdit({ ...currentEdit, status: e.target.value as JuniorUser["status"] })}
-                    className="w-full bg-[#0a0a0a] border-2 border-[#333] p-2 text-foreground focus:border-accent outline-none font-pixel text-sm h-[42px]"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Suspended">Suspended</option>
-                  </select>
                 </div>
               </div>
 
@@ -204,7 +167,6 @@ const ManageJunior = () => {
               </div>
             </form>
           </PixelFrame>
-          
         </div>
       )}
     </div>

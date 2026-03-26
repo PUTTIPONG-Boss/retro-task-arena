@@ -9,6 +9,7 @@ import PixelStore from "@/components/icons/PixelStore";
 import PixelUser from "@/components/icons/PixelUser";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
+import PixelSword from "@/components/icons/PixelSword";
 
 const Navbar = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const Navbar = () => {
   if (!user) return null;
 
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[18px]";
+  const isAdmin = user.role === "ADMIN";
 
   const toggleLanguage = () => {
     playPageTurnSound();
@@ -36,6 +38,11 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
+    ...(isAdmin ? [{ 
+      to: "/manage/quest", 
+      label: "ADMIN PANEL", 
+      icon: <PixelSword size={20} bladeColor="#ff5555" hiltColor="#440000" guardColor="#aa0000" /> 
+    }] : []),
     { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: <PixelStore className="text-yellow-400" size={20} /> },
     { to: "/profile", label: t("navbar.profile", "Profile"), icon: <PixelUser className="text-yellow-400" size={20} /> },
   ];

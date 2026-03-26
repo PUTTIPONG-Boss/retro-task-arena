@@ -29,15 +29,21 @@ const makeParticles = (count: number) =>
   }));
 
 const LoginPage = () => {
-  const { isAuthenticated, isLoading, loginWithOneID, login, mockLogin, mockSeniorLogin, mockAdminLogin } = useAuth();
+  const { isAuthenticated, user, isLoading, loginWithOneID, login, mockLogin, mockSeniorLogin, mockAdminLogin } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/", { replace: true });
-  }, [isAuthenticated, navigate]);
+    if (isAuthenticated && user) {
+      if (user.role === "admin" || user.role === "ADMIN") {
+        navigate("/manage/quest", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const stars = useMemo(() => makeStars(40), []);
   const particles = useMemo(() => makeParticles(14), []);

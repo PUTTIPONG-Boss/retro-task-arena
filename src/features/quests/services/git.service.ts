@@ -1,150 +1,130 @@
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type GitPlatform = 'gitlab' | 'github' | 'unknown';
 
-export interface RepoInfo {
-  platform: GitPlatform;
-  owner: string;
-  repo: string;
-  projectId?: string; // For GitLab encoded path
-}
-
 export interface GitTreeItem {
-  id: string;
+  id: string;     // maps from path (used as key)
   name: string;
   type: 'tree' | 'blob';
   path: string;
   mode?: string;
 }
 
-export const parseRepoUrl = (url: string): RepoInfo => {
-  try {
-    const uri = new URL(url);
-    const parts = uri.pathname.split('/').filter(Boolean);
+// Response shapes from backend
+interface BackendGitFile {
+  name: string;
+  path: string;
+  type: string;      // "file" | "dir"
+  size: number;
+  htmlUrl: string;
+  downloadUrl: string;
+}
 
-    if (uri.hostname.includes('gitlab.com')) {
-      // GitLab can have nested groups: /group/subgroup/repo
-      const cleanPath = uri.pathname.replace(/\.git$/, '').replace(/^\//, '');
-      const parts = cleanPath.split('/');
-      return {
-        platform: 'gitlab',
-        owner: parts[0],
-        repo: parts[parts.length - 1],
-        projectId: encodeURIComponent(cleanPath),
-      };
-    }
-    
-    if (uri.hostname.includes('github.com')) {
-      const cleanPath = uri.pathname.replace(/\.git$/, '').replace(/^\//, '');
-      const parts = cleanPath.split('/');
-      return {
-        platform: 'github',
-        owner: parts[0],
-        repo: parts[parts.length - 1],
-      };
-    }
+interface BackendGitTree {
+  repoInfo: {
+    provider: string;
+    owner: string;
+    repo: string;
+    branch: string;
+    url: string;
+  };
+  files: BackendGitFile[];
+  total: number;
+}
 
-    return { platform: 'unknown', owner: '', repo: '' };
-  } catch (e) {
-    return { platform: 'unknown', owner: '', repo: '' };
-  }
-};
+interface BackendGitFileContent {
+  path: string;
+  content: string;
+}
 
-const GITLAB_BASE = 'https://gitlab.com/api/v4';
-const GITHUB_BASE = 'https://api.github.com';
+// ─── Hooks ────────────────────────────────────────────────────────────────────
 
+/**
+ * Fetches the full recursive file tree for a repo via the backend.
+ * Backend: GET /v1/gitapi/repo?git_repo_url=...&branch=...
+ *
+ * Note: The old frontend version fetched per-directory (non-recursive),
+ * using path as a filter. The backend returns ALL files recursively.
+ * We filter by path prefix on the client so the FileTree component still works.
+ */
 export const useGetRepoTree = (url: string | undefined, path = '', ref = 'main') => {
-  const info = url ? parseRepoUrl(url) : null;
-
   return useQuery({
     queryKey: ['git-tree', url, path, ref],
-    enabled: !!info && info.platform !== 'unknown',
+    enabled: !!url,
     queryFn: async (): Promise<GitTreeItem[]> => {
-      if (!info) return [];
+      if (!url) return [];
 
-      if (info.platform === 'gitlab') {
-        const res = await axios.get(`${GITLAB_BASE}/projects/${info.projectId}/repository/tree`, {
-          params: { path, ref, per_page: 100 }
-        });
-        return res.data.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          type: item.type === 'tree' ? 'tree' : 'blob',
-          path: item.path,
-        }));
-      }
+      const res = await apiClient.get<BackendGitTree>('/gitapi/repo', {
+        params: {
+          git_repo_url: url,
+          branch: ref,
+        },
+      });
 
-      if (info.platform === 'github') {
-        const res = await axios.get(`${GITHUB_BASE}/repos/${info.owner}/${info.repo}/contents/${path}`, {
-          params: { ref }
-        });
-        // GitHub returns an array or an object if a single file
-        const data = Array.isArray(res.data) ? res.data : [res.data];
-        return data.map((item: any) => ({
-          id: item.sha,
-          name: item.name,
-          type: item.type === 'dir' ? 'tree' : 'blob',
-          path: item.path,
-        }));
-      }
+      const allFiles = res.data.files;
 
-      return [];
+      // Filter to only show items at the current directory level (path prefix match)
+      const items = allFiles.filter((file) => {
+        if (path === '') {
+          // Root level: no slash in path
+          return !file.path.includes('/');
+        }
+        // Subdirectory: starts with path/ but has no further slashes
+        if (!file.path.startsWith(path + '/')) return false;
+        const remainder = file.path.slice(path.length + 1);
+        return !remainder.includes('/');
+      });
+
+      return items.map((file) => ({
+        id: file.path,
+        name: file.name,
+        type: file.type === 'dir' ? 'tree' : 'blob',
+        path: file.path,
+      }));
     },
+    staleTime: 1000 * 60 * 5, // cache 5 minutes
     retry: false,
   });
 };
 
+/**
+ * Fetches the raw content of a file via the backend.
+ * Backend: GET /v1/gitapi/file?git_repo_url=...&branch=...&path=...
+ */
 export const useGetFileContent = (url: string | undefined, path: string, ref = 'main') => {
-  const info = url ? parseRepoUrl(url) : null;
-
   return useQuery({
     queryKey: ['git-content', url, path, ref],
-    enabled: !!info && !!path && info.platform !== 'unknown',
+    enabled: !!url && !!path,
     queryFn: async (): Promise<string> => {
-      if (!info) return '';
+      if (!url || !path) return '';
 
-      if (info.platform === 'gitlab') {
-        const encodedPath = encodeURIComponent(path);
-        const res = await axios.get(`${GITLAB_BASE}/projects/${info.projectId}/repository/files/${encodedPath}/raw`, {
-          params: { ref }
-        });
-        return typeof res.data === 'string' ? res.data : JSON.stringify(res.data, null, 2);
-      }
+      const res = await apiClient.get<BackendGitFileContent>('/gitapi/file', {
+        params: {
+          git_repo_url: url,
+          branch: ref,
+          path: path,
+        },
+      });
 
-      if (info.platform === 'github') {
-        const res = await axios.get(`${GITHUB_BASE}/repos/${info.owner}/${info.repo}/contents/${path}`, {
-          params: { ref },
-          headers: { Accept: 'application/vnd.github.v3.raw' }
-        });
-        return typeof res.data === 'string' ? res.data : JSON.stringify(res.data, null, 2);
-      }
-
-      return '';
+      return res.data.content;
     },
     retry: false,
   });
 };
 
+/**
+ * Fetches repo metadata. Currently not used in any component.
+ * Kept for future use – still calls external API directly (no sensitive data).
+ */
 export const useGetRepoMetadata = (url: string | undefined) => {
-  const info = url ? parseRepoUrl(url) : null;
-
   return useQuery({
     queryKey: ['git-meta', url],
-    enabled: !!info && info.platform !== 'unknown',
+    enabled: !!url,
     queryFn: async () => {
-      if (!info) return null;
-
-      if (info.platform === 'gitlab') {
-        const res = await axios.get(`${GITLAB_BASE}/projects/${info.projectId}`);
-        return res.data;
-      }
-
-      if (info.platform === 'github') {
-        const res = await axios.get(`${GITHUB_BASE}/repos/${info.owner}/${info.repo}`);
-        return res.data;
-      }
-
+      // TODO: Move to backend when needed
       return null;
     },
     retry: false,
