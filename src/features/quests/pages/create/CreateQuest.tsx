@@ -103,14 +103,14 @@ const CreateQuest = () => {
     createQuest(newQuest, {
       onSuccess: () => {
         toast.success(t("createQuest.successMsg"), {
-          style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
         });
         navigate("/");
       },
       onError: (error) => {
         console.error("Failed to post quest:", error);
         toast.error("Failed to post the quest. Ensure the API is running.", {
-          style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
         });
       },
     });

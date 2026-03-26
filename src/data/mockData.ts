@@ -1,51 +1,5 @@
-export interface Quest {
-  id: string;
-  title: string;
-  description: string;
-  fullDescription: string;
-  rewardPoints: number;
-  difficulty: number; // 1-5
-  estimatedTime: string;
-  category: string;
-  status: "open" | "bidding" | "in-progress" | "review" | "completed";
-  providerId: string;
-  providerName: string;
-  repoUrl?: string;
-  branchName?: string;
-  contact?: {
-    discord?: string;
-    line?: string;
-    email?: string;
-  };
-  bids: Bid[];
-  assignedTo?: string;
-}
-
-export interface Bid {
-  id: string;
-  oderId: string;
-  userId: string;
-  username: string;
-  githubUrl: string;
-  questsCompleted: number;
-  rating: number;
-  requestedPoints: number;
-  estimatedTime: string;
-  explanation: string;
-  avatarSeed: number;
-}
-
-export interface RewardItem {
-  id: string;
-  name: string;
-  description: string;
-  cost: number;
-  category: "digital" | "voucher" | "perk";
-  icon: string;
-  stock: number;
-}
-
 import { UserProfile } from "@/features/users/types";
+import { Quest, Bid, RewardItem } from "@/features/quests/types"; // Import from types
 
 export const mockUser: UserProfile = {
   id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6", // Valid UUID format required by Go Backend
@@ -140,7 +94,7 @@ export const mockQuests: Quest[] = [
     bids: [
       {
         id: "b4",
-        oderId: "q3",
+        taskId: "q3",
         userId: "user-5",
         username: "MysticCoder_9",
         githubUrl: "https://github.com/mysticcoder9",

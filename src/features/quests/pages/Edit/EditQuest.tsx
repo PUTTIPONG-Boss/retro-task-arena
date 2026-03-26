@@ -95,7 +95,7 @@ const EditQuest = () => {
     }
 
     toast.success(t("editQuest.successMsg"), {
-      style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+      style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
     });
     
     navigate(`/quest/${quest.id}`);

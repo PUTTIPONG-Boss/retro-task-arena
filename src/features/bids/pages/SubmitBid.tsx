@@ -32,7 +32,7 @@ const SubmitBid = () => {
     }
     addBid(quest.id, {
       id: `b-${Date.now()}`,
-      oderId: quest.id,
+      taskId: quest.id,
       userId: user.id,
       username: user.username,
       githubUrl: github || user.githubUrl,
@@ -44,7 +44,7 @@ const SubmitBid = () => {
       avatarSeed: Math.floor(Math.random() * 100),
     });
     toast.success("Bid submitted! May fortune favor your quest.", {
-      style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+      style: { fontFamily: '"TA_8bit"', fontSize: "10px" },
     });
     navigate(`/quest/${quest.id}`);
   };

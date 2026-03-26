@@ -5,14 +5,29 @@ export interface Bid {
   taskId: string;
   userId: string;
   username: string;
+  githubUrl: string;
   questsCompleted: number;
-  totalPointsEarned: number;
   rating: number;
-  bidAmount: number;
-  waitDuration: string;
-  note: string;
-  status: "PENDING" | "ACCEPTED" | "REJECTED";
-  createdAt: string;
+  requestedPoints: number;
+  estimatedTime: string;
+  explanation: string;
+  avatarSeed?: number;
+  totalPointsEarned?: number;
+  bidAmount?: number;
+  waitDuration?: string;
+  note?: string;
+  status?: "PENDING" | "ACCEPTED" | "REJECTED" | string;
+  createdAt?: string;
+}
+
+export interface RewardItem {
+  id: string;
+  name: string;
+  description: string;
+  cost: number;
+  category: "digital" | "voucher" | "perk";
+  icon: string;
+  stock: number;
 }
 
 export interface SubmitBidPayload {
