@@ -16,7 +16,7 @@ const AdminSidebar = () => {
 
   return (
     <aside className="w-64 h-full flex-shrink-0 bg-[#121212] border-r-4 border-[#333] flex flex-col font-pixel">
-      
+
       {/* --- ส่วนหัว Sidebar --- */}
       <div className="p-6 text-center border-b-4 border-[#333] bg-[#1a1a1b]">
         <h2 className="text-xl text-accent pixel-text-shadow mb-1">
@@ -24,20 +24,21 @@ const AdminSidebar = () => {
         </h2>
       </div>
 
-      {/* --- ส่วนรายการเมนู --- */}
-      <nav className="flex-1 p-4 space-y-3 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {adminMenus.map((menu) => {
           // ตรวจสอบว่าหน้าปัจจุบันตรงกับ path ของเมนูหรือไม่
-          const isActive = location.pathname.includes(menu.path);
+          // Use strict equality for the root path to avoid it always being active
+          const isActive = menu.path === "/"
+            ? location.pathname === "/"
+            : location.pathname.startsWith(menu.path);
 
           return (
-            <Link key={menu.name} to={menu.path} className="block">
+            <Link key={menu.name} to={menu.path} className="block group">
               <div
-                className={`px-4 py-3 border-2 transition-all duration-200 text-sm ${
-                  isActive
-                    ? "bg-accent/10 border-accent text-accent translate-x-1" // สไตล์ตอน Active (ถูกเลือก)
-                    : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white" // สไตล์ตอนปกติ
-                }`}
+                className={`px-4 py-3 border-2 transition-all duration-200 text-xs tracking-widest font-pixel ${isActive
+                    ? "bg-accent/20 border-accent text-accent translate-x-1 shadow-[4px_4px_0px_0px_rgba(251,191,36,0.2)]"
+                    : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white group-hover:translate-x-1"
+                  }`}
               >
                 {menu.name}
               </div>
@@ -57,7 +58,7 @@ const AdminSidebar = () => {
           🚪 LOGOUT
         </PixelButton>
       </div>
-      
+
     </aside>
   );
 };

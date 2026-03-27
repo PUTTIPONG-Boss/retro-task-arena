@@ -6,6 +6,8 @@ export interface Transaction {
   amount: number;
   transactionType: string;
   referenceId: string;
+  description?: string;
+  orderId?: string;
   createdAt: string;
 }
 

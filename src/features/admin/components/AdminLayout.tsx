@@ -1,17 +1,21 @@
-// src/features/admin/components/AdminLayout.tsx
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
+import Navbar from "@/components/Navbar";
+import PointsAnimation from "@/features/users/components/PointsAnimation";
 
 const AdminLayout = () => {
   return (
-    <div className="flex min-h-screen bg-background text-foreground font-pixel">
-      {/* Sidebar จะอยู่ทางซ้ายเสมอ */}
-      <AdminSidebar />
-
-      {/* เนื้อหาฝั่งขวาจะเปลี่ยนไปตาม URL ที่คลิก (ผ่าน <Outlet />) */}
-      <main className="flex-1 p-6 overflow-y-auto">
-        <Outlet /> 
-      </main>
+    <div className="relative z-10 h-screen flex flex-col bg-background font-pixel">
+      <PointsAnimation />
+      <Navbar />
+      
+      <div className="flex flex-1 overflow-hidden relative">
+        <AdminSidebar />
+        
+        <main className="flex-1 h-full overflow-y-auto w-full relative z-10 p-6">
+          <Outlet /> 
+        </main>
+      </div>
     </div>
   );
 };
