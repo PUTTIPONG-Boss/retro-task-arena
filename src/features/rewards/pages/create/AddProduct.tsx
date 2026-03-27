@@ -25,6 +25,7 @@ const AddProduct = () => {
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
 
@@ -36,7 +37,7 @@ const AddProduct = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!code.trim() || !name.trim() || !description.trim() || !price || !stock) {
+    if (!code.trim() || !name.trim() || !description.trim() || !category.trim() || !price || !stock) {
       toast.error("Please fill in all required fields.", {
         style: { fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]" },
       });
@@ -60,6 +61,7 @@ const AddProduct = () => {
         sku: code.trim().toUpperCase(),
         name: name.trim(),
         description: description.trim(),
+        category: category.trim(),
         price: parsedPrice,
         stock: parsedStock,
       },
@@ -140,6 +142,19 @@ const AddProduct = () => {
               placeholder={t("createReward.placeholders.description")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className={`font-pixel ${fontClass}`}
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createReward.labels.category")}
+            </label>
+            <PixelInput
+              placeholder={t("createReward.placeholders.category")}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               className={`font-pixel ${fontClass}`}
             />
           </div>

@@ -40,7 +40,7 @@ const Navbar = () => {
     { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
     ...(isAdmin ? [{ 
       to: "/manage/quest", 
-      label: "ADMIN PANEL", 
+      label: t("navbar.admin"), 
       icon: <PixelSword size={20} bladeColor="#ff5555" hiltColor="#440000" guardColor="#aa0000" /> 
     }] : []),
     { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: <PixelStore className="text-yellow-400" size={20} /> },

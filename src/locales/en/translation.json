@@ -3,7 +3,8 @@
     "quest_board": "Quest Board",
     "post_quest": "Post Quest",
     "reward_shop": "Reward Shop",
-    "profile": "Profile"
+    "profile": "Profile",
+    "admin": "ADMIN PANEL"
   },
   "questBoard": {
     "title": "Inet Quest Board",
@@ -204,6 +205,7 @@
       "code": "Product Code",
       "name": "Product Name",
       "description": "Description",
+      "category": "Category",
       "price": "Price (GP)",
       "stock": "Stock"
     },
@@ -211,6 +213,7 @@
       "code": "e.g. PROD-2026-001",
       "name": "e.g. Mechanical Keyboard G3",
       "description": "RGB Backlit, Blue Switches, Wireless 2.4GHz...",
+      "category": "e.g. Electronics",
       "price": "2500",
       "stock": "50"
     },
@@ -224,5 +227,70 @@
   "rewardBanner": {
     "marquee": "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦",
     "description": "Trade your hard-earned gold for items."
+  },
+  "admin": {
+    "juniorpage": {
+      "manage": "Manage Juniors",
+      "id": "ID",
+      "username": "Username",
+      "email": "Email",
+      "quests": "Quests",
+      "role": "Role",
+      "loading": "Loading Juniors...",
+      "notfoundjunior": "No Juniors found in the system."
+    },
+    "seniorpage": {
+      "manage": "Manage Seniors",
+      "id": "ID",
+      "username": "Username",
+      "email": "Email",
+      "quests": "Quests",
+      "role": "Role",
+      "loading": "Loading Seniors...",
+      "notfoundsenior": "No Seniors found in the system."
+    },
+    "questspage": {
+      "manage": "Manage Quests",
+      "id": "Quest ID",
+      "title": "Quest Title",
+      "reward": "Reward",
+      "status": "Status",
+      "action": "Actions",
+      "loading": "Loading Quests...",
+      "notfoundquest": "No Quests found in the system.",
+      "add": "ADD NEW QUEST",
+      "edit": "EDIT",
+      "delete": "DELETE",
+      "desc": "Description",
+      "type": "Type",
+      "diff": "Difficulty",
+      "skills": "Skills",
+      "est": "Estimated Time",
+      "repo": "Git Repo URL",
+      "branch": "Branch Name",
+      "cancel": "CANCEL",
+      "save": "SAVE CHANGES",
+      "employer": "Employer"
+    },
+    "rewardspage": {
+      "manage": "Manage Rewards",
+      "id": "Reward ID",
+      "title": "Item Name",
+      "cost": "Cost",
+      "stock": "Stock",
+      "action": "Actions",
+      "loading": "Loading Rewards...",
+      "notfoundquest": "No Rewards found in the system.",
+      "add": "ADD NEW REWARD",
+      "edit": "EDIT",
+      "delete": "DELETE",
+      "pts": "point",
+      "stockout": "Out of Stock",
+      "desc": "Description",
+      "category": "Category",
+      "cancel": "CANCEL",
+      "save": "SAVE CHANGES",
+      "alert": "Are you sure you want to delete this reward item?"
+    }
   }
 }

@@ -103,7 +103,7 @@ const EditQuest = () => {
 
   return (
     <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
-      <PixelButton variant="ghost" size="sm" className={`mb-6 font-pixel ${fontClass}`} onClick={() => navigate(`/quest/${quest.id}`)}>
+      <PixelButton variant="ghost" size="sm" className={`mb-6 font-pixel ${fontClass}`} onClick={() => navigate(-1)}>
         ← {t("editQuest.back")}
       </PixelButton>
 

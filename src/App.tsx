@@ -17,7 +17,7 @@ import QuestBoard from "@/features/quests/pages/QuestBoard";
 import QuestDetail from "@/features/quests/pages/QuestDetail";
 import QuestWorkspace from "@/features/quests/pages/QuestWorkspace";
 import CreateQuest from "@/features/quests/pages/create/CreateQuest";
-import EditQuest from "@/features/quests/pages/Edit/EditQuest";
+import EditQuest from "@/features/quests/pages/edit/EditQuest";
 import SubmitBid from "@/features/bids/pages/SubmitBid";
 import ProviderBids from "@/features/bids/pages/ProviderBids";
 import RewardShop from "@/features/rewards/pages/RewardShop";

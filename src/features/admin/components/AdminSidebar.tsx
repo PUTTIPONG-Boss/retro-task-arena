@@ -1,10 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import PixelButton from "@/components/PixelButton";
 
 const AdminSidebar = () => {
+  const { i18n } = useTranslation();
   const location = useLocation();
-  const { logout } = useAuth(); // ดึงฟังก์ชัน logout มาใช้
+  const { logout } = useAuth();
+
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   // รายการเมนูสำหรับ Admin
   const adminMenus = [
@@ -35,7 +39,7 @@ const AdminSidebar = () => {
           return (
             <Link key={menu.name} to={menu.path} className="block group">
               <div
-                className={`px-4 py-3 border-2 transition-all duration-200 text-xs tracking-widest font-pixel ${isActive
+                className={`px-4 py-3 border-2 transition-all duration-200 tracking-widest font-pixel ${fontClass} ${isActive
                     ? "bg-accent/20 border-accent text-accent translate-x-1 shadow-[4px_4px_0px_0px_rgba(251,191,36,0.2)]"
                     : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white group-hover:translate-x-1"
                   }`}
@@ -52,7 +56,7 @@ const AdminSidebar = () => {
         <PixelButton
           variant="ghost"
           size="md"
-          className="w-full text-red-500 hover:text-red-400 hover:bg-red-900/20 text-xs tracking-wider"
+          className={`w-full text-red-500 hover:text-red-400 hover:bg-red-900/20 tracking-wider ${fontClass}`}
           onClick={logout}
         >
           🚪 LOGOUT
