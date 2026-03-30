@@ -51,7 +51,7 @@ const UserProfile = () => {
           <ProfileHeader user={user} />
           <ProfileStats user={user} />
           <ProfileSkills skills={user.skills} />
-          <ProfileLinks githubUrl={user.githubUrl} />
+          <ProfileLinks githubUrl={user.github} />
           <QuestsTab user={user} quests={quests} />
         </>
       )}

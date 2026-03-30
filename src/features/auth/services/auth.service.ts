@@ -18,13 +18,27 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * Initiates OneID OAuth flow.
  * Future: POST /auth/oauth/oneid
  */
-export async function loginWithOneID(): Promise<OAuthTokenResponse> {
-  await delay(MOCK_DELAY);
+export async function loginWithOneID(username: string, password: string): Promise<OAuthTokenResponse> {
+  // Step 1: Login — backend set HttpOnly Cookie อัตโนมัติ
+  await apiClient.post("/user/login", { username, password }, { withCredentials: true });
 
-  // Simulate OAuth redirect → callback → token exchange
+  // Step 2: ดึง profile — ส่ง cookie ไปด้วย
+  const userResponse = await apiClient.get("/user/me", { withCredentials: true });
+  const userData = userResponse.data;
+
   return {
-    access_token: "mock_access_token_" + Date.now(),
-    user: { ...mockUser, role: "adventurer" },
+    access_token: "",
+    user: {
+      ...mockUser,
+      ...userData,
+      id: userData.userId || userData.id,
+      username: userData.username,
+      points: userData.points || 0,
+      role: userData.role || "adventurer",
+      skills: userData.skills ? userData.skills.split(",") : [],
+      questsCompleted: userData.questsCompleted || 0,
+      rating: userData.rating || 5.0,
+    },
   };
 }
 

@@ -16,17 +16,23 @@ const ProfileLinks: React.FC<ProfileLinksProps> = ({ githubUrl }) => {
       <h2
         className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
       >
-        <Github size={20} className="text-white"></Github>
+        <Github size={20} className="text-yellow-400"></Github>
         {t("userProfile.links")}
       </h2>
-      <a
-        href={githubUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`text-accent hover:text-gray-300 font-pixel ${fontClass} transition-colors`}
-      >
-        {githubUrl}
-      </a>
+      {githubUrl ? (
+        <a
+          href={githubUrl.startsWith("http") ? githubUrl : `https://${githubUrl}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`text-accent hover:text-gray-300 font-pixel ${fontClass} transition-colors break-all`}
+        >
+          {githubUrl}
+        </a>
+      ) : (
+        <p className={`text-muted-foreground font-pixel ${fontClass}`}>
+          {t("userProfile.noGithub")}
+        </p>
+      )}
     </PixelFrame>
   );
 };

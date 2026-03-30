@@ -7,6 +7,7 @@ import GuildBanner from "@/features/quests/components/GuildBanner";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
+import { isSeniorOrEmployer } from "@/features/users/utils/roleUtils";
 import { ListFilter, X } from "lucide-react";
 import PixelSearch from "@/components/icons/PixelSearch";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
@@ -45,12 +46,8 @@ const QuestBoard = () => {
   }, []);
 
   const categories = ["all", "frontend", "backend", "BUG FIX", "FEATURE"];
-  const statuses = ["active", "in-progress", "completed", "all"];
-  const isSeniorOrEmployer = () => {
-    if (!user) return false;
-    const r = user.role.toLowerCase();
-    return r.includes("senior") || r === "employer";
-  };
+  const statuses = ["active", "in_progress", "completed", "all"];
+  const isSeniorOrEmployerUser = isSeniorOrEmployer(user?.role || "");
 
   const filtered = quests.filter((q) => {
     const catMatch =
@@ -60,7 +57,7 @@ const QuestBoard = () => {
         ? true
         : statusFilter === "active"
           ? (q.status === "open" || q.status === "bidding")
-          : q.status === statusFilter;
+          : q.status === (statusFilter === "in_progress" ? "in-progress" : statusFilter);
     const searchMatch =
       searchQuery.trim() === "" ||
       q.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -185,7 +182,7 @@ const QuestBoard = () => {
 
         {/* Post Quest & Result Count */}
         <div className="mb-6 flex justify-between items-end">
-          {isSeniorOrEmployer() ? (
+          {isSeniorOrEmployerUser ? (
             <Link to="/create-quest">
               <PixelButton
                 variant="gold"

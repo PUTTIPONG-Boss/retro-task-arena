@@ -11,7 +11,7 @@ const ManageQuest = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
 
   const { data: quests, isLoading } = useQuery({
     queryKey: ["admin", "quests"],
@@ -31,6 +31,13 @@ const ManageQuest = () => {
     return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
+  const getStatusKey = (status: string) => {
+    const s = status?.toLowerCase();
+    if (s === "review") return "in_review";
+    if (s === "in-progress") return "in_progress";
+    return s;
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "open": return "bg-green-900/50 text-green-400 border border-green-800";
@@ -45,12 +52,12 @@ const ManageQuest = () => {
   if (isLoading) return <div className={`p-6 font-pixel text-accent ${fontClass}`}>{t("admin.questspage.loading")}</div>;
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto text-foreground font-pixel">
+    <div className={`p-6 max-w-[1400px] mx-auto text-foreground font-pixel ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 ">
         <h1 className="text-2xl font-bold text-accent pixel-text-shadow">📜 {t("admin.questspage.manage")}</h1>
-        <PixelButton 
-          variant="gold" 
-          size="md" 
+        <PixelButton
+          variant="gold"
+          size="md"
           className={fontClass}
           onClick={() => navigate("/create-quest")}>
           {t("admin.questspage.add")}
@@ -58,20 +65,19 @@ const ManageQuest = () => {
       </div>
 
       {/* --- ส่วนตารางแสดงข้อมูล --- */}
-      <PixelFrame variant="dark" className="relative p-6 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[1000px]">
+      <PixelFrame variant="dark" className="relative p-6">
+        <table className="w-full text-left border-collapse table-fixed">
           <thead>
             <tr className={`border-b border-[#333] text-muted-foreground uppercase tracking-wider ${fontClass}`}>
-              <th className="p-3">{t("admin.questspage.id")}</th>
-              <th className="p-3">{t("admin.questspage.title")}</th>
-              <th className="p-3 w-1/4">{t("admin.questspage.desc")}</th>
-              <th className="p-3 text-center">{t("admin.questspage.reward")}</th>
-              <th className="p-3 text-center">{t("admin.questspage.est")}</th>
-              <th className="p-3 text-center">{t("admin.questspage.type")}</th>
-              <th className="p-3 text-center">{t("admin.questspage.skills")}</th>
-              <th className="p-3 text-center">{t("admin.questspage.diff")}</th>
-              <th className="p-3 text-center">{t("admin.questspage.status")}</th>
-              <th className="p-3 text-center">{t("admin.questspage.action")}</th>
+              <th className="p-3 w-[10%]">{t("admin.questspage.id")}</th>
+              <th className="p-3 w-[10%]">{t("admin.questspage.title")}</th>
+              <th className="p-3 w-[16%]">{t("admin.questspage.desc")}</th>
+              <th className="p-3 w-[8%] text-center">{t("admin.questspage.reward")}</th>
+              <th className="p-3 w-[8%] text-center">{t("admin.questspage.est")}</th>
+              <th className="p-3 w-[8%] text-center">{t("admin.questspage.type")}</th>
+              <th className="p-3 w-[8%] text-center">{t("admin.questspage.diff")}</th>
+              <th className="p-3 w-[15%] text-center">{t("admin.questspage.status")}</th>
+              <th className="p-3 w-[17%] text-center">{t("admin.questspage.action")}</th>
             </tr>
           </thead>
           <tbody>
@@ -85,55 +91,61 @@ const ManageQuest = () => {
               quests.map((quest: any) => (
                 <tr key={quest.id} className="border-b border-[#333]/30 hover:bg-white/5 transition-colors">
                   <td className="p-3">
-                    <div className={`font-medium text-foreground ${fontClass}`}>{quest.id}</div>
+                    <div className={`font-medium text-foreground truncate ${fontClass}`} title={quest.id}>{quest.id}</div>
                   </td>
                   <td className="p-3">
-                    <div className={`font-medium text-foreground ${fontClass}`}>{quest.title}</div>
+                    <div className={`font-medium text-foreground truncate ${fontClass}`} title={quest.title}>{quest.title}</div>
                   </td>
                   <td className="p-3">
-                    <div className={`text-muted-foreground mt-1 ${fontClass}`}>
-                      {truncateText(quest.description)}
+                    <div className={`text-muted-foreground truncate ${fontClass}`} title={quest.description}>
+                      {quest.description}
                     </div>
                   </td>
-                  <td className={`p-3 text-center text-yellow-400 font-bold ${fontClass}`}>{quest.point} pts</td>
-                  <td className={`p-3 text-center text-accent ${fontClass}`}>{quest.estimatedTime}</td>
-                  <td className={`p-3 text-center text-muted-foreground ${fontClass}`}>{quest.type}</td>
-                  <td className="p-3 text-center">
-                    <div className={`text-xs text-muted-foreground ${fontClass}`}>
-                      {truncateText(quest.skills)}
+                  <td className={`p-3 text-center text-yellow-400 font-bold truncate ${fontClass}`}>
+                    {quest.point} pts
+                  </td>
+                  <td className={`p-3 text-center text-accent truncate ${fontClass}`}>
+                    {quest.estimatedTime}
+                  </td>
+                  <td className={`p-3 text-center text-muted-foreground truncate ${fontClass}`}>
+                    {quest.type}
+                  </td>
+                  <td className="p-3">
+                    <div className="flex items-center justify-center gap-1">
+                      <span className={`px-2 py-1 border truncate inline-block max-w-full ${quest.difficulty?.toLowerCase() === "easy" || quest.difficulty === "Low" ? "border-green-800 text-green-400 bg-green-900/20" :
+                        quest.difficulty?.toLowerCase() === "medium" || quest.difficulty === "Medium" ? "border-yellow-800 text-yellow-400 bg-yellow-900/20" :
+                          "border-red-800 text-red-400 bg-red-900/20"
+                        } ${i18n.language === "th" ? "text-[18px]" : "text-[16px]"}`}>
+                        {t(`admin.questspage.difficulty_values.${quest.difficulty?.toLowerCase()}`)}
+                      </span>
                     </div>
                   </td>
-                  <td className="p-3 text-center">
-                    <span className={`px-2 py-1 text-xs border ${
-                      quest.difficulty?.toLowerCase() === "easy" || quest.difficulty === "Low" ? "border-green-800 text-green-400 bg-green-900/20" :
-                      quest.difficulty?.toLowerCase() === "medium" || quest.difficulty === "Medium" ? "border-yellow-800 text-yellow-400 bg-yellow-900/20" :
-                      "border-red-800 text-red-400 bg-red-900/20"
-                    } ${fontClass}`}>
-                      {quest.difficulty}
-                    </span>
+                  <td className="p-3">
+                    <div className="flex items-center justify-center gap-1">
+                      <span className={`px-2 py-1 uppercase tracking-wider truncate inline-block max-w-full ${getStatusColor(quest.status)} ${fontClass}`}>
+                        {t(`admin.questspage.status_values.${getStatusKey(quest.status)}`)}
+                      </span>
+                    </div>
                   </td>
-                  <td className="p-3 text-center">
-                    <span className={`px-2 py-1 uppercase tracking-wider ${getStatusColor(quest.status)} ${fontClass}`}>
-                      {quest.status}
-                    </span>
-                  </td>
-                  <td className="p-3 flex justify-center gap-2 mt-1">
-                    <PixelButton
-                      onClick={() => navigate(`/quest/${quest.id}/edit`)}
-                      variant="gold"
-                      size="sm"
-                      className={fontClass}
-                    >
-                      {t("admin.questspage.edit")}
-                    </PixelButton>
-                    <PixelButton
-                      onClick={() => handleDelete(quest.id)}
-                      variant="danger"
-                      size="sm"
-                      className={`text-white-400 hover:text-white-300 ${fontClass}`}
-                    >
-                      {t("admin.questspage.delete")}
-                    </PixelButton>
+                  <td className="p-3">
+                    <div className="flex items-center justify-center gap-1">
+                      <PixelButton
+                        onClick={() => navigate(`/quest/${quest.id}/edit`)}
+                        variant="gold"
+                        size="sm"
+                        className={`${fontClass}`}
+                      >
+                        {t("admin.questspage.edit")}
+                      </PixelButton>
+                      <PixelButton
+                        onClick={() => handleDelete(quest.id)}
+                        variant="danger"
+                        size="sm"
+                        className={`text-white-400 hover:text-white-300 ${fontClass}`}
+                      >
+                        {t("admin.questspage.delete")}
+                      </PixelButton>
+                    </div>
                   </td>
                 </tr>
               ))

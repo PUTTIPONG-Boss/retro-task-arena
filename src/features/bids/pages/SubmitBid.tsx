@@ -39,7 +39,7 @@ const SubmitBid = () => {
       questsCompleted: user.questsCompleted,
       rating: user.rating,
       requestedPoints: parseInt(points) || quest.rewardPoints,
-      estimatedTime: `${time} Cycles`,
+      estimatedTime: `${time}`,
       explanation,
       avatarSeed: Math.floor(Math.random() * 100),
     });
@@ -74,7 +74,7 @@ const SubmitBid = () => {
 
           <div>
             <label className="font-pixel text-[9px] text-foreground block mb-2">Estimated Completion Time</label>
-            <PixelInput placeholder="e.g. 5 Cycles (hours)" value={time} onChange={(e) => setTime(e.target.value)} required />
+            <PixelInput placeholder="e.g. 5 (hours)" value={time} onChange={(e) => setTime(e.target.value)} required />
           </div>
 
           <div>

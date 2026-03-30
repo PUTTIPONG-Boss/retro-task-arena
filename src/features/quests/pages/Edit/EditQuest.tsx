@@ -77,7 +77,7 @@ const EditQuest = () => {
         <PixelFrame>
           <p className={`font-pixel text-foreground pixel-text-shadow ${fontClass}`}>Quest not found...</p>
           <PixelButton variant="danger" size="sm" className={`mt-4 font-pixel ${fontClass}`} 
-            onClick={() => navigate("/")}>
+            onClick={() => navigate(-1)}>
               ← {t("editQuest.back")}
           </PixelButton>
         </PixelFrame>
@@ -101,8 +101,8 @@ const EditQuest = () => {
   };
 
   return (
-    <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}>
-      <PixelButton variant="ghost" size="sm" className={`mb-6 font-pixel ${fontClass}`} onClick={() => navigate(-1)}>
+    <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
+      <PixelButton variant="danger" size="sm" className={`mb-6 font-pixel ${fontClass}`} onClick={() => navigate(-1)}>
         ← {t("editQuest.back")}
       </PixelButton>
 
@@ -154,7 +154,6 @@ const EditQuest = () => {
                   <PixelButton
                     key={d.value}
                     type="button"
-                    // ⭐️ 3. เพิ่มเงื่อนไขให้ปุ่ม Highlight ติดทั้งตอนที่เป็น Number และตอนเป็นค่า String (เช่น "EASY") จาก Database
                     variant={difficulty === d.value || difficulty === d.key.toUpperCase() ? "gold" : "ghost"}
                     size="sm"
                     className={`font-pixel ${fontClass}`}

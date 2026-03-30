@@ -23,7 +23,7 @@
     },
     "queststatuses": {
       "active": "OPEN",
-      "in-progress": "IN PROGRESS",
+      "in_progress": "IN PROGRESS",
       "completed": "COMPLETED",
       "all": "ALL"
     },
@@ -40,7 +40,6 @@
   },
   "questCard": {
     "reward": "GP",
-    "estimatedTime": "Cycles",
     "bids": "bids",
     "bid": "bid",
     "difficulty": "Difficulty",
@@ -93,8 +92,8 @@
     "status": {
       "open": "OPEN",
       "bidding": "BIDDING",
-      "in-progress": "IN PROGRESS",
-      "review": "REVIEW",
+      "in_progress": "IN PROGRESS",
+      "in_review": "IN REVIEW",
       "completed": "COMPLETED"
     },
     "sidebar": {
@@ -196,6 +195,8 @@
     "editPostedQuests": "Edit",
     "completedQuests": "Completed Quests",
     "done": "DONE",
+    "noGithub": "No GitHub link provided",
+    "noSkills": "No skills added yet",
     "btn": {
       "quests": "QUESTS",
       "financials": "FINANCIALS",
@@ -235,6 +236,8 @@
     },
     "githubUrl": "GitHub URL",
     "githubPlaceholder": "https://github.com/username",
+    "linkinUrl": "LinkedIn URL",
+    "linkinPlaceholder": "https://linkedin.com/in/username",
     "confirmBtn": "CONFIRM UPDATES",
     "successMsg": "Profile Updated!"
   },
@@ -291,7 +294,6 @@
       "questTitle": "Quest Title",
       "questDesc": "Quest Description",
       "baseReward": "Base Reward (GP)",
-      "estimatedTime": "Estimated Time (Cycles)",
       "difficulty": "Difficulty",
       "category": "Category",
       "repoUrl": "Git Repository URL"
@@ -405,7 +407,19 @@
       "branch": "Branch Name",
       "cancel": "CANCEL",
       "save": "SAVE CHANGES",
-      "employer": "Employer"
+      "status_values": {
+        "open": "OPEN",
+        "bidding": "BIDDING",
+        "in_progress": "IN PROGRESS",
+        "in_review": "IN REVIEW",
+        "completed": "COMPLETED"
+      },
+      "difficulty_values": {
+        "easy": "EASY",
+        "medium": "MEDIUM",
+        "hard": "HARD",
+        "low": "EASY"
+      }
     },
     "rewardspage": {
       "manage": "Manage Rewards",
@@ -427,5 +441,13 @@
       "save": "SAVE CHANGES",
       "alert": "Are you sure you want to delete this reward item?"
     }
+  },
+  "sidebar": {
+    "junior": "Manage Juniors",
+    "senior": "Manage Seniors",
+    "quest": "Manage Quests",
+    "reward": "Manage Rewards",
+    "admin": "ADMIN",
+    "logout": "LOGOUT"
   }
 }

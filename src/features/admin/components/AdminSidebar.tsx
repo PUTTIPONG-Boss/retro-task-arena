@@ -4,7 +4,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import PixelButton from "@/components/PixelButton";
 
 const AdminSidebar = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const { logout } = useAuth();
 
@@ -12,10 +12,10 @@ const AdminSidebar = () => {
 
   // รายการเมนูสำหรับ Admin
   const adminMenus = [
-    { name: "👥 Manage Junior", path: "/manage/junior" },
-    { name: "👥 Manage Senior", path: "/manage/senior" },
-    { name: "📜 Manage Quests", path: "/manage/quest" },
-    { name: "🎁 Manage Rewards", path: "/manage/reward" },
+    { name: "👥" + t("sidebar.junior"), path: "/admin/managejunior" },
+    { name: "👥" + t("sidebar.senior"), path: "/admin/managesenior" },
+    { name: "📜" + t("sidebar.quest"), path: "/admin/managequest" },
+    { name: "🎁" + t("sidebar.reward"), path: "/admin/managereward" },
   ];
 
   return (
@@ -24,7 +24,7 @@ const AdminSidebar = () => {
       {/* --- ส่วนหัว Sidebar --- */}
       <div className="p-6 text-center border-b-4 border-[#333] bg-[#1a1a1b]">
         <h2 className="text-xl text-accent pixel-text-shadow mb-1">
-          ⚔ ADMIN ⚔
+          ⚔ {t("sidebar.admin")} ⚔
         </h2>
       </div>
 
@@ -59,7 +59,7 @@ const AdminSidebar = () => {
           className={`w-full text-red-500 hover:text-red-400 hover:bg-red-900/20 tracking-wider ${fontClass}`}
           onClick={logout}
         >
-          🚪 LOGOUT
+          🚪 {t("sidebar.logout")}
         </PixelButton>
       </div>
 

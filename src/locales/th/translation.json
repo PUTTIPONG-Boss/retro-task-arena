@@ -23,7 +23,7 @@
     },
     "queststatuses": {
       "active": "เปิด",
-      "in-progress": "กำลังดำเนินการ",
+      "in_progress": "กำลังดำเนินการ",
       "completed": "เสร็จสิ้น",
       "all": "ทั้งหมด"
     },
@@ -92,8 +92,8 @@
     "status": {
       "open": "เปิด",
       "bidding": "กำลังประมูล",
-      "in-progress": "กำลังดำเนินการ",
-      "review": "รอตรวจสอบ",
+      "in_progress": "กำลังดำเนินการ",
+      "in_review": "รอตรวจสอบ",
       "completed": "เสร็จสิ้น"
     },
     "sidebar": {
@@ -195,6 +195,8 @@
     "editPostedQuests": "แก้ไข",
     "completedQuests": "เควสต์ที่สำเร็จแล้ว",
     "done": "สำเร็จ",
+    "noGithub": "ยังไม่ได้ระบุลิงก์ GitHub",
+    "noSkills": "ยังไม่มีทักษะที่ระบุ",
     "btn": {
       "quests": "เควสต์",
       "financials": "การเงิน",
@@ -233,6 +235,8 @@
     },
     "githubUrl": "ลิงก์ GitHub",
     "githubPlaceholder": "https://github.com/username",
+    "linkinUrl": "ลิงก์ LinkedIn",
+    "linkinPlaceholder": "https://linkedin.com/in/username",
     "confirmBtn": "บันทึกการเปลี่ยนแปลง",
     "successMsg": "อัปเดตโปรไฟล์แล้ว!"
   },
@@ -356,7 +360,7 @@
   },
   "admin": {
     "juniorpage": {
-      "title": "จัดการจูเนียร์",
+      "manage": "จัดการจูเนียร์",
       "id": "รหัส (ID)",
       "username": "ชื่อผู้ใช้งาน",
       "email": "อีเมล",
@@ -366,7 +370,7 @@
       "notfoundjunior": "ไม่พบจูเนียร์ในระบบ"
     },
     "seniorpage": {
-      "title": "จัดการซีเนียร์",
+      "manage": "จัดการซีเนียร์",
       "id": "รหัส (ID)",
       "username": "ชื่อผู้ใช้งาน",
       "email": "อีเมล",
@@ -396,7 +400,19 @@
       "branch": "ชื่อ Branch",
       "cancel": "ยกเลิก",
       "save": "บันทึกการเปลี่ยนแปลง",
-      "employer": "ผู้โพสต์"
+      "status_values": {
+        "open": "เปิด",
+        "bidding": "กำลังประมูล",
+        "in_progress": "กำลังดำเนินการ",
+        "in_review": "รอตรวจสอบ",
+        "completed": "เสร็จสิ้น"
+      },
+      "difficulty_values": {
+        "easy": "ง่าย",
+        "medium": "ปานกลาง",
+        "hard": "ยาก",
+        "low": "ง่าย"
+      }
     },
     "rewardspage": {
       "manage": "จัดการรางวัล",
@@ -418,5 +434,13 @@
       "save": "บันทึกการเปลี่ยนแปลง",
       "alert": "คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?"
     }
+  },
+  "sidebar": {
+    "junior": "จัดการจูเนียร์",
+    "senior": "จัดการซีเนียร์",
+    "quest": "จัดการเควสต์",
+    "reward": "จัดการรางวัล",
+    "admin": "แอดมิน",
+    "logout": "ออกจากระบบ"
   }
 }

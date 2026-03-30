@@ -87,17 +87,17 @@ const App = () => (
             }
           />
           <Route
-            path="/manage/*"
+            path="/admin/*"
             element={
               <ProtectedRoute>
                 <AdminLayout />
               </ProtectedRoute>
             }
           >
-            <Route path="senior" element={<ManageSenior />} />
-            <Route path="junior" element={<ManageJunior />} />
-            <Route path="quest" element={<ManageQuests />} />
-            <Route path="reward" element={<ManageReward />} />
+            <Route path="managesenior" element={<ManageSenior />} />
+            <Route path="managejunior" element={<ManageJunior />} />
+            <Route path="managequest" element={<ManageQuests />} />
+            <Route path="managereward" element={<ManageReward />} />
           </Route>
         </Routes>
       </BrowserRouter>
