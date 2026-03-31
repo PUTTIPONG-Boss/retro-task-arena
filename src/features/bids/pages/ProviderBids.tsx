@@ -16,7 +16,7 @@ const ProviderBids = () => {
   const handleSelect = (userId: string, username: string) => {
     acceptBidder(quest.id, userId);
     toast.success(`${username} has been assigned to this quest!`, {
-      style: { fontFamily: '"Press Start 2P"', fontSize: "10px" },
+      style: { fontFamily: '"TA_8bit"', fontSize: "10px" },
     });
   };
 

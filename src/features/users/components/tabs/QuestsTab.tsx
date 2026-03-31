@@ -88,7 +88,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                   <Link to={`/quest/${q.id}`} className="flex-1">
                     <div>
                       <p
-                        className={`font-pixel text-[9px] text-foreground group-hover:text-accent transition-colors ${fontClass}`}
+                        className={`font-pixel text-[18px] text-foreground group-hover:text-accent transition-colors ${fontClass}`}
                       >
                         {q.title}
                       </p>
@@ -104,7 +104,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                   <div className={`flex gap-2 font-pixel ${fontClass}`}>
                     <Link to={`/quest/${q.id}/edit`}>
                       <PixelButton variant="gold" size="sm">
-                        {t("userProfile.editPostedQuests")}
+                        <span className="text-[16px]">{t("userProfile.editPostedQuests")}</span>
                       </PixelButton>
                     </Link>
                   </div>
@@ -131,7 +131,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                 className="pixel-border bg-secondary p-3 flex justify-between items-center opacity-70"
               >
                 <div>
-                  <p className={`text-foreground font-pixel ${fontClass}`}>
+                  <p className={`text-[18px] text-foreground font-pixel ${fontClass}`}>
                     {q.title}
                   </p>
                   <p className={`text-muted-foreground mt-1 font-pixel ${fontClass}`}>

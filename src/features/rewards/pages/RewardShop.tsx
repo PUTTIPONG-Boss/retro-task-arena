@@ -33,23 +33,31 @@ const RewardShop = () => {
 
   const priceFilters = [
     { id: "all", labelKey: "all", min: 0, max: Infinity },
-    { id: "0-500", labelKey: "range1", min: 0, max: 500 },
-    { id: "501-1000", labelKey: "range2", min: 501, max: 1000 },
-    { id: "1001-2000", labelKey: "range3", min: 1001, max: 2000 },
-    { id: "2001-5000", labelKey: "range4", min: 2001, max: 5000 },
-    { id: "5001+", labelKey: "range5", min: 5001, max: Infinity },
+    { id: "0-50", labelKey: "range1", min: 0, max: 50 },
+    { id: "51-100", labelKey: "range2", min: 51, max: 100 },
+    { id: "101-150", labelKey: "range3", min: 101, max: 150 },
+    { id: "151-200", labelKey: "range4", min: 151, max: 200 },
+    { id: "201-250", labelKey: "range5", min: 201, max: 250 },
+    { id: "251-300", labelKey: "range6", min: 251, max: 300 },
+    { id: "300+", labelKey: "range7", min: 301, max: Infinity },
   ];
-
-  // Sync user profile (GP balance)
-  useGetProfile(!!user);
 
   if (!user) return null;
 
   const handleBuy = (productId: string, name: string, price: number) => {
-    if (user.points < price) {
+    if (user.points >= price) {
+      toast.success(t("rewardShop.toastSuccess", { name }), {
+        style: {
+          fontFamily:
+            i18n.language === "th" ? "text-[16px]" : "text-[16px]",
+          fontSize: "10px",
+        },
+      });
+    } else {
       toast.error(t("rewardShop.toastError"), {
         style: {
-          fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
+          fontFamily:
+            i18n.language === "th" ? "text-[16px]" : "text-[16px]",
           fontSize: "10px",
         },
       });
@@ -187,12 +195,17 @@ const RewardShop = () => {
                     transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   >
                     <PixelFrame className="h-full flex flex-col">
-                      {/* Icon derived from product code */}
+                      {/* Icon */}
                       <div className="text-center mb-3">
                         <span className="text-4xl">
                           {getProductIcon(item.code)}
                         </span>
                       </div>
+
+                      {/* ID badge */}
+                      <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
+                        [{item.id}]
+                      </p>
 
                       {/* Code badge */}
                       <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
@@ -207,7 +220,7 @@ const RewardShop = () => {
                       </h3>
 
                       {/* Description */}
-                      <p className="text-lg text-muted-foreground text-center flex-1 mb-3">
+                      <p className={`text-muted-foreground text-center flex-1 mb-3 ${fontClass}`}>
                         {item.description}
                       </p>
 

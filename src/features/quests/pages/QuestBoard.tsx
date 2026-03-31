@@ -11,12 +11,6 @@ import { ListFilter, X } from "lucide-react";
 import PixelSearch from "@/components/icons/PixelSearch";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 
-import {
-  playSoundOn,
-  playSoundOff,
-  playSoundSelect,
-} from "@/lib/sound/clickSound";
-
 const QuestBoard = () => {
   const user = useAuthStore((s) => s.user);
 
@@ -39,10 +33,8 @@ const QuestBoard = () => {
         filterRef.current &&
         !filterRef.current.contains(event.target as Node)
       ) {
-        // เช็คก่อนว่าถ้ามันเปิดอยู่ แล้วกำลังจะปิด ให้เล่นเสียง Off
         setIsFilterOpen((prev) => {
           if (prev) {
-            playSoundOff();
           }
           return false;
         });
@@ -52,8 +44,8 @@ const QuestBoard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const categories = ["all", "frontend", "backend", "BUG FIX", " FEATURE"];
-  const statuses = ["active", "completed", "all"];
+  const categories = ["all", "frontend", "backend", "BUG FIX", "FEATURE"];
+  const statuses = ["active", "in-progress", "completed", "all"];
   const isSeniorOrEmployer = () => {
     if (!user) return false;
     const r = user.role.toLowerCase();
@@ -67,7 +59,7 @@ const QuestBoard = () => {
       statusFilter === "all"
         ? true
         : statusFilter === "active"
-          ? q.status !== "completed"
+          ? (q.status === "open" || q.status === "bidding")
           : q.status === statusFilter;
     const searchMatch =
       searchQuery.trim() === "" ||
@@ -99,11 +91,6 @@ const QuestBoard = () => {
             <PixelButton
               variant="gold"
               onClick={() => {
-                if (isFilterOpen) {
-                  playSoundOff();
-                } else {
-                  playSoundOn();
-                }
                 setIsFilterOpen(!isFilterOpen);
               }}
               className="font-pixel flex items-center gap-2 h-full"
@@ -129,11 +116,10 @@ const QuestBoard = () => {
                           key={s}
                           onClick={() => {
                             setStatusFilter(s);
-                            playSoundSelect();
                           }}
                           className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${statusFilter === s
-                              ? "border-gold text-gold bg-gold/10"
-                              : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
+                            ? "border-gold text-gold bg-gold/10"
+                            : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
                             } ${fontClass}`}
                         >
                           {t(`questBoard.queststatuses.${s}`)}
@@ -154,30 +140,43 @@ const QuestBoard = () => {
                           key={cat}
                           onClick={() => {
                             setFilter(cat);
-                            playSoundSelect();
                           }}
                           className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${filter === cat
-                              ? "border-gold text-gold bg-gold/10"
-                              : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
+                            ? "border-gold text-gold bg-gold/10"
+                            : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
                             } ${fontClass}`}
                         >
-                          {cat.toUpperCase()}
+                          {t(`questBoard.categories.${cat}`)}
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Action Button */}
-                  <PixelButton
-                    variant="gold"
-                    className="w-full text-[12px] font-pixel"
-                    onClick={() => {
-                      playSoundSelect();
-                      setIsFilterOpen(false);
-                    }}
-                  >
-                    <PixelSearch size={20} className="text-black" /> {t("questBoard.searchPlaceholder")}
-                  </PixelButton>
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-2">
+                    <PixelButton
+                      variant="gold"
+                      className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 text-black ${fontClass}`}
+                      onClick={() => {
+                        setIsFilterOpen(false);
+                      }}
+                    >
+                      <PixelSearch size={20} className="text-black" /> {t("questBoard.searchPlaceholder")}
+                    </PixelButton>
+                    <PixelButton
+                      variant="ghost"
+                      size="sm"
+                      className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 text-white ${fontClass}`}
+                      onClick={() => {
+                        setFilter("all");
+                        setStatusFilter("active");
+                        setSearchQuery("");
+                        setIsFilterOpen(false);
+                      }}
+                    >
+                      <X size={18} /> {t("questBoard.clearFilters")}
+                    </PixelButton>
+                  </div>
                 </div>
               </div>
             )}
@@ -220,7 +219,7 @@ const QuestBoard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
             {filtered.map((quest) => (
-              <QuestCard key={quest.id} quest={quest} />
+              <QuestCard key={quest.id} quest={quest as any} />
             ))}
           </div>
         )}

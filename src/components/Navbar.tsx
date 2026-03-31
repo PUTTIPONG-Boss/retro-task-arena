@@ -4,7 +4,6 @@ import { useAuthStore } from "@/features/auth/store/authStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import PixelButton from "@/components/PixelButton";
-import { playPageTurnSound } from "@/lib/sound/pageTurnSound";
 import PixelStore from "@/components/icons/PixelStore";
 import PixelUser from "@/components/icons/PixelUser";
 import PixelCoin from "@/components/icons/PixelCoin";
@@ -24,14 +23,12 @@ const Navbar = () => {
   const isAdmin = user.role === "ADMIN";
 
   const toggleLanguage = () => {
-    playPageTurnSound();
     const newLang = i18n.language === "th" ? "en" : "th";
     i18n.changeLanguage(newLang);
     localStorage.setItem("app_lang", newLang);
   };
 
   const handleLogout = () => {
-    playPageTurnSound();
     logout();
     navigate("/login");
   };
@@ -52,7 +49,7 @@ const Navbar = () => {
       <nav className={`bg-card pixel-border sticky top-0 z-50 ${fontClass}`}>
         <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between h-14">
 
-          <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2" onClick={playPageTurnSound}>
+          <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2">
             <img
               src="/src/assets/logoinetquest.png"
               alt="INETQUEST"
@@ -71,7 +68,6 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                onClick={playPageTurnSound}
                 className={`flex items-center gap-2 font-pixel ${fontClass} uppercase tracking-wider transition-none ${location.pathname === link.to
                     ? "text-accent pixel-text-shadow"
                     : "text-foreground hover:text-accent"

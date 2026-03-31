@@ -31,6 +31,10 @@ const mapBackendBid = (b: BackendBid): Bid => ({
   note: b.note,
   status: b.status as Bid['status'],
   createdAt: b.createdAt,
+  githubUrl: '',
+  requestedPoints: 0,
+  estimatedTime: '',
+  explanation: ''
 });
 
 

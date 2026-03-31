@@ -1,51 +1,5 @@
-export interface Quest {
-  id: string;
-  title: string;
-  description: string;
-  fullDescription: string;
-  rewardPoints: number;
-  difficulty: number; // 1-5
-  estimatedTime: string;
-  category: string;
-  status: "open" | "bidding" | "in-progress" | "review" | "completed";
-  providerId: string;
-  providerName: string;
-  repoUrl?: string;
-  branchName?: string;
-  contact?: {
-    discord?: string;
-    line?: string;
-    email?: string;
-  };
-  bids: Bid[];
-  assignedTo?: string;
-}
-
-export interface Bid {
-  id: string;
-  oderId: string;
-  userId: string;
-  username: string;
-  githubUrl: string;
-  questsCompleted: number;
-  rating: number;
-  requestedPoints: number;
-  estimatedTime: string;
-  explanation: string;
-  avatarSeed: number;
-}
-
-export interface RewardItem {
-  id: string;
-  name: string;
-  description: string;
-  cost: number;
-  category: "digital" | "voucher" | "perk";
-  icon: string;
-  stock: number;
-}
-
 import { UserProfile } from "@/features/users/types";
+import { Quest, Bid, RewardItem } from "@/features/quests/types"; // Import from types
 
 export const mockUser: UserProfile = {
   id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6", // Valid UUID format required by Go Backend
@@ -140,7 +94,8 @@ export const mockQuests: Quest[] = [
     bids: [
       {
         id: "b4",
-        oderId: "q3",
+        taskId: "q3",
+        // oderId: "q3",
         userId: "user-5",
         username: "MysticCoder_9",
         githubUrl: "https://github.com/mysticcoder9",
@@ -214,7 +169,7 @@ export const mockRewards: RewardItem[] = [
     id: "r1",
     name: "Cloak of Dark Mode",
     description: "Unlock the legendary dark theme for your profile.",
-    cost: 500,
+    cost: 50,
     category: "perk",
     icon: "🧥",
     stock: 99,
@@ -223,7 +178,7 @@ export const mockRewards: RewardItem[] = [
     id: "r2",
     name: "GitHub Pro Scroll",
     description: "One month of GitHub Pro subscription.",
-    cost: 3000,
+    cost: 30,
     category: "voucher",
     icon: "📜",
     stock: 10,
@@ -232,7 +187,7 @@ export const mockRewards: RewardItem[] = [
     id: "r3",
     name: "XP Boost Elixir",
     description: "Double quest points for your next 3 completed quests.",
-    cost: 1500,
+    cost: 15,
     category: "perk",
     icon: "🧪",
     stock: 25,
@@ -241,7 +196,7 @@ export const mockRewards: RewardItem[] = [
     id: "r4",
     name: "AWS Credits Chest",
     description: "$50 in AWS credits to host your creations.",
-    cost: 5000,
+    cost: 50,
     category: "voucher",
     icon: "💎",
     stock: 5,
@@ -250,7 +205,7 @@ export const mockRewards: RewardItem[] = [
     id: "r5",
     name: "Custom Badge Rune",
     description: "Create a custom pixel badge for your profile.",
-    cost: 800,
+    cost: 80,
     category: "digital",
     icon: "🏅",
     stock: 50,
@@ -259,7 +214,7 @@ export const mockRewards: RewardItem[] = [
     id: "r6",
     name: "Priority Queue Pass",
     description: "Your bids appear first for 7 days.",
-    cost: 2000,
+    cost: 200,
     category: "perk",
     icon: "⚡",
     stock: 15,
@@ -268,7 +223,7 @@ export const mockRewards: RewardItem[] = [
     id: "r7",
     name: "Merchant's Voucher",
     description: "$25 gift card for a store of your choice.",
-    cost: 4000,
+    cost: 400,
     category: "voucher",
     icon: "🎫",
     stock: 8,
@@ -277,7 +232,7 @@ export const mockRewards: RewardItem[] = [
     id: "r8",
     name: "Pixel Avatar Pack",
     description: "Unlock 20 exclusive pixel art avatars.",
-    cost: 1000,
+    cost: 100,
     category: "digital",
     icon: "👾",
     stock: 30,

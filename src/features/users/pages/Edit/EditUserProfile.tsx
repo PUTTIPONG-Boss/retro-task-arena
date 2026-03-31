@@ -47,9 +47,9 @@ const EditUserProfile = () => {
     toast.success(t("editProfile.successMsg"), {
       style: {
         fontFamily:
-          i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"',
+          i18n.language === "th" ? "text-[16px]" : "text-[16px] font-pixel",
         fontSize: "10px",
-      },
+      }
     });
     navigate(-1);
   };

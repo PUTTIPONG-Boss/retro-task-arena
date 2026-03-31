@@ -92,7 +92,7 @@ const CreateQuest = () => {
       title,
       description,
       point: parseInt(rewardPoints) || 0,
-      estimated_time: `${estimatedTime} Cycles`,
+      estimated_time: `${estimatedTime}`,
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
@@ -103,14 +103,15 @@ const CreateQuest = () => {
     createQuest(newQuest, {
       onSuccess: () => {
         toast.success(t("createQuest.successMsg"), {
-          style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
         });
         navigate("/");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         console.error("Failed to post quest:", error);
-        toast.error("Failed to post the quest. Ensure the API is running.", {
-          style: { fontFamily: i18n.language === "th" ? '"TA-ChaiLai"' : '"Press Start 2P"', fontSize: "10px" },
+        const errorMsg = error.response?.data?.error || "Failed to post the quest. Ensure the API is running.";
+        toast.error(errorMsg, {
+          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
         });
       },
     });
@@ -121,7 +122,7 @@ const CreateQuest = () => {
   return (
     <div className="max-w-[700px] mx-auto px-4 py-8">
       <PixelButton
-        variant="ghost"
+        variant="danger"
         size="sm"
         className={`mb-6 font-pixel ${fontClass}`}
         onClick={() => navigate("/")}
