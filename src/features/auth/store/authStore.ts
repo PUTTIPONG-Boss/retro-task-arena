@@ -32,7 +32,6 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const res = await authService.loginWithOneID(username, password);
-          localStorage.setItem("auth_token", res.access_token);
           set({
             user: res.user,
             token: res.access_token,

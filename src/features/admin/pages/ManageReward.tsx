@@ -10,12 +10,16 @@ import { getAllProducts } from "../services/admin.service";
 const ManageReward = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  
+
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
-  
+
+  const [page, setPage] = useState(1);
+  const LIMIT = 20;
+
   const { data: rewards, isLoading } = useQuery({
-    queryKey: ["admin", "products"],
-    queryFn: getAllProducts,
+    queryKey: ["admin", "products", page],
+    queryFn: () => getAllProducts(page, LIMIT),
+    staleTime: 30_000,
   });
 
   // State สำหรับจัดการ Modal การแก้ไข

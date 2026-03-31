@@ -18,7 +18,7 @@ export const useGetProfile = (enabled: boolean = true) => {
         username: userData.username,
         email: userData.email,
         points: userData.points || 0,
-        role: userData.role || 'adventurer',
+        role: userData.role,
         questsCompleted: userData.questsCompleted || 0,
         rating: userData.rating || 5.0,
         totalRatings: userData.totalRatings || 0,
@@ -28,7 +28,7 @@ export const useGetProfile = (enabled: boolean = true) => {
           : userData.skills
           ? userData.skills.split(',')
           : [],
-        title: userData.titleEn || userData.title || 'Novice',
+        title: userData.titleEn || userData.title,
         level: userData.level || 1,
         github: userData.github || '',
         linkin: userData.linkin || '',
@@ -74,26 +74,18 @@ export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: Pick<UserProfile, 'id' | 'github' | 'linkin' | 'skills'>) => {
-      const { id, github, linkin, skills } = payload;
+    mutationFn: async (payload: Pick<UserProfile, 'github' | 'linkin' | 'skills'>) => {
+      const { github, linkin, skills } = payload;
       const currentUser = useUserStore.getState().user;
 
       const backendPayload = {
-        username: currentUser?.username,
-        email: currentUser?.email,
         github,
         linkin,
         skills: Array.isArray(skills) ? skills.join(',') : skills,
       };
 
-      try {
-        console.log('Sending Profile Update Payload:', backendPayload);
-        const response = await apiClient.patch(`/user/${id}`, backendPayload);
-        return response.data;
-      } catch (error: any) {
-        console.error('Profile Update Error Details:', error.response?.data || error.message);
-        throw error;
-      }
+      const response = await apiClient.patch('/user/me', backendPayload);
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });

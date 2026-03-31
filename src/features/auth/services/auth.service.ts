@@ -19,10 +19,8 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * Future: POST /auth/oauth/oneid
  */
 export async function loginWithOneID(username: string, password: string): Promise<OAuthTokenResponse> {
-  // Step 1: Login — backend set HttpOnly Cookie อัตโนมัติ
   await apiClient.post("/user/login", { username, password }, { withCredentials: true });
 
-  // Step 2: ดึง profile — ส่ง cookie ไปด้วย
   const userResponse = await apiClient.get("/user/me", { withCredentials: true });
   const userData = userResponse.data;
 
@@ -34,7 +32,7 @@ export async function loginWithOneID(username: string, password: string): Promis
       id: userData.userId || userData.id,
       username: userData.username,
       points: userData.points || 0,
-      role: userData.role || "adventurer",
+      role: userData.role || "JUNIOR",
       skills: userData.skills ? userData.skills.split(",") : [],
       questsCompleted: userData.questsCompleted || 0,
       rating: userData.rating || 5.0,
@@ -50,7 +48,7 @@ import { apiClient } from "@/lib/api";
 export async function login(email: string, password: string): Promise<OAuthTokenResponse> {
   const response = await apiClient.post("/user/login", { email, password });
   const token = response.data.token;
-  
+
   // After login, fetch user profile using the new /user/me endpoint
   // The token is automatically attached by the interceptor if we wait for the store to update,
   // but here we can pass it manually for the very first call.
@@ -63,15 +61,15 @@ export async function login(email: string, password: string): Promise<OAuthToken
   return {
     access_token: token,
     user: {
-       ...mockUser, // Fallback fields
-       ...userData,
-       id: userData.userId || userData.id,
-       username: userData.username,
-       points: userData.points || 0,
-       role: userData.role || "adventurer",
-       skills: userData.skills ? userData.skills.split(",") : [],
-       questsCompleted: userData.questsCompleted || 0,
-       rating: userData.rating || 5.0,
+      ...mockUser, // Fallback fields
+      ...userData,
+      id: userData.userId || userData.id,
+      username: userData.username,
+      points: userData.points || 0,
+      role: userData.role || "JUNIOR",
+      skills: userData.skills ? userData.skills.split(",") : [],
+      questsCompleted: userData.questsCompleted || 0,
+      rating: userData.rating || 5.0,
     },
   };
 }
@@ -102,7 +100,7 @@ export async function fetchOrCreateUser(
     ...userData,
     id: userData.userId || userData.id,
     points: userData.points || 0,
-    role: userData.role || "adventurer",
+    role: userData.role || "JUNIOR",
     skills: userData.skills ? userData.skills.split(",") : [],
   };
 }
@@ -112,7 +110,7 @@ export async function fetchOrCreateUser(
  * Future: POST /auth/logout
  */
 export async function logout(): Promise<void> {
-  await delay(200);
+  // await delay(200);
 }
 
 /**

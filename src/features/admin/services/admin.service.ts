@@ -1,15 +1,23 @@
 import { apiClient } from "@/lib/api";
 import { UserProfile } from "@/features/users/types";
 
-// Note: Backend /v1/user returns []*domain.User
-// We might need to map it to UserProfile or a specific admin type
+async function withTTFB<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  const start = performance.now();
+  try {
+    const result = await fn();
+    const ttfb = performance.now() - start;
+    console.log(`[TTFB] ${label}: ${ttfb.toFixed(2)} ms`);
+    return result;
+  } catch (err) {
+    const ttfb = performance.now() - start;
+    console.error(`[TTFB] ${label} (failed): ${ttfb.toFixed(2)} ms`, err);
+    throw err;
+  }
+}
 
-export async function getAllUsers(): Promise<UserProfile[]> {
-  const response = await apiClient.get("/user");
-  // Backend might return array directly or wrapped in { data: [...] }
+export async function getUsersByRole(role: string): Promise<UserProfile[]> {
+  const response = await apiClient.get(`/user/list?role=${role}`);
   const data = Array.isArray(response.data) ? response.data : (response.data.data || []);
-
-  // Map backend domain.User to frontend UserProfile
   return data.map((u: any) => ({
     id: u.userId || u.id,
     username: u.username,
@@ -28,12 +36,12 @@ export async function getAllUsers(): Promise<UserProfile[]> {
   }));
 }
 
-export async function getAllTasks() {
-  const response = await apiClient.get("/tasks");
+export async function getAllTasks(page = 1, limit = 20) {
+  const response = await apiClient.get(`/tasks?page=${page}&limit=${limit}`);
   return Array.isArray(response.data) ? response.data : (response.data.data || []);
 }
 
-export async function getAllProducts() {
-  const response = await apiClient.get("/product");
+export async function getAllProducts(page = 1, limit = 20) {
+  const response = await apiClient.get(`/product?page=${page}&limit=${limit}`);
   return Array.isArray(response.data) ? response.data : (response.data.data || []);
 }

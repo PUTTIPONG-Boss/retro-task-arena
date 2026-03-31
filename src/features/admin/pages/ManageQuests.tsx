@@ -13,9 +13,13 @@ const ManageQuest = () => {
 
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
 
+  const [page, setPage] = useState(1);
+  const LIMIT = 20;
+
   const { data: quests, isLoading } = useQuery({
-    queryKey: ["admin", "quests"],
-    queryFn: getAllTasks,
+    queryKey: ["admin", "quests", page],
+    queryFn: () => getAllTasks(page, LIMIT),
+    staleTime: 30_000,
   });
 
   // --- ฟังก์ชัน Delete ---

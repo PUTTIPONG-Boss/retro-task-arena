@@ -2,20 +2,37 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import PixelFrame from "@/components/PixelFrame";
 import { useQuery } from "@tanstack/react-query";
-import { getAllUsers } from "../services/admin.service";
+import { getUsersByRole } from "../services/admin.service";
+
+const STALE_TIME = 5 * 60 * 1_000; // must match AdminLayout prefetch
+
+const SkeletonRows = () => (
+  <>
+    {Array.from({ length: 6 }).map((_, i) => (
+      <tr key={i} className="border-b border-[#333]/30">
+        {Array.from({ length: 5 }).map((__, j) => (
+          <td key={j} className="p-3">
+            <div
+              className="h-4 rounded bg-white/10 animate-pulse"
+              style={{ width: j === 2 ? "80%" : j === 4 ? "60%" : "50%" }}
+            />
+          </td>
+        ))}
+      </tr>
+    ))}
+  </>
+);
 
 const ManageJunior = () => {
   const { t, i18n } = useTranslation();
-  const { data: allUsers, isLoading } = useQuery({
-    queryKey: ["admin", "users"],
-    queryFn: getAllUsers,
+  const { data: juniors = [], isLoading } = useQuery({
+    queryKey: ["admin", "users", "junior"],
+    queryFn: () => getUsersByRole("JUNIOR"),
+    staleTime: STALE_TIME,
+    gcTime: 10 * 60 * 1_000,
   });
 
-  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
-
-  const juniors = allUsers?.filter(u => u.role?.toUpperCase().includes("JUNIOR")) || [];
-  
-  if (isLoading) return <div className={`p-6 font-pixel text-accent ${fontClass}`}>{t("admin.juniorpage.loading")}</div>;
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
 
   return (
     <div className="p-6 max-w-6xl mx-auto text-foreground font-pixel">
@@ -36,7 +53,9 @@ const ManageJunior = () => {
             </tr>
           </thead>
           <tbody>
-            {juniors.length === 0 ? (
+            {isLoading ? (
+              <SkeletonRows />
+            ) : juniors.length === 0 ? (
               <tr>
                 <td colSpan={5} className="p-6 text-center text-muted-foreground">
                   {t("admin.juniorpage.notfoundjunior")}

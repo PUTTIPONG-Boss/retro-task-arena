@@ -196,6 +196,8 @@
     "completedQuests": "เควสต์ที่สำเร็จแล้ว",
     "done": "สำเร็จ",
     "noGithub": "ยังไม่ได้ระบุลิงก์ GitHub",
+    "noLinkedin": "ยังไม่ได้ระบุลิงก์ LinkedIn",
+    "linkedinLinks": "ลิงก์ LinkedIn",
     "noSkills": "ยังไม่มีทักษะที่ระบุ",
     "btn": {
       "quests": "เควสต์",

@@ -31,8 +31,8 @@
       "all": "ALL",
       "frontend": "FRONTEND",
       "backend": "BACKEND",
-      "bugfix": "BUG FIX",
-      "feature": "FEATURE"
+      "BUG FIX": "BUG FIX",
+      "FEATURE": "FEATURE"
     },
     "category": "Category",
     "queststatus": "Status",
@@ -196,6 +196,8 @@
     "completedQuests": "Completed Quests",
     "done": "DONE",
     "noGithub": "No GitHub link provided",
+    "noLinkedin": "No LinkedIn link provided",
+    "linkedinLinks": "LinkIn",
     "noSkills": "No skills added yet",
     "btn": {
       "quests": "QUESTS",
@@ -278,10 +280,11 @@
       "Hard": "Hard"
     },
     "categories": {
-      "Frontend": "Frontend",
-      "Backend": "Backend",
-      "Bug Fix": "Bug Fix",
-      "Feature": "Feature"
+      "all": "ALL",
+      "Frontend": "FRONTEND",
+      "Backend": "BACKEND",
+      "BUG FIX": "BUG FIX",
+      "FEATURE": "FEATURE"
     },
     "submitBtn": "Post Quest",
     "successMsg": "Quest posted to the board!"

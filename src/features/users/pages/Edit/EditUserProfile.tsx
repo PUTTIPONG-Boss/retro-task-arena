@@ -41,7 +41,6 @@ const EditUserProfile = () => {
       // ไม่ spread ...user ทั้งหมด เพราะจะทำให้ field อื่น (role, points, level ฯลฯ)
       // ถูกส่งไป PATCH และ backend อาจ overwrite ค่าสำคัญด้วยค่าผิดพลาด
       await updateProfile.mutateAsync({
-        id: user.id,
         github,
         linkin,
         skills,

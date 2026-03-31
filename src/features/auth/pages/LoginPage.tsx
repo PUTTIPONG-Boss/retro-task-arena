@@ -168,7 +168,6 @@ const LoginPage = () => {
       {/* ═══ LOGIN PANEL ═══ */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          {/* Decorative top */}
           <div className="text-center mb-6">
             <span className="text-[12px] text-muted-foreground tracking-[0.3em] uppercase">
               Guild Access Terminal
@@ -179,7 +178,6 @@ const LoginPage = () => {
             animate={{ y: [0, -4, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
-            {/* Soft panel glow */}
             <div className="relative">
               <div className="absolute -inset-2 bg-accent/[0.04] blur-xl rounded-sm pointer-events-none" />
 
@@ -215,9 +213,8 @@ const LoginPage = () => {
                 </div> */}
 
                 {/* Login Form */}
-                {/* Other Login options */}
                 <div className="space-y-3">
-                  {/* ✅ เพิ่ม input สำหรับ OneID */}
+                  {/* เพิ่ม input สำหรับ OneID */}
                   <div>
                     <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">
                       Username
@@ -241,24 +238,19 @@ const LoginPage = () => {
                   </div>
 
                   <PixelButton
-                    variant="primary"
+                    variant="gold"
                     size="md"
                     className="w-full font-pixel text-[16px] uppercase tracking-wider"
-                    onClick={() => loginWithOneID(oneIdUsername, oneIdPassword)} // ✅ ส่ง username, password
+                    onClick={() => loginWithOneID(oneIdUsername, oneIdPassword)} // ส่ง username, password
                     disabled={isLoading}
                     type="button"
                   >
                     🔑 Login with OneID
                   </PixelButton>
-
-                  {/* ... ปุ่ม mock อื่นๆ เหมือนเดิม ... */}
                 </div>
-
-
-
                 <PixelDivider className="mt-6 mb-4" />
 
-                <p className="font-pixel text-[12px] text-muted-foreground text-center leading-relaxed">
+                <p className="font-pixel text-[16px] text-muted-foreground text-center leading-relaxed">
                   No account needed — your profile is created automatically after
                   first login.
                 </p>

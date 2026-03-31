@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import PixelButton from "@/components/PixelButton";
+import { useMemo } from "react";
 
 const AdminSidebar = () => {
   const { t, i18n } = useTranslation();
@@ -11,12 +12,12 @@ const AdminSidebar = () => {
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   // รายการเมนูสำหรับ Admin
-  const adminMenus = [
+  const adminMenus = useMemo(() => [
     { name: "👥" + t("sidebar.junior"), path: "/admin/managejunior" },
     { name: "👥" + t("sidebar.senior"), path: "/admin/managesenior" },
     { name: "📜" + t("sidebar.quest"), path: "/admin/managequest" },
     { name: "🎁" + t("sidebar.reward"), path: "/admin/managereward" },
-  ];
+  ], [t]);
 
   return (
     <aside className="w-64 h-full flex-shrink-0 bg-[#121212] border-r-4 border-[#333] flex flex-col font-pixel">
@@ -40,8 +41,8 @@ const AdminSidebar = () => {
             <Link key={menu.name} to={menu.path} className="block group">
               <div
                 className={`px-4 py-3 border-2 transition-all duration-200 tracking-widest font-pixel ${fontClass} ${isActive
-                    ? "bg-accent/20 border-accent text-accent translate-x-1 shadow-[4px_4px_0px_0px_rgba(251,191,36,0.2)]"
-                    : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white group-hover:translate-x-1"
+                  ? "bg-accent/20 border-accent text-accent translate-x-1 shadow-[4px_4px_0px_0px_rgba(251,191,36,0.2)]"
+                  : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white group-hover:translate-x-1"
                   }`}
               >
                 {menu.name}

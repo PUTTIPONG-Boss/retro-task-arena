@@ -35,16 +35,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
             >
               {user.username}
             </h1>
-            <Link to="/profile/edit">
-              <PixelButton variant="gold" size="sm" className={`font-pixel text-[10px] ${fontClass}`}>
-                {t("userProfile.editProfile")}
-              </PixelButton>
+            <Link 
+              to="/profile/edit" 
+              className="text-yellow-400 hover:text-yellow-300 transition-colors flex items-center"
+              title={t("userProfile.editProfile")}
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="currentColor" 
+                viewBox="0 0 24 24" 
+                className="w-6 h-6"
+              >
+                <path d="M19 21H5v-2h14v2ZM5 19H3V5h2v14Zm16 0h-2v-6h2v6Zm-11-7h2v2h2v2H8v-6h2v2Zm6 2h-2v-2h2v2Zm2-2h-2v-2h2v2Zm-6-2h-2V8h2v2Zm8 0h-2V8h2v2Zm-6-2h-2V6h2v2Zm8 0h-2V6h2v2Zm-6-2h-2V4h2v2Zm4 0h-2V4h2v2Zm-9-1H5V3h6v2Zm7-1h-2V2h2v2Z"/>
+              </svg>
             </Link>
           </div>
           <p
-            className={`text-accent pixel-text-shadow mt-1 font-pixel ${fontClass}`}
+            className={`font-text pixel-text-shadow mt-1 font-pixel ${fontClass}`}
           >
-            {user.title}
+            {user.role}
           </p>
           <p className={`text-muted-foreground mt-1 font-pixel ${fontClass}`}>
             {t("userProfile.joined")} {new Date(user.joinedDate).toLocaleDateString()}

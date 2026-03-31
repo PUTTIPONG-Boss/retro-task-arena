@@ -35,7 +35,7 @@ const SubmitBid = () => {
       taskId: quest.id,
       userId: user.id,
       username: user.username,
-      githubUrl: github || user.githubUrl,
+      githubUrl: github || user.github,
       questsCompleted: user.questsCompleted,
       rating: user.rating,
       requestedPoints: parseInt(points) || quest.rewardPoints,
