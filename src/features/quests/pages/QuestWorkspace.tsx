@@ -143,10 +143,17 @@ const QuestWorkspace = () => {
   const workerUsername = workerBid?.username || "Adventurer";
   const isOwner = user?.id === quest.providerId;
 
+  const getStatusKey = (status: string) => {
+    const s = status?.toLowerCase();
+    if (s === "review") return "in_review";
+    if (s === "in-progress") return "in_progress";
+    return s;
+  };
+
   return (
     <div className={`max-w-[1280px] mx-auto px-4 py-8 ${fontClass}`}>
       <Link to={`/quest/${quest.id}`}>
-        <PixelButton variant="ghost" size="sm" className={`mb-6 ${fontClass}`}>
+        <PixelButton variant="danger" size="sm" className={`mb-6 ${fontClass}`}>
           <span className={fontClass}>{t("questWorkspace.backToQuest")}</span>
         </PixelButton>
       </Link>
@@ -161,7 +168,7 @@ const QuestWorkspace = () => {
                 quest.status === "review" ? "text-yellow-400" :
                   quest.status === "completed" ? "text-success" : "text-accent"
               )}>
-                ● {t(`questDetail.status.${quest.status}`)}
+                ● {t(`questDetail.status.${getStatusKey(quest.status)}`)}
               </span>
             </div>
 
@@ -327,9 +334,9 @@ const QuestWorkspace = () => {
 
           {user?.id === quest.assignedTo && quest.status === "review" && (
             <PixelButton
-              variant="ghost"
+              variant="blue"
               size="lg"
-              className="w-full py-6 cursor-not-allowed opacity-80"
+              className="w-full py-6 cursor-not-allowed"
               disabled
             >
               {t("questWorkspace.actions.waitingReview")}

@@ -17,7 +17,7 @@ interface QuestsTabProps {
 
 const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
   const { t, i18n } = useTranslation();
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   const completedQuests = quests.filter((q) => q.status === "completed");
   const activeQuests = quests.filter(
@@ -32,7 +32,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
         <h2
           className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
         >
-          <Clock size={20} className="text-white" /> {t("userProfile.activeQuests")}
+          <Clock size={20} className="text-yellow-400" /> {t("userProfile.activeQuests")}
         </h2>
         {activeQuests.length === 0 ? (
           <p className={`text-muted-foreground font-pixel ${fontClass}`}>
@@ -72,7 +72,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
           <h2
             className={`font-pixel text-foreground pixel-text-shadow ${fontClass} flex items-center gap-2`}
           >
-            <Archive size={20} className="text-white" /> {t("userProfile.postQuests")}
+            <Archive size={20} className="text-yellow-400" /> {t("userProfile.postQuests")}
           </h2>
           {postedQuests.length === 0 ? (
             <p className={`text-lg text-muted-foreground font-pixel ${fontClass}`}>
@@ -88,7 +88,11 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                   <Link to={`/quest/${q.id}`} className="flex-1">
                     <div>
                       <p
+<<<<<<< HEAD
                         className={`font-pixel text-[18px] text-foreground group-hover:text-accent transition-colors ${fontClass}`}
+=======
+                        className={`font-pixel text-[16px] text-foreground group-hover:text-accent transition-colors ${fontClass}`}
+>>>>>>> origin/pea
                       >
                         {q.title}
                       </p>
@@ -103,8 +107,13 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                   </Link>
                   <div className={`flex gap-2 font-pixel ${fontClass}`}>
                     <Link to={`/quest/${q.id}/edit`}>
+<<<<<<< HEAD
                       <PixelButton variant="gold" size="sm">
                         <span className="text-[16px]">{t("userProfile.editPostedQuests")}</span>
+=======
+                      <PixelButton variant="gold" size="sm" className="font-pixel text-[12px]">
+                        {t("userProfile.editPostedQuests")}
+>>>>>>> origin/pea
                       </PixelButton>
                     </Link>
                   </div>
@@ -139,7 +148,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                   </p>
                 </div>
                 <span className={`text-success pixel-text-shadow font-pixel ${fontClass}`}>
-                  ✓ {t("userProfile.done")}
+                  {t("userProfile.done")}
                 </span>
               </div>
             ))}

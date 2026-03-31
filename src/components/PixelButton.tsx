@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 interface PixelButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "gold" | "danger" | "ghost";
+  variant?: "primary" | "gold" | "danger" | "ghost" | "blue" | "success";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
@@ -20,6 +20,10 @@ const PixelButton = forwardRef<HTMLButtonElement, PixelButtonProps>(
         "bg-destructive text-destructive-foreground shadow-[inset_-3px_-3px_0_0_hsl(0_60%_35%),inset_3px_3px_0_0_hsl(0_70%_65%)] active:shadow-[inset_3px_3px_0_0_hsl(0_60%_35%)] active:translate-x-[2px] active:translate-y-[2px]",
       ghost:
         "bg-transparent text-foreground border-muted shadow-none hover:bg-muted active:translate-x-[2px] active:translate-y-[2px]",
+      blue: 
+        "bg-blue-600 text-white shadow-[inset_-3px_-3px_0_0_hsl(210_70%_30%),inset_3px_3px_0_0_hsl(210_80%_60%)] active:shadow-[inset_3px_3px_0_0_hsl(210_70%_30%)] active:translate-x-[2px] active:translate-y-[2px]",
+      success:
+        "bg-green-600 text-white shadow-[inset_-3px_-3px_0_0_hsl(140_70%_30%),inset_3px_3px_0_0_hsl(140_80%_60%)] active:shadow-[inset_3px_3px_0_0_hsl(140_70%_30%)] active:translate-x-[2px] active:translate-y-[2px]",
     };
 
     const sizes = {

@@ -12,7 +12,7 @@ interface ActivityTabProps {
 
 const ActivityTab: React.FC<ActivityTabProps> = ({ bids }) => {
   const { t, i18n } = useTranslation();
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   return (
     <PixelFrame>

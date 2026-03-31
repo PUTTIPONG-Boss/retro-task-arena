@@ -1,18 +1,23 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import PixelButton from "@/components/PixelButton";
+import { useMemo } from "react";
 
 const AdminSidebar = () => {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
-  const { logout } = useAuth(); // ดึงฟังก์ชัน logout มาใช้
+  const { logout } = useAuth();
+
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   // รายการเมนูสำหรับ Admin
-  const adminMenus = [
-    { name: "👥 Manage Junior", path: "/manage/junior" },
-    { name: "👥 Manage Senior", path: "/manage/senior" },
-    { name: "📜 Manage Quests", path: "/manage/quest" },
-    { name: "🎁 Manage Rewards", path: "/manage/reward" },
-  ];
+  const adminMenus = useMemo(() => [
+    { name: "👥" + t("sidebar.junior"), path: "/admin/managejunior" },
+    { name: "👥" + t("sidebar.senior"), path: "/admin/managesenior" },
+    { name: "📜" + t("sidebar.quest"), path: "/admin/managequest" },
+    { name: "🎁" + t("sidebar.reward"), path: "/admin/managereward" },
+  ], [t]);
 
   return (
     <aside className="w-64 h-full flex-shrink-0 bg-[#121212] border-r-4 border-[#333] flex flex-col font-pixel">
@@ -20,7 +25,7 @@ const AdminSidebar = () => {
       {/* --- ส่วนหัว Sidebar --- */}
       <div className="p-6 text-center border-b-4 border-[#333] bg-[#1a1a1b]">
         <h2 className="text-xl text-accent pixel-text-shadow mb-1">
-          ⚔ ADMIN ⚔
+          ⚔ {t("sidebar.admin")} ⚔
         </h2>
       </div>
 
@@ -35,9 +40,9 @@ const AdminSidebar = () => {
           return (
             <Link key={menu.name} to={menu.path} className="block group">
               <div
-                className={`px-4 py-3 border-2 transition-all duration-200 text-xs tracking-widest font-pixel ${isActive
-                    ? "bg-accent/20 border-accent text-accent translate-x-1 shadow-[4px_4px_0px_0px_rgba(251,191,36,0.2)]"
-                    : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white group-hover:translate-x-1"
+                className={`px-4 py-3 border-2 transition-all duration-200 tracking-widest font-pixel ${fontClass} ${isActive
+                  ? "bg-accent/20 border-accent text-accent translate-x-1 shadow-[4px_4px_0px_0px_rgba(251,191,36,0.2)]"
+                  : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white group-hover:translate-x-1"
                   }`}
               >
                 {menu.name}
@@ -52,10 +57,10 @@ const AdminSidebar = () => {
         <PixelButton
           variant="ghost"
           size="md"
-          className="w-full text-red-500 hover:text-red-400 hover:bg-red-900/20 text-xs tracking-wider"
+          className={`w-full text-red-500 hover:text-red-400 hover:bg-red-900/20 tracking-wider ${fontClass}`}
           onClick={logout}
         >
-          🚪 LOGOUT
+          🚪 {t("sidebar.logout")}
         </PixelButton>
       </div>
 

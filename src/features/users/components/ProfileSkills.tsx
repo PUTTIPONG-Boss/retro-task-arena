@@ -16,17 +16,23 @@ const ProfileSkills: React.FC<ProfileSkillsProps> = ({ skills }) => {
       <h2
         className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
       >
-        <Sword /> {t("userProfile.skills")}
+        <Sword className="text-yellow-400" /> {t("userProfile.skills")}
       </h2>
       <div className="flex flex-wrap gap-2">
-        {skills.map((skill) => (
-          <span
-            key={skill}
-            className={`pixel-border bg-secondary px-3 py-1 text-foreground font-pixel ${fontClass}`}
-          >
-            {skill}
-          </span>
-        ))}
+        {skills && skills.length > 0 ? (
+          skills.map((skill) => (
+            <span
+              key={skill}
+              className={`pixel-border bg-secondary px-3 py-1 text-foreground font-pixel ${fontClass}`}
+            >
+              {skill}
+            </span>
+          ))
+        ) : (
+          <p className={`text-muted-foreground font-pixel ${fontClass}`}>
+            {t("userProfile.noSkills")}
+          </p>
+        )}
       </div>
     </PixelFrame>
   );

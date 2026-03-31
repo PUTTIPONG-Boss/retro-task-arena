@@ -35,10 +35,14 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // เพิ่ม state สำหรับ OneID
+  const [oneIdUsername, setOneIdUsername] = useState("");
+  const [oneIdPassword, setOneIdPassword] = useState("");
+
   useEffect(() => {
     if (isAuthenticated && user) {
       if (user.role === "admin" || user.role === "ADMIN") {
-        navigate("/manage/quest", { replace: true });
+        navigate("/admin/managequest", { replace: true });
       } else {
         navigate("/", { replace: true });
       }
@@ -164,7 +168,6 @@ const LoginPage = () => {
       {/* ═══ LOGIN PANEL ═══ */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          {/* Decorative top */}
           <div className="text-center mb-6">
             <span className="text-[12px] text-muted-foreground tracking-[0.3em] uppercase">
               Guild Access Terminal
@@ -175,7 +178,6 @@ const LoginPage = () => {
             animate={{ y: [0, -4, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
-            {/* Soft panel glow */}
             <div className="relative">
               <div className="absolute -inset-2 bg-accent/[0.04] blur-xl rounded-sm pointer-events-none" />
 
@@ -211,98 +213,44 @@ const LoginPage = () => {
                 </div> */}
 
                 {/* Login Form */}
-                <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
-                  <div>
-                    <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">Email</label>
-                    <PixelInput 
-                      placeholder="adventurer@guild.com" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      required 
-                    />
-                  </div>
-                  <div>
-                    <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">Secret Password</label>
-                    <PixelInput 
-                      type="password" 
-                      placeholder="••••••••" 
-                      value={password} 
-                      onChange={(e) => setPassword(e.target.value)} 
-                      required 
-                    />
-                  </div>
-                  <PixelButton
-                    type="submit"
-                    variant="gold"
-                    size="lg"
-                    className="w-full font-pixel text-[16px] uppercase tracking-wider"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Authenticating..." : "⚔ Sign In"}
-                  </PixelButton>
-                </form>
-
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border/50"></div>
-                  </div>
-                  <div className="relative flex justify-center text-[8px] uppercase">
-                    <span className="bg-[#1a1a1b] text-muted-foreground font-pixel text-[18px]">Or use Identity providers</span>
-                  </div>
-                </div>
-
-                {/* Other Login options */}
                 <div className="space-y-3">
+                  {/* เพิ่ม input สำหรับ OneID */}
+                  <div>
+                    <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">
+                      Username
+                    </label>
+                    <PixelInput
+                      placeholder="your OneID username"
+                      value={oneIdUsername}
+                      onChange={(e) => setOneIdUsername(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">
+                      Password
+                    </label>
+                    <PixelInput
+                      type="password"
+                      placeholder="••••••••"
+                      value={oneIdPassword}
+                      onChange={(e) => setOneIdPassword(e.target.value)}
+                    />
+                  </div>
+
                   <PixelButton
-                    variant="primary"
+                    variant="gold"
                     size="md"
                     className="w-full font-pixel text-[16px] uppercase tracking-wider"
-                    onClick={() => loginWithOneID()}
+                    onClick={() => loginWithOneID(oneIdUsername, oneIdPassword)} // ส่ง username, password
                     disabled={isLoading}
                     type="button"
                   >
                     🔑 Login with OneID
                   </PixelButton>
-
-                  <PixelButton
-                    variant="ghost"
-                    size="sm"
-                    className="w-full font-pixel text-[16px] uppercase tracking-wider"
-                    onClick={() => mockLogin()}
-                    disabled={isLoading}
-                    type="button"
-                  >
-                    🛠 Dev Tool: Mock Login
-                  </PixelButton>
-                  <div className="flex gap-2 mt-2">
-                    <PixelButton
-                      variant="ghost"
-                      size="sm"
-                      className="w-full font-pixel text-[12px] uppercase tracking-wider text-blue-400 hover:bg-blue-900/20"
-                      onClick={() => mockSeniorLogin && mockSeniorLogin()}
-                      disabled={isLoading}
-                      type="button"
-                    >
-                      🛠 Mock Senior
-                    </PixelButton>
-
-                    <PixelButton
-                      variant="ghost"
-                      size="sm"
-                      className="w-full font-pixel text-[12px] uppercase tracking-wider text-red-400 hover:bg-red-900/20"
-                      onClick={() => mockAdminLogin && mockAdminLogin()}
-                      disabled={isLoading}
-                      type="button"
-                    >
-                      🛠 Mock Admin
-                    </PixelButton>
-                  </div>
-
                 </div>
-
                 <PixelDivider className="mt-6 mb-4" />
 
-                <p className="font-pixel text-[12px] text-muted-foreground text-center leading-relaxed">
+                <p className="font-pixel text-[16px] text-muted-foreground text-center leading-relaxed">
                   No account needed — your profile is created automatically after
                   first login.
                 </p>

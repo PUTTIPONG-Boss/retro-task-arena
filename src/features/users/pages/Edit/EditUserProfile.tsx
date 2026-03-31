@@ -1,4 +1,5 @@
 import { useUserStore } from "@/features/users/store/userStore";
+import { useUpdateProfile } from "@/features/users/services/user.service";
 import PixelFrame from "@/components/PixelFrame";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -8,15 +9,14 @@ import PixelButton from "@/components/PixelButton";
 
 const EditUserProfile = () => {
   const user = useUserStore((state) => state.user);
-  const setUser = useUserStore((state) => state.setUser);
+  const updateProfile = useUpdateProfile();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px] font-pixel";
 
-  const [username, setUsername] = useState(user?.username || "");
-  const [title, setTitle] = useState(user?.title || "");
-  const [githubUrl, setGithubUrl] = useState(user?.githubUrl || "");
+  const [github, setGithub] = useState(user?.github || "");
+  const [linkin, setLinkin] = useState(user?.linkin || "");
   const [skills, setSkills] = useState<string[]>(user?.skills || []);
   const [newSkill, setNewSkill] = useState("");
 
@@ -33,30 +33,36 @@ const EditUserProfile = () => {
     setSkills(skills.filter((s) => s !== skillToRemove));
   };
 
-  const handleSave = () => {
-    if (user) {
-      setUser({
-        ...user,
-        username,
-        title,
-        githubUrl,
+  const handleSave = async () => {
+    if (!user) return;
+
+    try {
+      // FIX: ส่งเฉพาะ id และ field ที่ user แก้ได้จริงๆ
+      // ไม่ spread ...user ทั้งหมด เพราะจะทำให้ field อื่น (role, points, level ฯลฯ)
+      // ถูกส่งไป PATCH และ backend อาจ overwrite ค่าสำคัญด้วยค่าผิดพลาด
+      await updateProfile.mutateAsync({
+        github,
+        linkin,
         skills,
       });
-    }
 
-    toast.success(t("editProfile.successMsg"), {
-      style: {
-        fontFamily:
-          i18n.language === "th" ? "text-[16px]" : "text-[16px] font-pixel",
-        fontSize: "10px",
-      }
-    });
-    navigate(-1);
+      toast.success(t("editProfile.successMsg"), {
+        style: {
+          fontFamily:
+            i18n.language === "th" ? "text-[16px]" : "text-[16px] font-pixel",
+          fontSize: "10px",
+        }
+      });
+      navigate(-1);
+    } catch (err) {
+      toast.error("Failed to update profile");
+      console.error(err);
+    }
   };
 
   return (
     <div
-      className={`max-w-[900px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA-ChaiLai']" : ""}`}
+      className={`max-w-[900px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}
     >
       <div className="flex justify-between items-center mb-6">
         <button
@@ -81,25 +87,11 @@ const EditUserProfile = () => {
               >
                 {t("editProfile.labels.username")}
               </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className={`w-full bg-secondary pixel-border p-2 text-foreground focus:outline-none font-pixel ${fontClass}`}
-              />
-            </div>
-            <div>
-              <label
-                className={`block mb-1 font-pixel ${fontClass}`}
+              <div
+                className={`w-full bg-secondary/50 pixel-border p-2 text-foreground/70 font-pixel ${fontClass}`}
               >
-                {t("editProfile.labels.adventurerTitle")}
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className={`w-full bg-secondary pixel-border p-2 text-foreground focus:outline-none font-pixel ${fontClass}`}
-              />
+                {user.username}
+              </div>
             </div>
           </div>
         </div>
@@ -153,9 +145,24 @@ const EditUserProfile = () => {
         </h2>
         <input
           type="text"
-          value={githubUrl}
-          onChange={(e) => setGithubUrl(e.target.value)}
+          value={github}
+          onChange={(e) => setGithub(e.target.value)}
           placeholder={t("editProfile.githubPlaceholder")}
+          className={`w-full bg-secondary pixel-border p-3 focus:outline-none font-pixel ${fontClass}`}
+        />
+      </PixelFrame>
+
+      <PixelFrame className="mb-6">
+        <h2
+          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}
+        >
+          🔗 {t("editProfile.linkinUrl")}
+        </h2>
+        <input
+          type="text"
+          value={linkin}
+          onChange={(e) => setLinkin(e.target.value)}
+          placeholder={t("editProfile.linkinPlaceholder")}
           className={`w-full bg-secondary pixel-border p-3 focus:outline-none font-pixel ${fontClass}`}
         />
       </PixelFrame>
@@ -165,9 +172,10 @@ const EditUserProfile = () => {
         variant="gold"
         size="lg"
         onClick={handleSave}
+        disabled={updateProfile.isPending}
         className={`w-full font-pixel flex items-center justify-center gap-2 h-11 ${i18n.language === "th" ? "pb-1.5 pt-0" : "pt-0.5 pb-0"} ${fontClass}`}
       >
-        {t("editProfile.confirmBtn")}
+        {updateProfile.isPending ? t("common.loading") : t("editProfile.confirmBtn")}
       </PixelButton>
     </div>
   );

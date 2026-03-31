@@ -9,7 +9,6 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 
-  loginWithOneID: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   mockLogin: () => Promise<void>;
   mockSeniorLogin: () => Promise<void>;
@@ -17,6 +16,8 @@ interface AuthState {
 
   logout: () => void;
   setUser: (user: UserProfile) => void;
+
+  loginWithOneID: (username: string, password: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -27,10 +28,10 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
 
-      loginWithOneID: async () => {
+      loginWithOneID: async (username: string, password: string) => {
         set({ isLoading: true });
         try {
-          const res = await authService.loginWithOneID();
+          const res = await authService.loginWithOneID(username, password);
           set({
             user: res.user,
             token: res.access_token,

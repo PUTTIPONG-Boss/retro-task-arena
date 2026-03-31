@@ -3,7 +3,8 @@
     "quest_board": "กระดานภารกิจ",
     "post_quest": "ลงภารกิจใหม่",
     "reward_shop": "ร้านค้ารางวัล",
-    "profile": "โปรไฟล์"
+    "profile": "โปรไฟล์",
+    "admin": "เมนูแอดมิน"
   },
   "questBoard": {
     "title": "กระดานภารกิจ",
@@ -22,7 +23,7 @@
     },
     "queststatuses": {
       "active": "เปิด",
-      "in-progress": "กำลังดำเนินการ",
+      "in_progress": "กำลังดำเนินการ",
       "completed": "เสร็จสิ้น",
       "all": "ทั้งหมด"
     },
@@ -91,8 +92,8 @@
     "status": {
       "open": "เปิด",
       "bidding": "กำลังประมูล",
-      "in-progress": "กำลังดำเนินการ",
-      "review": "รอตรวจสอบ",
+      "in_progress": "กำลังดำเนินการ",
+      "in_review": "รอตรวจสอบ",
       "completed": "เสร็จสิ้น"
     },
     "sidebar": {
@@ -194,6 +195,10 @@
     "editPostedQuests": "แก้ไข",
     "completedQuests": "เควสต์ที่สำเร็จแล้ว",
     "done": "สำเร็จ",
+    "noGithub": "ยังไม่ได้ระบุลิงก์ GitHub",
+    "noLinkedin": "ยังไม่ได้ระบุลิงก์ LinkedIn",
+    "linkedinLinks": "ลิงก์ LinkedIn",
+    "noSkills": "ยังไม่มีทักษะที่ระบุ",
     "btn": {
       "quests": "เควสต์",
       "financials": "การเงิน",
@@ -232,6 +237,8 @@
     },
     "githubUrl": "ลิงก์ GitHub",
     "githubPlaceholder": "https://github.com/username",
+    "linkinUrl": "ลิงก์ LinkedIn",
+    "linkinPlaceholder": "https://linkedin.com/in/username",
     "confirmBtn": "บันทึกการเปลี่ยนแปลง",
     "successMsg": "อัปเดตโปรไฟล์แล้ว!"
   },
@@ -330,13 +337,15 @@
       "code": "รหัสสินค้า",
       "name": "ชื่อสินค้า",
       "description": "รายละเอียดสินค้า",
+      "category": "หมวดหมู่",
       "price": "ราคา (ทอง)",
-      "stock": "สต็อก (จำนวน)"
+      "stock": "จำนวนสินค้า"
     },
     "placeholders": {
       "code": "เช่น PROD-2026-001",
       "name": "เช่น คีย์บอร์ด Mechanical G3",
       "description": "มีไฟ RGB, Blue Switches, ไร้สาย 2.4GHz...",
+      "category": "เช่น อุปกรณ์คอมพิวเตอร์",
       "price": "2500",
       "stock": "50"
     },
@@ -350,5 +359,90 @@
   "rewardBanner": {
     "marquee": "✦ ไอเทมระดับตำนานอันล้ำค่า ✦ สินค้าหายาก ✦ ไอเทมรุ่นลิมิเต็ด ✦ รางวัลสุดพิเศษ ✦",
     "description": "นำทองที่คุณหามาอย่างยากลำบากมาแลกเปลี่ยนเป็นไอเทม"
+  },
+  "admin": {
+    "juniorpage": {
+      "manage": "จัดการจูเนียร์",
+      "id": "รหัส (ID)",
+      "username": "ชื่อผู้ใช้งาน",
+      "email": "อีเมล",
+      "quests": "เควสต์",
+      "role": "บทบาท",
+      "loading": "กำลังโหลดข้อมูล...",
+      "notfoundjunior": "ไม่พบจูเนียร์ในระบบ"
+    },
+    "seniorpage": {
+      "manage": "จัดการซีเนียร์",
+      "id": "รหัส (ID)",
+      "username": "ชื่อผู้ใช้งาน",
+      "email": "อีเมล",
+      "quests": "เควสต์",
+      "role": "บทบาท",
+      "loading": "กำลังโหลดข้อมูล...",
+      "notfoundsenior": "ไม่พบซีเนียร์ในระบบ"
+    },
+    "questspage": {
+      "manage": "จัดการเควสต์",
+      "id": "รหัสเควสต์ (ID)",
+      "title": "ชื่อเควสต์",
+      "reward": "รางวัล",
+      "status": "สถานะ",
+      "action": "การจัดการ",
+      "loading": "กำลังโหลดเควสต์...",
+      "notfoundquest": "ไม่พบเควสต์ในระบบ",
+      "add": "เพิ่มเควสต์ใหม่",
+      "edit": "แก้ไข",
+      "delete": "ลบ",
+      "desc": "รายละเอียด",
+      "type": "ประเภท",
+      "diff": "ความยาก",
+      "skills": "สกิลที่ต้องการ",
+      "est": "เวลาที่คาดว่าจะใช้",
+      "repo": "Git Repo URL",
+      "branch": "ชื่อ Branch",
+      "cancel": "ยกเลิก",
+      "save": "บันทึกการเปลี่ยนแปลง",
+      "status_values": {
+        "open": "เปิด",
+        "bidding": "กำลังประมูล",
+        "in_progress": "กำลังดำเนินการ",
+        "in_review": "รอตรวจสอบ",
+        "completed": "เสร็จสิ้น"
+      },
+      "difficulty_values": {
+        "easy": "ง่าย",
+        "medium": "ปานกลาง",
+        "hard": "ยาก",
+        "low": "ง่าย"
+      }
+    },
+    "rewardspage": {
+      "manage": "จัดการรางวัล",
+      "id": "รหัสสินค้า (ID)",
+      "title": "ชื่อสินค้า",
+      "cost": "ราคา",
+      "stock": "จำนวน",
+      "action": "การจัดการ",
+      "loading": "กำลังโหลดรางวัล...",
+      "notfoundquest": "ไม่พบรางวัลในระบบ",
+      "add": "เพิ่มรางวัลใหม่",
+      "edit": "แก้ไข",
+      "delete": "ลบ",
+      "pts": "ทอง",
+      "stockout": "สินค้าหมด",
+      "desc": "รายละเอียด",
+      "category": "หมวดหมู่",
+      "cancel": "ยกเลิก",
+      "save": "บันทึกการเปลี่ยนแปลง",
+      "alert": "คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?"
+    }
+  },
+  "sidebar": {
+    "junior": "จัดการจูเนียร์",
+    "senior": "จัดการซีเนียร์",
+    "quest": "จัดการเควสต์",
+    "reward": "จัดการรางวัล",
+    "admin": "แอดมิน",
+    "logout": "ออกจากระบบ"
   }
 }

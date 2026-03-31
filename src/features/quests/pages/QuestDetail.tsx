@@ -16,13 +16,22 @@ import {
 import { toast } from "sonner";
 import { Coins } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { isSeniorOrEmployer } from "@/features/users/utils/roleUtils";
 
 const statusColor: Record<string, string> = {
   open: "text-success",
   bidding: "text-accent",
   "in-progress": "text-accent",
   review: "text-yellow-400",
+  in_review: "text-yellow-400",
   completed: "text-success",
+};
+
+const getStatusKey = (status: string) => {
+  const s = status?.toLowerCase();
+  if (s === "review") return "in_review";
+  if (s === "in-progress") return "in_progress";
+  return s;
 };
 
 const QuestDetail = () => {
@@ -83,8 +92,7 @@ const QuestDetail = () => {
     );
   }
 
-  const isSeniorOrEmployer =
-    user?.role === "employer" || user?.role?.toLowerCase().includes("senior");
+  const isSeniorOrEmployerUser = isSeniorOrEmployer(user?.role || "");
 
   const isOwner = user?.id === quest.providerId;
 
@@ -208,7 +216,7 @@ const QuestDetail = () => {
                 {quest.category}
               </span>
               <span className={`font-pixel uppercase ${statusColor[quest.status] || "text-success"} ${fontClass}`}>
-                ● {t(`questDetail.status.${quest.status}`)}
+                ● {t(`questDetail.status.${getStatusKey(quest.status)}`)}
               </span>
             </div>
 
@@ -523,7 +531,7 @@ const QuestDetail = () => {
                 <span className={fontClass}>{t("questDetail.sidebar.openWorkspace")}</span>
               </PixelButton>
 
-              {isSeniorOrEmployer && quest.status === "review" && (
+              {isSeniorOrEmployerUser && quest.status === "review" && (
                 <PixelButton
                   variant="gold"
                   size="md"
