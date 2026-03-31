@@ -22,7 +22,6 @@ const AddProduct = () => {
     }
   }, [user, navigate]);
 
-  const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -37,7 +36,7 @@ const AddProduct = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!code.trim() || !name.trim() || !description.trim() || !category.trim() || !price || !stock) {
+    if (!name.trim() || !description.trim() || !category.trim() || !price || !stock) {
       toast.error("Please fill in all required fields.", {
         style: { fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]" },
       });
@@ -58,7 +57,6 @@ const AddProduct = () => {
 
     createProduct(
       {
-        sku: code.trim().toUpperCase(),
         name: name.trim(),
         description: description.trim(),
         category: category.trim(),
@@ -73,7 +71,8 @@ const AddProduct = () => {
           navigate("/reward-shop");
         },
         onError: (error: any) => {
-          const msg = error?.response?.data?.error || t("createReward.errorMsg");
+          const raw = error?.response?.data?.error;
+          const msg = typeof raw === "string" ? raw : typeof raw?.message === "string" ? raw.message : t("createReward.errorMsg");
           toast.error(msg, {
             style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
@@ -86,10 +85,10 @@ const AddProduct = () => {
     <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       {/* Back Button */}
       <PixelButton
-        variant="ghost"
+        variant="danger"
         size="sm"
         className={`mb-6 font-pixel ${fontClass}`}
-        onClick={() => navigate("/reward-shop")}
+        onClick={() => navigate(-1)}
       >
         ← {t("createReward.back")}
       </PixelButton>
@@ -103,22 +102,6 @@ const AddProduct = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Product Code */}
-          <div>
-            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-              {t("createReward.labels.code")}
-            </label>
-            <PixelInput
-              placeholder={t("createReward.placeholders.code")}
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              className={`font-pixel ${fontClass}`}
-            />
-            <p className={`font-pixel text-muted-foreground mt-1 ${fontClass}`}>
-              {t("createReward.hints.code")}
-            </p>
-          </div>
-
           {/* Product Name */}
           <div>
             <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>

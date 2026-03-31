@@ -8,7 +8,6 @@ import PixelStore from "@/components/icons/PixelStore";
 import PixelUser from "@/components/icons/PixelUser";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
-import PixelSword from "@/components/icons/PixelSword";
 
 const Navbar = () => {
   const location = useLocation();
@@ -38,7 +37,11 @@ const Navbar = () => {
     ...(isAdmin ? [{ 
       to: "/admin/managequest", 
       label: t("navbar.admin"), 
-      icon: <PixelSword size={20} bladeColor="#ff5555" hiltColor="#440000" guardColor="#aa0000" /> 
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="text-yellow-400" width={20} height={20}>
+          <path d="M6 22H4v-4h2v4Zm12 0h-2v-2h2v2Zm4 0h-2v-2h2v2Zm-2-2h-2v-2h2v2ZM8 18H6v-2h2v2Zm10 0h-2v-2h2v2Zm4 0h-2v-2h2v2Zm-8-2H8v-2h6v2Zm1-4H9v-2h6v2Zm-6-2H7V4h2v6Zm8 0h-2V4h2v6Zm-2-6H9V2h6v2Z"/>
+        </svg>
+      ),
     }] : []),
     { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: <PixelStore className="text-yellow-400" size={20} /> },
     { to: "/profile", label: t("navbar.profile", "Profile"), icon: <PixelUser className="text-yellow-400" size={20} /> },
@@ -68,9 +71,10 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`flex items-center gap-2 font-pixel ${fontClass} uppercase tracking-wider transition-none ${location.pathname === link.to
-                    ? "text-accent pixel-text-shadow"
-                    : "text-foreground hover:text-accent"
+                className={`flex items-center gap-2 font-pixel ${fontClass} uppercase tracking-wider transition-none ${
+                    (link.to === "/" ? location.pathname === "/" : location.pathname.startsWith(link.to.startsWith("/admin") ? "/admin" : link.to))
+                      ? "text-accent pixel-text-shadow"
+                      : "text-foreground hover:text-accent"
                   }`}
               >
                 {link.icon}

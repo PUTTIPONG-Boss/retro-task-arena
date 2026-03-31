@@ -2,6 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import PixelButton from "@/components/PixelButton";
+import PixelClipboardList from "@/components/icons/PixelClipboardList";
+import PixelStore from "@/components/icons/PixelStore";
 import { useMemo } from "react";
 
 const AdminSidebar = () => {
@@ -11,12 +13,16 @@ const AdminSidebar = () => {
 
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
+  const BuildingIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5 text-accent flex-shrink-0"><path d="M2 22H0v-4h2v4Zm14 0h-2v-4h2v4Zm8 0h-2v-4h2v4ZM4 18H2v-2h2v2Zm10 0h-2v-2h2v2Zm8 0h-2v-2h2v2Zm-10-2H4v-2h8v2Zm8 0h-4v-2h4v2Zm-9-4H5v-2h6v2Zm8 0h-4v-2h4v2ZM5 10H3V4h2v6Zm8 0h-2V4h2v6Zm8 0h-2V4h2v6ZM11 4H5V2h6v2Zm8 0h-4V2h4v2Z"/></svg>
+  );
+
   // รายการเมนูสำหรับ Admin
   const adminMenus = useMemo(() => [
-    { name: "👥" + t("sidebar.junior"), path: "/admin/managejunior" },
-    { name: "👥" + t("sidebar.senior"), path: "/admin/managesenior" },
-    { name: "📜" + t("sidebar.quest"), path: "/admin/managequest" },
-    { name: "🎁" + t("sidebar.reward"), path: "/admin/managereward" },
+    { icon: <BuildingIcon />, label: t("sidebar.junior"), path: "/admin/managejunior" },
+    { icon: <BuildingIcon />, label: t("sidebar.senior"), path: "/admin/managesenior" },
+    { icon: <PixelClipboardList className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.quest"), path: "/admin/managequest" },
+    { icon: <PixelStore className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.reward"), path: "/admin/managereward" },
   ], [t]);
 
   return (
@@ -38,14 +44,15 @@ const AdminSidebar = () => {
             : location.pathname.startsWith(menu.path);
 
           return (
-            <Link key={menu.name} to={menu.path} className="block group">
+            <Link key={menu.path} to={menu.path} className="block group">
               <div
-                className={`px-4 py-3 border-2 transition-all duration-200 tracking-widest font-pixel ${fontClass} ${isActive
+                className={`flex items-center gap-2 px-4 py-3 border-2 transition-all duration-200 tracking-widest font-pixel ${fontClass} ${isActive
                   ? "bg-accent/20 border-accent text-accent translate-x-1 shadow-[4px_4px_0px_0px_rgba(251,191,36,0.2)]"
                   : "bg-transparent border-transparent text-muted-foreground hover:bg-[#222] hover:border-[#444] hover:text-white group-hover:translate-x-1"
                   }`}
               >
-                {menu.name}
+                {menu.icon}
+                {menu.label}
               </div>
             </Link>
           );

@@ -19,19 +19,19 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * Future: POST /auth/oauth/oneid
  */
 export async function loginWithOneID(username: string, password: string): Promise<OAuthTokenResponse> {
-  await apiClient.post("/user/login", { username, password }, { withCredentials: true });
+  // login → backend set HttpOnly cookie อัตโนมัติ
+  await apiClient.post("/user/login", { username, password });
 
-  const userResponse = await apiClient.get("/user/me", { withCredentials: true });
+  // ดึงข้อมูล user (cookie ถูกส่งไปอัตโนมัติจาก withCredentials: true)
+  const userResponse = await apiClient.get("/user/me");
   const userData = userResponse.data;
 
   return {
-    access_token: "",
+    access_token: "",  // ← ไม่ต้องเก็บ token ใน JS memory เลย
     user: {
       ...mockUser,
       ...userData,
       id: userData.userId || userData.id,
-      username: userData.username,
-      points: userData.points || 0,
       role: userData.role || "JUNIOR",
       skills: userData.skills ? userData.skills.split(",") : [],
       questsCompleted: userData.questsCompleted || 0,
@@ -39,7 +39,6 @@ export async function loginWithOneID(username: string, password: string): Promis
     },
   };
 }
-
 /**
  * Real login with email and password.
  */

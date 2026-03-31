@@ -27,8 +27,8 @@ const CreateQuest = () => {
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (user && !(user.role === 'employer' || user.role.toLowerCase().includes('admin') || user.role.toLowerCase().includes('senior'))) {
-      toast.error("Access denied. Only Senior Adventurers or Employers can post quests.");
+    if (user && !(user.role.toUpperCase() === 'SENIOR' || user.role.toUpperCase() === 'ADMIN')) {
+      toast.error("Access denied. Only Senior Adventurers or Admins can post quests.");
       navigate("/");
     }
   }, [user, navigate]);
@@ -52,7 +52,7 @@ const CreateQuest = () => {
 
   const toggleSkill = (skill: string) => {
     if (selectedSkills.includes(skill)) {
-      if (selectedSkills.length === 1 && selectedSkills[0] === "General") return; // Keep at least one
+      if (selectedSkills.length === 1 && selectedSkills[0] === "General") return;
       setSelectedSkills(selectedSkills.filter((s) => s !== skill));
     } else {
       setSelectedSkills([...selectedSkills, skill]);
@@ -88,7 +88,6 @@ const CreateQuest = () => {
 
     // Format Backend Payload
     const newQuest: CreateQuestPayload = {
-      employer_id: user.id,
       title,
       description,
       point: parseInt(rewardPoints) || 0,
@@ -107,9 +106,10 @@ const CreateQuest = () => {
         });
         navigate("/");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         console.error("Failed to post quest:", error);
-        toast.error("Failed to post the quest. Ensure the API is running.", {
+        const msg = error?.response?.data?.message || error?.message || "Unknown error";
+        toast.error(`Failed to post quest: ${msg}`, {
           style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
         });
       },
@@ -124,7 +124,7 @@ const CreateQuest = () => {
         variant="danger"
         size="sm"
         className={`mb-6 font-pixel ${fontClass}`}
-        onClick={() => navigate("/")}
+        onClick={() => navigate(-1)}
       >
         ← {t("createQuest.back")}
       </PixelButton>

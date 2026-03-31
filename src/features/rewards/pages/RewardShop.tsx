@@ -13,11 +13,11 @@ import { useTranslation } from "react-i18next";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelStore from "@/components/icons/PixelStore";
 
-// Map product.code to a pixel icon for visual variety
-const getProductIcon = (code: string): string => {
+// Map product.id to a pixel icon for visual variety
+const getProductIcon = (id: string): string => {
   const icons = ["🧪", "📜", "💎", "⚡", "🏅", "🎫", "👾", "🧥", "🔮", "⚔️"];
-  if (!code) return "📦";
-  const index = code.charCodeAt(0) % icons.length;
+  if (!id) return "📦";
+  const index = id.charCodeAt(0) % icons.length;
   return icons[index] || "📦";
 };
 
@@ -198,7 +198,7 @@ const RewardShop = () => {
                       {/* Icon */}
                       <div className="text-center mb-3">
                         <span className="text-4xl">
-                          {getProductIcon(item.code)}
+                          {getProductIcon(item.id)}
                         </span>
                       </div>
 
@@ -207,10 +207,7 @@ const RewardShop = () => {
                         [{item.id}]
                       </p>
 
-                      {/* Code badge */}
-                      <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
-                        [{item.code}]
-                      </p>
+
 
                       {/* Name */}
                       <h3

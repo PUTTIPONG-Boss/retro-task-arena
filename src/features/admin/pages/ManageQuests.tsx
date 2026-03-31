@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelFrame from "@/components/PixelFrame";
+import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import { useQuery } from "@tanstack/react-query";
 import { getAllTasks } from "../services/admin.service";
 
@@ -58,7 +59,10 @@ const ManageQuest = () => {
   return (
     <div className={`p-6 max-w-[1400px] mx-auto text-foreground font-pixel ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 ">
-        <h1 className="text-2xl font-bold text-accent pixel-text-shadow">📜 {t("admin.questspage.manage")}</h1>
+        <h1 className="text-2xl font-bold text-accent pixel-text-shadow flex items-center gap-2">
+          <PixelClipboardList className="w-7 h-7" />
+          {t("admin.questspage.manage")}
+        </h1>
         <PixelButton
           variant="gold"
           size="md"

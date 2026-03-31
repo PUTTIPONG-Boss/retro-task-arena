@@ -62,7 +62,6 @@ export interface Quest {
 }
 
 export interface CreateQuestPayload {
-  employer_id: string;
   title: string;
   description: string;
   point: number;

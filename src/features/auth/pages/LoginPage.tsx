@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Eye, EyeOff } from "lucide-react";
 
 /* ── tiny helper: seeded-ish random array ── */
 const makeStars = (count: number) =>
@@ -29,7 +30,7 @@ const makeParticles = (count: number) =>
   }));
 
 const LoginPage = () => {
-  const { isAuthenticated, user, isLoading, loginWithOneID, login, mockLogin, mockSeniorLogin, mockAdminLogin } = useAuth();
+  const { isAuthenticated, user, isLoading, loginWithOneID, login } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -52,6 +53,7 @@ const LoginPage = () => {
   const stars = useMemo(() => makeStars(40), []);
   const particles = useMemo(() => makeParticles(14), []);
 
+  const [showOneIdPassword, setShowOneIdPassword] = useState(false);
   const { i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px] font-['TA_8bit']" : "text-[14px] font-pixel";
 
@@ -194,27 +196,8 @@ const LoginPage = () => {
 
                 <PixelDivider />
 
-                {/* Pixel terminal decoration */}
-                {/* <div className="pixel-inset bg-background p-4 mb-6">
-                  <div className="font-pixel-body text-sm text-muted-foreground space-y-1">
-                    <p>
-                      <span className="text-success terminal-glow">{">"}</span>{" "}
-                      Initializing guild terminal...
-                    </p>
-                    <p>
-                      <span className="text-success terminal-glow">{">"}</span>{" "}
-                      Authentication required
-                    </p>
-                    <p>
-                      <span className="text-success terminal-glow">{">"}</span>{" "}
-                      Select login method_
-                    </p>
-                  </div>
-                </div> */}
-
                 {/* Login Form */}
                 <div className="space-y-3">
-                  {/* เพิ่ม input สำหรับ OneID */}
                   <div>
                     <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">
                       Username
@@ -229,19 +212,33 @@ const LoginPage = () => {
                     <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">
                       Password
                     </label>
-                    <PixelInput
-                      type="password"
-                      placeholder="••••••••"
-                      value={oneIdPassword}
-                      onChange={(e) => setOneIdPassword(e.target.value)}
-                    />
+                    <div className="relative">
+                      <PixelInput
+                        type={showOneIdPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={oneIdPassword}
+                        onChange={(e) => setOneIdPassword(e.target.value)}
+                        className="pr-12"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowOneIdPassword(!showOneIdPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-accent transition-colors"
+                      >
+                        {showOneIdPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   <PixelButton
                     variant="gold"
                     size="md"
                     className="w-full font-pixel text-[16px] uppercase tracking-wider"
-                    onClick={() => loginWithOneID(oneIdUsername, oneIdPassword)} // ส่ง username, password
+                    onClick={() => loginWithOneID(oneIdUsername, oneIdPassword)}
                     disabled={isLoading}
                     type="button"
                   >
