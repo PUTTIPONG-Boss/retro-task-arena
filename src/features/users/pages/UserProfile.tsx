@@ -63,7 +63,7 @@ const UserProfile = () => {
         />
       )}
 
-      {activeTab === "activity" && <ActivityTab bids={bids} />}
+      {activeTab === "activity" && <ActivityTab bids={bids} quests={quests} user={user} />}
     </div>
   );
 };

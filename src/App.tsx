@@ -17,14 +17,13 @@ import QuestBoard from "@/features/quests/pages/QuestBoard";
 import QuestDetail from "@/features/quests/pages/QuestDetail";
 import QuestWorkspace from "@/features/quests/pages/QuestWorkspace";
 import CreateQuest from "@/features/quests/pages/create/CreateQuest";
-import EditQuest from "@/features/quests/pages/edit/EditQuest";
+import EditQuest from "@/features/quests/pages/Edit/EditQuest";
 import SubmitBid from "@/features/bids/pages/SubmitBid";
 import ProviderBids from "@/features/bids/pages/ProviderBids";
 import RewardShop from "@/features/rewards/pages/RewardShop";
 import AddProduct from "@/features/rewards/pages/create/AddProduct";
 import UserProfile from "@/features/users/pages/UserProfile";
 import EditUserProfile from "@/features/users/pages/Edit/EditUserProfile";
-import PointsAnimation from "@/features/users/components/PointsAnimation";
 import ManageSenior from "@/features/admin/pages/ManageSenior";
 import ManageJunior from "@/features/admin/pages/ManageJunior";
 import ManageQuests from "@/features/admin/pages/ManageQuests";
@@ -44,7 +43,6 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ProtectedRoute>
-      <PointsAnimation />
       <div className="relative z-10 h-screen flex flex-col bg-background">
         <Navbar />
         <main className="flex-1 h-full overflow-y-auto w-full relative z-10">

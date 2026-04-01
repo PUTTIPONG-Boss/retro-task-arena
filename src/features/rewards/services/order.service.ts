@@ -26,7 +26,7 @@ export const useGetMyOrders = (userId: string | undefined) => {
     queryKey: ['my-orders', userId],
     enabled: !!userId && userId !== '00000000-0000-0000-0000-000000000000',
     queryFn: async (): Promise<Order[]> => {
-      const response = await apiClient.get<Order[]>(`/order/user/${userId}`);
+      const response = await apiClient.get<Order[]>(`/order/my`);
       return response.data;
     },
   });

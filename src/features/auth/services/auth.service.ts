@@ -19,13 +19,15 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * Future: POST /auth/oauth/oneid
  */
 export async function loginWithOneID(username: string, password: string): Promise<OAuthTokenResponse> {
-  await apiClient.post("/user/login", { username, password }, { withCredentials: true });
+  // login → backend sets HttpOnly cookies อัตโนมัติ (access_token, refresh_token)
+  await apiClient.post("/user/login", { username, password });
 
-  const userResponse = await apiClient.get("/user/me", { withCredentials: true });
+  // ดึงข้อมูล user (cookie ถูกส่งไปอัตโนมัติจาก withCredentials: true)
+  const userResponse = await apiClient.get("/user/me");
   const userData = userResponse.data;
 
   return {
-    access_token: "",
+    access_token: "cookie_based", // Placeholder indicate cookie is used
     user: {
       ...mockUser,
       ...userData,
@@ -33,7 +35,7 @@ export async function loginWithOneID(username: string, password: string): Promis
       username: userData.username,
       points: userData.points || 0,
       role: userData.role || "JUNIOR",
-      skills: userData.skills ? userData.skills.split(",") : [],
+      skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
       questsCompleted: userData.questsCompleted || 0,
       rating: userData.rating || 5.0,
     },
@@ -46,20 +48,16 @@ export async function loginWithOneID(username: string, password: string): Promis
 import { apiClient } from "@/lib/api";
 
 export async function login(email: string, password: string): Promise<OAuthTokenResponse> {
-  const response = await apiClient.post("/user/login", { email, password });
-  const token = response.data.token;
+  // backend sets HttpOnly cookies อัตโนมัติ
+  await apiClient.post("/user/login", { email, password });
 
-  // After login, fetch user profile using the new /user/me endpoint
-  // The token is automatically attached by the interceptor if we wait for the store to update,
-  // but here we can pass it manually for the very first call.
-  const userResponse = await apiClient.get("/user/me", {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  // ดึงข้อมูล user โดยใช้ cookie (interceptor will handle basic config)
+  const userResponse = await apiClient.get("/user/me");
 
   const userData = userResponse.data;
 
   return {
-    access_token: token,
+    access_token: "cookie_based",
     user: {
       ...mockUser, // Fallback fields
       ...userData,
@@ -67,7 +65,7 @@ export async function login(email: string, password: string): Promise<OAuthToken
       username: userData.username,
       points: userData.points || 0,
       role: userData.role || "JUNIOR",
-      skills: userData.skills ? userData.skills.split(",") : [],
+      skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
       questsCompleted: userData.questsCompleted || 0,
       rating: userData.rating || 5.0,
     },

@@ -59,10 +59,10 @@ export interface Quest {
   bids: Bid[];
   assignedTo?: string;
   skills?: string;
+  createdAt: string;
 }
 
 export interface CreateQuestPayload {
-  employer_id: string;
   title: string;
   description: string;
   point: number;

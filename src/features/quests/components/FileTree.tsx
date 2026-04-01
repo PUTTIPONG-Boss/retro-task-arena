@@ -11,16 +11,16 @@ interface FileTreeProps {
   branch?: string;
 }
 
-const FileTreeItem = ({ 
-  item, 
-  repoUrl, 
-  onFileSelect, 
+const FileTreeItem = ({
+  item,
+  repoUrl,
+  onFileSelect,
   selectedPath,
   level = 0,
   branch
-}: { 
-  item: GitTreeItem; 
-  repoUrl: string; 
+}: {
+  item: GitTreeItem;
+  repoUrl: string;
   onFileSelect: (path: string) => void;
   selectedPath?: string;
   level?: number;
@@ -32,7 +32,7 @@ const FileTreeItem = ({
   if (item.type === 'tree') {
     return (
       <div className="select-none">
-        <div 
+        <div
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             "flex items-center gap-1.5 py-1 px-2 cursor-pointer hover:bg-muted/50 transition-colors group",
@@ -44,12 +44,12 @@ const FileTreeItem = ({
           <Folder size={14} className={cn("text-accent", isOpen ? "fill-accent/20" : "")} />
           <span className="font-pixel text-[8px] text-foreground/90 group-hover:text-accent">{item.name}</span>
         </div>
-        
+
         {isOpen && (
-          <FileTreeLevel 
-            repoUrl={repoUrl} 
-            path={item.path} 
-            onFileSelect={onFileSelect} 
+          <FileTreeLevel
+            repoUrl={repoUrl}
+            path={item.path}
+            onFileSelect={onFileSelect}
             selectedPath={selectedPath}
             level={level + 1}
             branch={branch}
@@ -60,7 +60,7 @@ const FileTreeItem = ({
   }
 
   return (
-    <div 
+    <div
       onClick={() => onFileSelect(item.path)}
       className={cn(
         "flex items-center gap-1.5 py-1 px-2 cursor-pointer transition-colors group",
@@ -79,22 +79,22 @@ const FileTreeItem = ({
   );
 };
 
-const FileTreeLevel = ({ 
-  repoUrl, 
-  path = '', 
-  onFileSelect, 
+const FileTreeLevel = ({
+  repoUrl,
+  path = '',
+  onFileSelect,
   selectedPath,
   level = 0,
   branch
-}: { 
-  repoUrl: string; 
-  path?: string; 
+}: {
+  repoUrl: string;
+  path?: string;
   onFileSelect: (path: string) => void;
   selectedPath?: string;
   level?: number;
   branch?: string;
 }) => {
-  const { data: items, isLoading, isError } = useGetRepoTree(repoUrl, path, branch);
+  const { data: items, isLoading, isError, error } = useGetRepoTree(repoUrl, path, branch);
 
   if (isLoading && level === 0) {
     return (
@@ -106,6 +106,20 @@ const FileTreeLevel = ({
   }
 
   if (isError) {
+    const status = (error as any)?.response?.status;
+    if (status === 429) {
+      return (
+        <div className="p-4 text-center">
+          <div className="text-2xl mb-2">⏳</div>
+          <p className="font-pixel text-[7px] text-yellow-400 leading-relaxed">
+            GitHub API Rate Limit
+          </p>
+          <p className="font-pixel text-[6px] text-muted-foreground mt-1">
+            โควต้าหมดชั่วคราว
+          </p>
+        </div>
+      );
+    }
     return <div className="p-4 font-pixel text-[7px] text-destructive">Failed to load tree</div>;
   }
 
@@ -123,11 +137,11 @@ const FileTreeLevel = ({
   return (
     <div>
       {sortedItems.map((item) => (
-        <FileTreeItem 
-          key={item.id} 
-          item={item} 
-          repoUrl={repoUrl} 
-          onFileSelect={onFileSelect} 
+        <FileTreeItem
+          key={item.id}
+          item={item}
+          repoUrl={repoUrl}
+          onFileSelect={onFileSelect}
           selectedPath={selectedPath}
           level={level}
           branch={branch}

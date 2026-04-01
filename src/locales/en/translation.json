@@ -22,8 +22,9 @@
       "subtitle": "Is the Go Fiber server running on port 5000?"
     },
     "queststatuses": {
-      "active": "OPEN",
+      "open": "OPEN",
       "in_progress": "IN PROGRESS",
+      "in_review": "IN REVIEW",
       "completed": "COMPLETED",
       "all": "ALL"
     },
@@ -104,6 +105,12 @@
       "openWorkspace": "Open Workspace",
       "completeQuest": "Complete Quest & Award Points",
       "questCompleted": "QUEST COMPLETED"
+    },
+    "finalReview": {
+      "title": "Quest Review",
+      "rating": "Satisfaction Rating",
+      "comment": "Feedback",
+      "noReview": "No review available for this quest."
     }
   },
   "questWorkspace": {
@@ -150,7 +157,8 @@
       "title": "Review Status",
       "desc": "The worker has submitted their work. Please verify the code in the 'Files' tab before approving.",
       "approveBtn": "✅ Approve Results",
-      "requestChangesBtn": "🔄 Request Changes"
+      "requestChangesBtn": "🔄 Request Changes",
+      "revisionRequired": "🚩 REVISION REQUIRED"
     },
     "victory": "Quest Victory!",
     "rewardAwarded": "Reward: {{reward}} GP Awarded",
@@ -174,6 +182,16 @@
       "approveFailed": "Failed to approve quest.",
       "changesRequested": "Changes requested. Quest status returned to IN PROGRESS.",
       "requestFailed": "Failed to request changes."
+    },
+    "modals": {
+      "requestChanges": {
+        "title": "⚔ REQUEST CHANGES",
+        "desc": "Specify what needs to be fixed by the adventurer",
+        "reasonLabel": "REVISION REASON",
+        "placeholder": "e.g. Add error handling, Fix CSS alignment...",
+        "cancelBtn": "CANCEL",
+        "submitBtn": "SEND REQUEST"
+      }
     }
   },
   "userProfile": {
@@ -211,11 +229,20 @@
       "noTransactions": "No transactions found."
     },
     "activity": {
-      "title": "Your quest applications",
-      "noApplications": "You haven't applied for any quests yet.",
+      "title": "Your Activity Feed",
+      "noApplications": "No activities found in your journey yet.",
       "unknownQuest": "Unknown Quest",
       "bid": "Bid:",
       "wait": "Wait:",
+      "sortNewest": "Newest",
+      "sortOldest": "Oldest",
+      "types": {
+        "posted": "Posted a new quest: {{title}}",
+        "applied": "Submitted a bid for quest: {{title}}",
+        "completed": "Quest Victory! Awarded {{reward}} GP",
+        "submitted": "Sent work for review: {{title}}",
+        "reviewed": "Received review: {{comment}}"
+      },
       "status": {
         "pending": "PENDING",
         "accepted": "ACCEPTED",

@@ -9,6 +9,7 @@ import PixelUser from "@/components/icons/PixelUser";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import PixelSword from "@/components/icons/PixelSword";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const Navbar = () => {
 
   if (!user) return null;
 
-  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[18px]";
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[14px]";
   const isAdmin = user.role === "ADMIN";
 
   const toggleLanguage = () => {

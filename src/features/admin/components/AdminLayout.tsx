@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 import Navbar from "@/components/Navbar";
-import PointsAnimation from "@/features/users/components/PointsAnimation";
 import { useQueryClient } from "@tanstack/react-query";
 import { getUsersByRole } from "../services/admin.service";
 
@@ -29,7 +28,6 @@ const AdminLayout = () => {
 
   return (
     <div className="relative z-10 h-screen flex flex-col bg-background font-pixel">
-      <PointsAnimation />
       <Navbar />
       
       <div className="flex flex-1 overflow-hidden relative">
