@@ -4,7 +4,7 @@ import PixelFrame from "@/components/PixelFrame";
 import { useQuery } from "@tanstack/react-query";
 import { getUsersByRole } from "../services/admin.service";
 
-const STALE_TIME = 5 * 60 * 1_000; // must match AdminLayout prefetch
+const STALE_TIME = 5 * 60 * 1_000;
 
 const SkeletonRows = () => (
   <>
@@ -27,7 +27,7 @@ const ManageJunior = () => {
   const { t, i18n } = useTranslation();
   const { data: juniors = [], isLoading } = useQuery({
     queryKey: ["admin", "users", "junior"],
-    queryFn: () => getUsersByRole("JUNIOR"),
+    queryFn: () => getUsersByRole("JUNIOR"),  
     staleTime: STALE_TIME,
     gcTime: 10 * 60 * 1_000,
   });

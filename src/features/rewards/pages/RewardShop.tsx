@@ -226,7 +226,7 @@ const RewardShop = () => {
                         <span
                           className={`text-accent pixel-text-shadow ${fontClass}`}
                         >
-                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.price.toLocaleString()}{" "}
+                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.price.toLocaleString()}
                         </span>
                         <span className={`text-muted-foreground ${fontClass}`}>
                           {t("rewardShop.stock")}: {item.stock}

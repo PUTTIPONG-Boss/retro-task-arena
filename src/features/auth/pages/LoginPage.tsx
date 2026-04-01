@@ -67,6 +67,31 @@ const LoginPage = () => {
     }
   };
 
+  const handleOneIdLogin = async (e?: React.FormEvent | KeyboardEvent) => {
+    if (e && "preventDefault" in e) e.preventDefault();
+    if (isLoading) return;
+
+    try {
+      await loginWithOneID(oneIdUsername, oneIdPassword);
+      // The store handles the success state (isAuthenticated) which triggers the useEffect redirect
+    } catch (error) {
+      toast.error("OneID authentication failed. Check your coordinates.");
+    }
+  };
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Check if Enter key is pressed and we are not already loading
+      // and not currently in handleEmailLogin (though it's hidden)
+      if (e.key === "Enter" && !isLoading) {
+        handleOneIdLogin(e);
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [oneIdUsername, oneIdPassword, isLoading]);
+
   return (
     <div className={`relative min-h-screen overflow-hidden ${fontClass}`}>
       {/* ═══ LAYER 1 — pixel star sky (supplemental to global bg) ═══ */}
@@ -197,7 +222,7 @@ const LoginPage = () => {
                 <PixelDivider />
 
                 {/* Login Form */}
-                <div className="space-y-3">
+                <form className="space-y-3" onSubmit={handleOneIdLogin}>
                   <div>
                     <label className="font-pixel text-[18px] text-muted-foreground block mb-2 uppercase">
                       Username
@@ -238,13 +263,13 @@ const LoginPage = () => {
                     variant="gold"
                     size="md"
                     className="w-full font-pixel text-[16px] uppercase tracking-wider"
-                    onClick={() => loginWithOneID(oneIdUsername, oneIdPassword)}
+                    onClick={handleOneIdLogin}
                     disabled={isLoading}
-                    type="button"
+                    type="submit"
                   >
                     🔑 Login with OneID
                   </PixelButton>
-                </div>
+                </form>
                 <PixelDivider className="mt-6 mb-4" />
 
                 <p className="font-pixel text-[16px] text-muted-foreground text-center leading-relaxed">

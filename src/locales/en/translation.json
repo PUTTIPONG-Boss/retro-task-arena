@@ -39,13 +39,14 @@
     "filter": "Filter"
   },
   "questCard": {
-    "reward": "GP",
+    "reward": "Points",
     "bids": "bids",
     "bid": "bid",
     "difficulty": "Difficulty",
     "provider": "Posted by",
     "totalBids": "Total Bids",
-    "issuedBy": "Quest Giver:"
+    "issuedBy": "Quest Giver:",
+    "GP": "Points"
   },
   "questDetail": {
     "back": "Back to Board",
@@ -55,19 +56,19 @@
       "aventurerbids": "Adventurer Bids",
       "nobid": "No bids yet. Share this quest with adventurers!",
       "quest": "quests",
-      "GP": "Gold"
+      "GP": "Points"
     },
-    "viewmode" : {
+    "viewmode": {
       "yourbidsub": "Your bid has been submitted!",
       "amount": "Amount",
-      "GP": "Gold",
+      "GP": "Points",
       "duration": "Duration",
       "note": "Note",
       "status": "Status"
     },
-    "GP": "Gold",
+    "GP": "Points",
     "acceptbid": "Accept Bid",
-    "ownerbids" : "Adventurer(s) have bid on this quest",
+    "ownerbids": "Adventurer(s) have bid on this quest",
     "accept": "ACCEPTED",
     "reject": "REJECTED",
     "bidsdetail": "Bid details are hidden to ensure fair competition.",
@@ -77,13 +78,13 @@
     "waitduration": "Wait Duration",
     "note": "Note",
     "Submitting": "Submitting...",
-    "btncancel" : "CANCEL",
-    "editbid" : {
+    "btncancel": "CANCEL",
+    "editbid": {
       "editbids": "Edit Your Bid",
-      "bidamount": "BID AMOUNT (GP)",
+      "bidamount": "BID AMOUNT (Points)",
       "waitduration": "ESTIMATED DURATION",
       "note": "NOTE (OPTIONAL)",
-      "btncancel" : "CANCEL",
+      "btncancel": "CANCEL",
       "Saving": "Saving...",
       "SuccessSave": "Save Changes",
       "SuccessMsg": "Bid updated successfully!",
@@ -153,7 +154,7 @@
       "requestChangesBtn": "🔄 Request Changes"
     },
     "victory": "Quest Victory!",
-    "rewardAwarded": "Reward: {{reward}} GP Awarded",
+    "rewardAwarded": "Reward: {{reward}} Points Awarded",
     "sidebar": {
       "provider": "Quest Giver",
       "name": "Name",
@@ -181,7 +182,7 @@
     "joined": "Joined",
     "level": "LEVEL",
     "stats": {
-      "gold": "Gold",
+      "gold": "Points",
       "questsDone": "Quests Done",
       "rating": "Rating",
       "reviews": "Reviews"
@@ -223,7 +224,6 @@
       }
     }
   },
-
   "editProfile": {
     "cancel": "< CANCEL",
     "title": "EDIT ADVENTURER",
@@ -243,7 +243,6 @@
     "confirmBtn": "CONFIRM UPDATES",
     "successMsg": "Profile Updated!"
   },
-
   "createQuest": {
     "back": "Back",
     "title": "Post New Quest",
@@ -251,7 +250,7 @@
     "labels": {
       "questTitle": "Quest Title",
       "questDesc": "Quest Description",
-      "baseReward": "Base Reward (GP)",
+      "baseReward": "Base Reward (Points)",
       "estimatedTime": "Estimated Time",
       "difficulty": "Difficulty",
       "category": "Category",
@@ -264,8 +263,8 @@
     "placeholders": {
       "questTitle": "e.g. Slay the Authentication Dragon",
       "questDesc": "Describe the quest requirements...",
-      "reward": "e.g. 100 Gold",
-      "time": "e.g. 8 Days or 8 Hours",
+      "reward": "e.g. 100 Points",
+      "time": "e.g. 8",
       "customSkill": "Add other skills (e.g. Golang, Angular)"
     },
     "buttons": {
@@ -273,6 +272,11 @@
     },
     "messages": {
       "noSkills": "No skills selected"
+    },
+    "timeUnits": {
+      "Days": "Days",
+      "Weeks": "Weeks",
+      "Months": "Months"
     },
     "difficulties": {
       "Easy": "Easy",
@@ -292,11 +296,11 @@
   "editQuest": {
     "back": "Back to Quest",
     "title": "Edit Quest",
-    "subtitle": "Modify the details of your requested task.",
+    "subtitle": "Update the details of your quest",
     "labels": {
       "questTitle": "Quest Title",
       "questDesc": "Quest Description",
-      "baseReward": "Base Reward (GP)",
+      "baseReward": "Base Reward (Points)",
       "difficulty": "Difficulty",
       "category": "Category",
       "repoUrl": "Git Repository URL"
@@ -311,29 +315,28 @@
     "saveBtn": "Save Changes",
     "successMsg": "Quest updated successfully!"
   },
-
   "rewardShop": {
     "title": "Inet Reward Shop",
-    "subtitle": "Trade your gold for legendary items",
+    "subtitle": "Trade your points for legendary items",
     "balance": "Your Balance",
-    "currency": "GP",
+    "currency": "Points",
     "addProduct": "Add Product",
     "filters": {
       "all": "ALL ITEMS",
-      "range1": "0-50 GP",
-      "range2": "51-100 GP",
-      "range3": "101-150 GP",
-      "range4": "151-200 GP",
-      "range5": "201-250 GP",
-      "range6": "251-300 GP",
-      "range7": "300+ GP"
+      "range1": "0-50 Points",
+      "range2": "51-100 Points",
+      "range3": "101-150 Points",
+      "range4": "151-200 Points",
+      "range5": "201-250 Points",
+      "range6": "251-300 Points",
+      "range7": "300+ Points"
     },
     "stock": "Stock",
     "buy": "Buy",
-    "needMore": "Need More GP",
+    "needMore": "Need More Points",
     "empty": "No items found in this price range...",
     "toastSuccess": "You acquired: {{name}}!",
-    "toastError": "Not enough gold! Complete more quests.",
+    "toastError": "Not enough point! Complete more quests.",
     "loaditem": "Failed to load items from the shop.",
     "running": "Make sure the backend is running and try again."
   },
@@ -346,7 +349,7 @@
       "name": "Product Name",
       "description": "Description",
       "category": "Category",
-      "price": "Price (GP)",
+      "price": "Price (Points)",
       "stock": "Stock"
     },
     "placeholders": {
@@ -366,7 +369,7 @@
   },
   "rewardBanner": {
     "marquee": "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦",
-    "description": "Trade your hard-earned gold for items."
+    "description": "Trade your hard-earned points for items."
   },
   "admin": {
     "juniorpage": {

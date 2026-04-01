@@ -104,7 +104,7 @@ const statusConfig: Record<string, { color: string; icon: string; animate?: bool
 const QuestCard = ({ quest }: QuestCardProps) => {
   const { t, i18n } = useTranslation();
   const { data: bids = [] } = useGetBids(quest.id);
-  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[18px]";
   const status = statusConfig[quest.status] || { color: "#ffffff", icon: "[ ]" };
 
   // ชุดสีสำหรับ Card (เข้ากับ Banner)
@@ -236,7 +236,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                   className={`pixel-font gold-text flex items-center gap-2 ${fontClass}`}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <span className={`text-[#f1c40f] ${fontClass}`}>●</span> {quest.rewardPoints} GP
+                  <span className={`text-[#f1c40f] ${fontClass}`}>●</span> {quest.rewardPoints} {t("questCard.GP")}
                 </motion.span>
                 <div className={`pixel-text ${fontClass}`}>
                   <DifficultyStars level={quest.difficulty} />

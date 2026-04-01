@@ -45,3 +45,11 @@ export async function getAllProducts(page = 1, limit = 20) {
   const response = await apiClient.get(`/product?page=${page}&limit=${limit}`);
   return Array.isArray(response.data) ? response.data : (response.data.data || []);
 }
+
+export async function deleteProduct(id: string): Promise<void> {
+  await apiClient.delete(`/product/${id}`);
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  await apiClient.delete(`/tasks/${id}`);
+}

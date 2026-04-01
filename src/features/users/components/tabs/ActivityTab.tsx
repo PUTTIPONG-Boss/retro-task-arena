@@ -36,7 +36,7 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids }) => {
                 </Link>
                 <div className="flex gap-3 items-center mt-1">
                   <p className={`text-[10px] text-muted-foreground ${fontClass}`}>
-                    {t("userProfile.activity.bid")}:{" "}
+                    {t("userProfile.activity.bid")}
                     <span className="text-accent">
                       <PixelCoin size={12} className="inline mr-0.5" /> {app.bidAmount} GP
                     </span>

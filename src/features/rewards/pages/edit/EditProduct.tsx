@@ -1,14 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
-import { useCreateProduct } from "../../services/product.service";
+import { useGetProductById, useUpdateProduct } from "../../services/product.service";
 import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import PixelStore from "@/components/icons/PixelStore";
 
@@ -18,16 +17,14 @@ const CATEGORY_OPTIONS = [
   { value: "clothing", label: "Clothing" },
 ];
 
-const AddProduct = () => {
+const EditProduct = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const { t, i18n } = useTranslation();
 
-  useEffect(() => {
-    if (user && !(user.role === 'ADMIN')) {
-      toast.error("Access denied. Only Admin can list products.");
-      navigate("/reward-shop");
-    }
-  }, [user, navigate]);
+  const { data: product, isLoading: isFetching } = useGetProductById(id);
+  const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -35,18 +32,33 @@ const AddProduct = () => {
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("coupon");
 
-  const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
 
-  const { mutate: createProduct, isPending } = useCreateProduct();
+  // Admin access check
+  useEffect(() => {
+    if (user && user.role !== 'ADMIN') {
+      toast.error("Access denied. Only Admin can edit products.");
+      navigate("/reward-shop");
+    }
+  }, [user, navigate]);
+
+  // Pre-fill form when product data is loaded
+  useEffect(() => {
+    if (product) {
+      setName(product.name);
+      setDescription(product.description);
+      setPrice(product.price.toString());
+      setStock(product.stock.toString());
+      setCategory(product.category || "coupon");
+    }
+  }, [product]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!id) return;
     if (!name.trim() || !description.trim() || !category.trim() || !price || !stock) {
-      toast.error("Please fill in all required fields.", {
-        style: { fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]" },
-      });
+      toast.error("Please fill in all required fields.");
       return;
     }
 
@@ -62,24 +74,27 @@ const AddProduct = () => {
       return;
     }
 
-    createProduct(
+    updateProduct(
       {
-        name: name.trim(),
-        description: description.trim(),
-        category: category.trim(),
-        price: parsedPrice,
-        stock: parsedStock,
+        id,
+        payload: {
+          name: name.trim(),
+          description: description.trim(),
+          category: category.trim(),
+          price: parsedPrice,
+          stock: parsedStock,
+        },
       },
       {
         onSuccess: () => {
-          toast.success(t("createReward.successMsg"), {
+          toast.success(t("admin.rewardspage.saveSuccess") || "Product updated successfully!", {
             style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
-          navigate("/reward-shop");
+          navigate("/admin/managereward");
         },
         onError: (error: any) => {
           const raw = error?.response?.data?.error;
-          const msg = typeof raw === "string" ? raw : typeof raw?.message === "string" ? raw.message : t("createReward.errorMsg");
+          const msg = typeof raw === "string" ? raw : typeof raw?.message === "string" ? raw.message : "Failed to update product.";
           toast.error(msg, {
             style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
@@ -87,6 +102,14 @@ const AddProduct = () => {
       }
     );
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="font-pixel text-accent animate-pulse">Loading Product...</div>
+      </div>
+    );
+  }
 
   return (
     <div className={`max-w-[700px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
@@ -102,10 +125,10 @@ const AddProduct = () => {
 
       <PixelFrame>
         <h1 className={`flex items-center gap-2 font-pixel pixel-text-shadow mb-2 ${fontClass}`}>
-          <PixelStore size={24} className="text-yellow-500" /> {t("createReward.title")}
+          <PixelStore size={24} className="text-yellow-500" /> {t("admin.questspage.edit") || "Edit Product"}
         </h1>
         <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>
-          {t("createReward.subtitle")}
+          Update product details and stock availability
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -142,21 +165,21 @@ const AddProduct = () => {
               {t("createReward.labels.category")}
             </label>
             <div className="relative">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className={`font-pixel ${fontClass} w-full bg-background border border-border text-foreground px-3 py-2 pr-10 rounded-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 cursor-pointer appearance-none pixel-inset`}
-              >
-                {CATEGORY_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className={`font-pixel ${fontClass} w-full bg-background border border-border text-foreground px-3 py-2 pr-10 rounded-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 cursor-pointer appearance-none pixel-inset`}
+            >
+              {CATEGORY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
                 <ChevronDown size={16} />
               </div>
-            </div>
+          </div>  
           </div>
 
           {/* Price + Stock side by side */}
@@ -195,17 +218,17 @@ const AddProduct = () => {
             variant="gold"
             size="lg"
             className="w-full font-pixel h-14"
-            disabled={isPending}
+            disabled={isUpdating}
           >
-            {isPending ? (
+            {isUpdating ? (
               <div className="flex items-center justify-center gap-2">
                 <PixelStore size={18} className="animate-pulse" />
-                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+                <span className={fontClass}>{t("admin.rewardspage.save") || "Saving..."}</span>
               </div>
             ) : (
               <div className="flex items-center justify-center gap-2">
                 <PixelStore size={18} />
-                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+                <span className={fontClass}>{t("admin.rewardspage.save") || "Save Changes"}</span>
               </div>
             )}
           </PixelButton>
@@ -215,4 +238,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

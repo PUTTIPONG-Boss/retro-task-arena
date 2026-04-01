@@ -50,8 +50,8 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                     <p
                       className={`text-muted-foreground mt-1 font-pixel ${fontClass}`}
                     >
-                      {q.category} ·{" "}
-                      <Hourglass size={16} className="inline mr-1 text-yellow-400" />{" "}
+                      {q.category}
+                      <Hourglass size={16} className="inline mr-1 text-yellow-400" />
                       {q.estimatedTime}
                     </p>
                   </div>
@@ -95,8 +95,8 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                       <p
                         className={`text-base text-muted-foreground mt-1 font-pixel ${fontClass}`}
                       >
-                        {q.status.toUpperCase()} ·{" "}
-                        <Hourglass size={16} className="inline mr-1 text-yellow-400" />{" "}
+                        {q.status.toUpperCase()}
+                        <Hourglass size={16} className="inline mr-1 text-yellow-400" />
                         {q.estimatedTime}
                       </p>
                     </div>
@@ -121,7 +121,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
           <h2
             className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}
           >
-            <PixelTrophy size={20} className="inline-block mr-1 text-yellow-400" />{" "}
+            <PixelTrophy size={20} className="inline-block mr-1 text-yellow-400" />
             {t("userProfile.completedQuests")}
           </h2>
           <div className="space-y-3">
