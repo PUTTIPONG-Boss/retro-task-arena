@@ -57,7 +57,7 @@ const CreateQuest = () => {
 
   const toggleSkill = (skill: string) => {
     if (selectedSkills.includes(skill)) {
-      if (selectedSkills.length === 1 && selectedSkills[0] === "General") return; // Keep at least one
+      if (selectedSkills.length === 1 && selectedSkills[0] === "General") return;
       setSelectedSkills(selectedSkills.filter((s) => s !== skill));
     } else {
       setSelectedSkills([...selectedSkills, skill]);
@@ -129,7 +129,7 @@ const CreateQuest = () => {
         variant="danger"
         size="sm"
         className={`mb-6 font-pixel ${fontClass}`}
-        onClick={() => navigate("/")}
+        onClick={() => navigate(-1)}
       >
         ← {t("createQuest.back")}
       </PixelButton>

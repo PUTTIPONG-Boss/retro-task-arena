@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelFrame from "@/components/PixelFrame";
+import PixelStore from "@/components/icons/PixelStore";
 import { useQuery } from "@tanstack/react-query";
 import { getAllProducts } from "../services/admin.service";
 
@@ -59,8 +60,9 @@ const ManageReward = () => {
   return (
     <div className={`p-6 max-w-6xl mx-auto text-foreground font-pixel ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-accent pixel-text-shadow">
-          🎁 {t("admin.rewardspage.title")}
+        <h1 className="text-2xl font-bold text-accent pixel-text-shadow flex items-center gap-2">
+          <PixelStore className="w-7 h-7" />
+          {t("admin.rewardspage.title")}
         </h1>
         <PixelButton
           variant="gold"
@@ -77,19 +79,18 @@ const ManageReward = () => {
         <table className="w-full text-left border-collapse min-w-[1000px] table-fixed">
           <thead>
             <tr className={`border-b border-[#333] text-muted-foreground uppercase tracking-wider ${fontClass}`}>
-              <th className="p-3 w-[16.6%]">{t("admin.rewardspage.id")}</th>
-              <th className="p-3 w-[16.6%]">{t("admin.rewardspage.title")}</th>
-              <th className="p-3 w-[16.6%]">{t("admin.rewardspage.desc")}</th>
-              <th className="p-3 w-[16.6%] text-center">{t("admin.rewardspage.cost")}</th>
-              <th className="p-3 w-[16.6%] text-center">{t("admin.rewardspage.stock")}</th>
-              <th className="p-3 w-[16.6%] text-center">{t("admin.rewardspage.action")}</th>
+              <th className="p-3 w-[25%]">{t("admin.rewardspage.title")}</th>
+              <th className="p-3 w-[25%]">{t("admin.rewardspage.desc")}</th>
+              <th className="p-3 w-[15%] text-center">{t("admin.rewardspage.cost")}</th>
+              <th className="p-3 w-[15%] text-center">{t("admin.rewardspage.stock")}</th>
+              <th className="p-3 w-[20%] text-center">{t("admin.rewardspage.action")}</th>
             </tr>
           </thead>
           <tbody>
             {!rewards || rewards.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={5}
                   className="p-6 text-center text-muted-foreground"
                 >
                   {t("admin.rewardspage.notfoundquest")}
@@ -101,9 +102,7 @@ const ManageReward = () => {
                   key={reward.id}
                   className="border-b border-[#333]/30 hover:bg-white/5 transition-colors"
                 >
-                  <td className="p-3">
-                    <div className={`text-muted-foreground truncate ${fontClass}`} title={reward.sku}>{reward.sku}</div>
-                  </td>
+
                   <td className="p-3">
                     <div className={`font-medium text-foreground truncate ${fontClass}`} title={reward.name}>
                       {reward.name}
@@ -175,19 +174,6 @@ const ManageReward = () => {
               </div>
 
               <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className={`block text-muted-foreground mb-2 uppercase ${fontClass}`}>
-                    SKU
-                  </label>
-                  <PixelInput
-                    type="text"
-                    value={currentEdit.sku}
-                    onChange={(e) =>
-                      setCurrentEdit({ ...currentEdit, sku: e.target.value })
-                    }
-                    required
-                  />
-                </div>
                 <div className="flex-1">
                   <label className={`block text-muted-foreground mb-2 uppercase ${fontClass}`}>
                     {t("admin.rewardspage.category")}

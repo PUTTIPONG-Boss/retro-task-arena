@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import PixelButton from "@/components/PixelButton";
+import { Github, Linkedin, Sword } from "lucide-react";
 
 const EditUserProfile = () => {
   const user = useUserStore((state) => state.user);
@@ -37,9 +38,6 @@ const EditUserProfile = () => {
     if (!user) return;
 
     try {
-      // FIX: ส่งเฉพาะ id และ field ที่ user แก้ได้จริงๆ
-      // ไม่ spread ...user ทั้งหมด เพราะจะทำให้ field อื่น (role, points, level ฯลฯ)
-      // ถูกส่งไป PATCH และ backend อาจ overwrite ค่าสำคัญด้วยค่าผิดพลาด
       await updateProfile.mutateAsync({
         github,
         linkin,
@@ -83,8 +81,11 @@ const EditUserProfile = () => {
           <div className="flex-1 w-full space-y-4">
             <div>
               <label
-                className={`block mb-1 font-pixel ${fontClass}`}
+                className={`flex items-center gap-2 mb-1 font-pixel ${fontClass}`}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-[18px] h-[18px] text-yellow-400 shrink-0">
+                  <path d="M6 22H4v-4h2v4Zm14 0h-2v-4h2v4ZM8 18H6v-2h2v2Zm10 0h-2v-2h2v2Zm-2-2H8v-2h8v2Zm-1-4H9v-2h6v2Zm-6-2H7V4h2v6Zm8 0h-2V4h2v6Zm-2-6H9V2h6v2Z"/>
+                </svg>
                 {t("editProfile.labels.username")}
               </label>
               <div
@@ -99,9 +100,10 @@ const EditUserProfile = () => {
 
       <PixelFrame className="mb-6">
         <h2
-          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}
+          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
         >
-          ⚔ {t("editProfile.skills.title")}
+          <Sword className="text-yellow-400" />
+          {t("editProfile.skills.title")}
         </h2>
         <div className="flex flex-wrap gap-2 mb-4">
           {skills.map((skill) => (
@@ -126,11 +128,13 @@ const EditUserProfile = () => {
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addSkill()}
-            className={`flex-1 bg-secondary pixel-border p-2 text-foreground placeholder-amber-400 focus:outline-none font-pixel ${fontClass}`}
+            className={`flex-1 bg-secondary pixel-border p-2 text-foreground placeholder-white-400 focus:outline-none font-pixel ${fontClass}`}
           />
           <button
             onClick={addSkill}
-            className={`pixel-border bg-muted px-4 text-amber-500 hover:text-amber-300 font-pixel ${fontClass}`}
+            className={`pixel-border bg-muted px-4 font-pixel transition-colors ${fontClass} ${
+              newSkill.trim() ? "text-amber-400 hover:text-amber-300" : "text-gray-500"
+            }`}
           >
             {t("editProfile.skills.addBtn")}
           </button>
@@ -139,9 +143,10 @@ const EditUserProfile = () => {
 
       <PixelFrame className="mb-6">
         <h2
-          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}
+          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
         >
-          🔗 {t("editProfile.githubUrl")}
+          <Github size={18} className="text-yellow-400" />
+          {t("editProfile.githubUrl")}
         </h2>
         <input
           type="text"
@@ -154,9 +159,10 @@ const EditUserProfile = () => {
 
       <PixelFrame className="mb-6">
         <h2
-          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass}`}
+          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
         >
-          🔗 {t("editProfile.linkinUrl")}
+          <Linkedin size={18} className="text-yellow-400" />
+          {t("editProfile.linkinUrl")}
         </h2>
         <input
           type="text"

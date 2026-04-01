@@ -32,8 +32,6 @@ export async function loginWithOneID(username: string, password: string): Promis
       ...mockUser,
       ...userData,
       id: userData.userId || userData.id,
-      username: userData.username,
-      points: userData.points || 0,
       role: userData.role || "JUNIOR",
       skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
       questsCompleted: userData.questsCompleted || 0,
@@ -41,7 +39,6 @@ export async function loginWithOneID(username: string, password: string): Promis
     },
   };
 }
-
 /**
  * Real login with email and password.
  */

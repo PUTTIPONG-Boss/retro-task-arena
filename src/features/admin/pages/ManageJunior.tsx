@@ -37,7 +37,10 @@ const ManageJunior = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto text-foreground font-pixel">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-accent pixel-text-shadow">🛡️ {t("admin.juniorpage.manage")}</h1>
+        <h1 className="text-2xl font-bold text-accent pixel-text-shadow flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-7 h-7"><path d="M2 22H0v-4h2v4Zm14 0h-2v-4h2v4Zm8 0h-2v-4h2v4ZM4 18H2v-2h2v2Zm10 0h-2v-2h2v2Zm8 0h-2v-2h2v2Zm-10-2H4v-2h8v2Zm8 0h-4v-2h4v2Zm-9-4H5v-2h6v2Zm8 0h-4v-2h4v2ZM5 10H3V4h2v6Zm8 0h-2V4h2v6Zm8 0h-2V4h2v6ZM11 4H5V2h6v2Zm8 0h-4V2h4v2Z"/></svg>
+          {t("admin.juniorpage.manage")}
+        </h1>
       </div>
 
       {/* --- ส่วนตารางแสดงข้อมูล (ใช้ PixelFrame ครอบ) --- */}

@@ -260,7 +260,7 @@
     },
     "skills": {
       "title": "Edit Skills",
-      "placeholder": "Add new skill...",
+      "placeholder": "Add new skill",
       "addBtn": "ADD"
     },
     "githubUrl": "GitHub URL",
@@ -272,7 +272,7 @@
   },
 
   "createQuest": {
-    "back": "Back to Board",
+    "back": "Back",
     "title": "Post New Quest",
     "subtitle": "Define a task for adventurers to complete.",
     "labels": {
@@ -365,7 +365,7 @@
     "running": "Make sure the backend is running and try again."
   },
   "createReward": {
-    "back": "BACK TO SHOP",
+    "back": "BACK",
     "title": "Add New Product",
     "subtitle": "List a new item in the Reward Shop.",
     "labels": {

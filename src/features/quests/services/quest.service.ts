@@ -131,6 +131,7 @@ export const useCreateQuest = () => {
 
   return useMutation({
     mutationFn: async (payload: CreateQuestPayload) => {
+      console.log(payload);
       const response = await apiClient.post('/tasks', payload);
       return response.data;
     },

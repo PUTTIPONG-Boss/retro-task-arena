@@ -5,7 +5,7 @@ import { BackendProduct, Product, CreateProductPayload } from '../types';
 // ── Mapper: Backend → Frontend ────────────────────────────────────────────────
 const mapBackendProductToProduct = (p: BackendProduct): Product => ({
   id: p.id,
-  code: p.sku,
+  // code: p.sku,
   name: p.name,
   description: p.description,
   price: p.price,

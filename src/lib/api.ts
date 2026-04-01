@@ -3,6 +3,12 @@ import axios from 'axios';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { getCookie } from './utils';
 
+function getCookie(name: string): string {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : '';
+}
+
+
 export const apiClient = axios.create({
   baseURL: "http://localhost:5001/api/v1",
   // baseURL: "http://127.0.0.1:5001/api/v1",
@@ -36,9 +42,8 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Global error handling
     if (error.response?.status === 401) {
-      // Handle unauthorized (e.g. logout or redirect)
+      // handle unauthorized
     }
     console.error('API Error:', error);
     return Promise.reject(error);

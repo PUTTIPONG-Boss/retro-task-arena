@@ -10,9 +10,6 @@ interface AuthState {
   isLoading: boolean;
 
   login: (email: string, password: string) => Promise<void>;
-  mockLogin: () => Promise<void>;
-  mockSeniorLogin: () => Promise<void>;
-  mockAdminLogin: () => Promise<void>;
 
   logout: () => void;
   setUser: (user: UserProfile) => void;
@@ -43,50 +40,8 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      mockLogin: async () => {
-        set({ isLoading: true });
-        try {
-          const res = await authService.mockLogin();
-          set({
-            user: res.user,
-            token: res.access_token,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } catch {
-          set({ isLoading: false });
-        }
-      },
 
-      mockSeniorLogin: async () => {
-        set({ isLoading: true });
-        try {
-          const res = await authService.mockSeniorLogin();
-          set({
-            user: res.user,
-            token: res.access_token,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } catch {
-          set({ isLoading: false });
-        }
-      },
 
-      mockAdminLogin: async () => {
-        set({ isLoading: true });
-        try {
-          const res = await authService.mockAdminLogin();
-          set({
-            user: res.user,
-            token: res.access_token,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } catch {
-          set({ isLoading: false });
-        }
-      },
 
       login: async (email, password) => {
         set({ isLoading: true });
