@@ -45,15 +45,10 @@ const RewardShop = () => {
   if (!user) return null;
 
   const handleBuy = (productId: string, name: string, price: number) => {
-    if (user.points >= price) {
-      toast.success(t("rewardShop.toastSuccess", { name }), {
-        style: {
-          fontFamily:
-            i18n.language === "th" ? "text-[16px]" : "text-[16px]",
-          fontSize: "10px",
-        },
-      });
-    } else {
+    // Defensive check for points
+    const currentPoints = user.points ?? 0;
+
+    if (currentPoints < price) {
       toast.error(t("rewardShop.toastError"), {
         style: {
           fontFamily:
@@ -67,7 +62,8 @@ const RewardShop = () => {
     createOrder(
       {
         orderItems: [{ productId, quantity: 1, pricePerUnit: price }],
-        paymentMethod: "POINTS",
+        paymentMethod: "POINT",
+        shippingAddress: "Digital Reward / Point Exchange",
       },
       {
         onSuccess: () => {
@@ -79,7 +75,19 @@ const RewardShop = () => {
           });
         },
         onError: (error: any) => {
-          const message = error.response?.data?.error || "Failed to redeem reward.";
+          const rawError = error.response?.data?.error;
+          let message = "Failed to redeem reward.";
+
+          if (typeof rawError === 'string') {
+            message = rawError;
+          } else if (Array.isArray(rawError)) {
+            message = rawError[0]?.message || "Validation Error";
+          } else if (rawError && typeof rawError === 'object' && rawError.message) {
+            message = rawError.message;
+          } else if (rawError) {
+            message = JSON.stringify(rawError);
+          }
+
           toast.error(message, {
             style: {
               fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
@@ -118,7 +126,7 @@ const RewardShop = () => {
             <span
               className={`text-accent pixel-text-shadow flex items-center gap-1.5 ${fontClass}`}
             >
-              <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {user.points.toLocaleString()}
+              <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {(user.points ?? 0).toLocaleString()}
 
               <span className={fontClass}>{t("rewardShop.currency")}</span>
             </span>
@@ -229,7 +237,7 @@ const RewardShop = () => {
                         <span
                           className={`text-accent pixel-text-shadow ${fontClass}`}
                         >
-                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {item.price.toLocaleString()}{" "}
+                          <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {(item.price ?? 0).toLocaleString()}{" "}
                         </span>
                         <span className={`text-muted-foreground ${fontClass}`}>
                           {t("rewardShop.stock")}: {item.stock}
@@ -248,9 +256,9 @@ const RewardShop = () => {
                       >
                         {item.stock === 0
                           ? "Out of Stock"
-                          : isRedeeming 
+                          : isRedeeming
                             ? "Processing..."
-                            : user.points >= item.price
+                            : (user.points ?? 0) >= item.price
                               ? t("rewardShop.buy")
                               : t("rewardShop.needMore")}
                       </PixelButton>

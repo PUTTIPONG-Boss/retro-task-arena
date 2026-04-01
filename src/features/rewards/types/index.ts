@@ -39,7 +39,8 @@ export interface OrderItemPayload {
 
 export interface CreateOrderPayload {
   orderItems: OrderItemPayload[];
-  paymentMethod: 'POINTS' | 'THB';
+  paymentMethod: 'POINT' | 'POINTS' | 'THB';
+  shippingAddress?: string;
 }
 
 export interface OrderItem {
