@@ -39,7 +39,7 @@ const EditQuest = () => {
   const [rewardPoints, setRewardPoints] = useState("");
   const [difficulty, setDifficulty] = useState(1);
   const [estimatedTime, setEstimatedTime] = useState("");
-  const [timeUnit, setTimeUnit] = useState("Days");
+  const [timeUnit, setTimeUnit] = useState("");
   const [category, setCategory] = useState("Frontend");
   const [repoUrl, setRepoUrl] = useState("");
   const [branchName, setBranchName] = useState("");
@@ -73,6 +73,8 @@ const EditQuest = () => {
         timeUnitVal = "Weeks";
       } else if (timeVal.toLowerCase().includes("month") || timeVal.includes("เดือน")) {
         timeUnitVal = "Months";
+      } else if (timeVal.toLowerCase().includes("hour") || timeVal.includes("ชั่วโมง")) {
+        timeUnitVal = "Hours";
       }
       setTimeUnit(timeUnitVal);
 
@@ -255,6 +257,7 @@ const EditQuest = () => {
                     onChange={(e) => setTimeUnit(e.target.value)}
                     className={`px-3 py-2 pr-8 bg-background text-foreground outline-none font-pixel ${fontClass} appearance-none cursor-pointer w-full h-full`}
                   >
+                    <option value="Hours">{t("createQuest.timeUnits.Hours", "Hours")}</option>
                     <option value="Days">{t("createQuest.timeUnits.Days", "Days")}</option>
                     <option value="Weeks">{t("createQuest.timeUnits.Weeks", "Weeks")}</option>
                     <option value="Months">{t("createQuest.timeUnits.Months", "Months")}</option>

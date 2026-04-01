@@ -274,6 +274,7 @@
       "noSkills": "No skills selected"
     },
     "timeUnits": {
+      "Hours": "Hours",
       "Days": "Days",
       "Weeks": "Weeks",
       "Months": "Months"
