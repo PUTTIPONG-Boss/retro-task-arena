@@ -184,9 +184,16 @@ const CreateQuest = () => {
               </label>
               <PixelInput
                 type="number"
+                min="0"
+                max="1000"
                 placeholder={t("createQuest.placeholders.reward")}
                 value={rewardPoints}
-                onChange={(e) => setRewardPoints(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "" || (parseInt(val) <= 1000 && parseInt(val) >= 0)) {
+                    setRewardPoints(val);
+                  }
+                }}
                 className={`font-pixel ${fontClass}`}
                 required
               />

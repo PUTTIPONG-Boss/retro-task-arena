@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
+import ExpBar from "@/components/ExpBar";
 import { UserProfile } from "../types";
 
 interface ProfileHeaderProps {
@@ -33,7 +34,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
             <h1
               className={`text-[22px] text-white font-bold pixel-text-shadow font-pixel ${fontClass}`}
             >
-              {user.username}
+              {i18n.language === "th" ? (user.nameTh || user.username) : (user.nameEn || user.username)}
             </h1>
             <Link 
               to="/profile/edit" 
@@ -60,15 +61,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
           </p>
         </div>
 
-        <div className="pixel-border bg-secondary px-6 py-3 text-center">
-          <p className={`text-muted-foreground mb-1 font-pixel ${fontClass}`}>
+        <div className="pixel-border bg-secondary px-6 py-3 text-center min-w-[180px]">
+          <p className={`text-muted-foreground mb-1 font-pixel ${fontClass} uppercase`}>
             {t("userProfile.level")}
           </p>
           <p
-            className={`text-[22px] text-white pixel-text-shadow font-pixel ${fontClass}`}
+            className={`text-[24px] text-white pixel-text-shadow font-pixel ${fontClass} mb-2`}
           >
             {user.level}
           </p>
+          <ExpBar level={user.level} totalExp={user.totalExp || 0} size="sm" showText />
         </div>
       </div>
     </PixelFrame>

@@ -369,9 +369,13 @@ const QuestDetail = () => {
                         <input
                           type="number"
                           value={editBidAmount}
-                          onChange={(e) => setEditBidAmount(Number(e.target.value))}
+                          onChange={(e) => {
+                            const val = Number(e.target.value);
+                            if (val <= 1000) setEditBidAmount(val);
+                          }}
                           className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
                           min={1}
+                          max={1000}
                         />
                       </div>
                       <div>
@@ -444,10 +448,14 @@ const QuestDetail = () => {
                     <input
                       type="number"
                       value={bidAmount}
-                      onChange={(e) => setBidAmount(Number(e.target.value))}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        if (val <= 1000) setBidAmount(val);
+                      }}
                       className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
                       placeholder="e.g. 500"
                       min={1}
+                      max={1000}
                     />
                   </div>
                   <div>

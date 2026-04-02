@@ -5,6 +5,7 @@ export interface UserProfile {
   email?: string;
   title: string;
   level: number;
+  totalExp: number;
   points: number;
   questsCompleted: number;
   rating: number;

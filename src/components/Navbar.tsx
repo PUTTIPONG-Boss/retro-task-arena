@@ -4,6 +4,7 @@ import { useAuthStore } from "@/features/auth/store/authStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import PixelButton from "@/components/PixelButton";
+import ExpBar from "@/components/ExpBar";
 import PixelStore from "@/components/icons/PixelStore";
 import PixelUser from "@/components/icons/PixelUser";
 import PixelCoin from "@/components/icons/PixelCoin";
@@ -83,46 +84,55 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* User HUD */}
-            <div className="pixel-border bg-secondary px-3 py-1 flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <span className={`font-pixel text-muted-foreground ${fontClass}`}>
-                  LV
+            {/* User HUD - RPG Status Plate Redesign */}
+            <div className="pixel-border bg-[#1a1c1e] flex flex-col min-w-[200px] overflow-hidden group hover:border-[#F59E0B] transition-colors duration-300">
+              {/* Header: Name & Logout */}
+              <div className="flex items-center justify-between px-2.5 py-1 bg-[#141517] border-b border-slate-800">
+                <span className="font-pixel text-[10px] text-[#9ca3af] truncate max-w-[140px] tracking-tight uppercase">
+                  {i18n.language === "th" ? (user.nameTh || user.username) : (user.nameEn || user.username)}
                 </span>
-                <span className={`font-pixel text-foreground ${fontClass}`}>
-                  {user.level}
-                </span>
+                <button
+                  onClick={handleLogout}
+                  className="font-pixel text-[#ef4444] hover:text-[#f87171] transition-colors text-[10px] opacity-60 group-hover:opacity-100"
+                >
+                  LOGOUT
+                </button>
               </div>
-              <div className="w-[1px] h-4 bg-border" />
-              <div className="flex items-center gap-1">
-                <PixelCoin className="text-yellow-400 -mt-0.5" size={20} />
-                <AnimatePresence mode="popLayout">
-                  <motion.span
-                    key={user.points}
-                    initial={{ y: 10, opacity: 0, scale: 0.5 }}
-                    animate={{ y: 0, opacity: 1, scale: 1 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 15,
-                      duration: 0.3
-                    }}
-                    className={`font-pixel text-accent pixel-text-shadow inline-block ${fontClass}`}
-                  >
-                    {user.points.toLocaleString()}
-                  </motion.span>
-                </AnimatePresence>
+              
+              {/* Main Content: LV & Points */}
+              <div className="flex items-center justify-between px-2.5 py-1.5">
+                <div className="flex items-center gap-1.5 focus:outline-none">
+                  <div className="flex flex-col items-center leading-none">
+                    <span className="font-pixel text-[8px] text-[#6b7280] -mb-0.5 uppercase">LV</span>
+                    <span className="font-pixel text-[16px] text-white leading-none">
+                      {user.level}
+                    </span>
+                  </div>
+                  
+                  {/* EXP Bar - Inline but prominent */}
+                  <ExpBar 
+                    level={user.level} 
+                    totalExp={user.totalExp || 0} 
+                    size="sm" 
+                    className="w-[70px]"
+                  />
+                </div>
+
+                <div className="flex items-center gap-1.5 bg-[#141517]/50 px-2 py-1 rounded-sm border border-slate-800/50">
+                  <PixelCoin size={14} className="text-[#fbbf24] drop-shadow-[0_0_2px_rgba(251,191,36,0.4)]" />
+                  <AnimatePresence mode="popLayout">
+                    <motion.span
+                      key={user.points}
+                      initial={{ y: 5, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 20 }}
+                      className="font-pixel text-[#f59e0b] text-[14px] leading-none tracking-wider"
+                    >
+                      {user.points.toLocaleString()}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
               </div>
-              <div className="w-[1px] h-4 bg-border" />
-              <span className={`font-pixel text-foreground hidden md:inline ${fontClass}`}>
-                {user.username}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="font-pixel text-destructive hover:text-destructive/80 uppercase tracking-wider cursor-pointer"
-              >
-                ⏻
-              </button>
             </div>
 
             <PixelButton

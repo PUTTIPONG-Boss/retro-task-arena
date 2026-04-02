@@ -279,6 +279,7 @@
     box-shadow: 0 0 4px hsl(var(--accent) / 0.5);
     pointer-events: none;
     animation: float-up 10s linear infinite;
+    will-change: transform;
   }
 }
 
