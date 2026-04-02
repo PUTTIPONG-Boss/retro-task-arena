@@ -252,6 +252,34 @@
     animation: coin-rain 1.2s steps(6, end) forwards;
   }
 
+  @keyframes float-up {
+    0% {
+      transform: translateY(100vh) scale(0.5);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    90% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(-10vh) scale(1.2);
+      opacity: 0;
+    }
+  }
+
+  .pixel-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: hsl(var(--accent));
+    border-radius: 50%;
+    filter: blur(1px);
+    box-shadow: 0 0 4px hsl(var(--accent) / 0.5);
+    pointer-events: none;
+    animation: float-up 10s linear infinite;
+  }
 }
 
 
@@ -324,12 +352,19 @@
 .pixel-bg {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 5;
   overflow: hidden;
   pointer-events: none;
-  image-rendering: pixelated;
-  -ms-interpolation-mode: nearest-neighbor;
-  background-color: hsl(var(--background));
+  background-color: #090b09;
+}
+
+.pixel-bg-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
 }
 
 /* Layer 1 — far stars (1px dots, slow drift) */

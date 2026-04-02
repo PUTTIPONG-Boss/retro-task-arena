@@ -4,6 +4,7 @@ export interface BackendProduct {
   sku: string;
   name: string;
   description: string;
+  category: string;
   price: number;
   stock: number;
   createdAt: string;
@@ -13,16 +14,17 @@ export interface BackendProduct {
 // ── Frontend Display Model (camelCase) ────────────────────────────────────────
 export interface Product {
   id: string;
-  // code: string;
+  sku: string;
   name: string;
   description: string;
   price: number;
   stock: number;
+  category?: string;
 }
 
 // ── Payload for creating a product (POST /product — requires JWT) ─────────────
 export interface CreateProductPayload {
-  // sku: string;
+  sku?: string; // Optional — backend will generate if missing
   name: string;
   description: string;
   price: number;

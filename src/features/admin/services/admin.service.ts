@@ -45,3 +45,22 @@ export async function getAllProducts(page = 1, limit = 20) {
   const response = await apiClient.get(`/product?page=${page}&limit=${limit}`);
   return Array.isArray(response.data) ? response.data : (response.data.data || []);
 }
+
+export async function updateProduct(id: string, payload: any) {
+  const response = await apiClient.patch(`/product/${id}`, payload);
+  return response.data;
+}
+
+export async function deleteProduct(id: string) {
+  const response = await apiClient.delete(`/product/${id}`);
+  return response.data;
+}
+
+export async function getAllOrders(params: { page?: number; limit?: number; status?: string; search?: string; sort?: string }) {
+  const response = await apiClient.get('/admin/orders', { params });
+  return response.data as { data: any[]; total: number; page: number; limit: number };
+}
+
+export async function updateOrderStatus(id: string, status: string): Promise<void> {
+  await apiClient.patch(`/order/${id}`, { status });
+}

@@ -23,6 +23,7 @@ const AdminSidebar = () => {
     { icon: <BuildingIcon />, label: t("sidebar.senior"), path: "/admin/managesenior" },
     { icon: <PixelClipboardList className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.quest"), path: "/admin/managequest" },
     { icon: <PixelStore className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.reward"), path: "/admin/managereward" },
+    { icon: <PixelClipboardList className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.order"), path: "/admin/manageorder" },
   ], [t]);
 
   return (

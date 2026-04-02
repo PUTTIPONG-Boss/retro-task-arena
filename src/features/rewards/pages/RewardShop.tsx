@@ -62,7 +62,7 @@ const RewardShop = () => {
     createOrder(
       {
         orderItems: [{ productId, quantity: 1, pricePerUnit: price }],
-        paymentMethod: "POINT",
+        paymentMethod: "POINTS",
         shippingAddress: "Digital Reward / Point Exchange",
       },
       {

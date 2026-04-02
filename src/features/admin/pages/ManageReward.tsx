@@ -7,6 +7,9 @@ import PixelFrame from "@/components/PixelFrame";
 import PixelStore from "@/components/icons/PixelStore";
 import { useQuery } from "@tanstack/react-query";
 import { getAllProducts } from "../services/admin.service";
+import { useUpdateProduct, useDeleteProduct } from "../../rewards/services/product.service";
+import { toast } from "sonner";
+import { Product } from "../../rewards/types";
 
 const ManageReward = () => {
   const { t, i18n } = useTranslation();
@@ -23,9 +26,12 @@ const ManageReward = () => {
     staleTime: 30_000,
   });
 
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: deleteProduct } = useDeleteProduct();
+
   // State สำหรับจัดการ Modal การแก้ไข
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentEdit, setCurrentEdit] = useState<any | null>(null);
+  const [currentEdit, setCurrentEdit] = useState<Product | null>(null);
 
   // Helper สำหรับตัดข้อความที่ยาวเกินไป
   const truncateText = (text: string, length: number = 20) => {
@@ -35,8 +41,15 @@ const ManageReward = () => {
 
   // --- ฟังก์ชัน Delete ---
   const handleDelete = (id: string) => {
-    if (window.confirm(t("admin.rewardspage.alert"))) {
-      // TODO: API DELETE
+    if (window.confirm(t("admin.rewardspage.alert") || "Are you sure you want to delete this product?")) {
+      deleteProduct(id, {
+        onSuccess: () => {
+          toast.success("Product deleted successfully!");
+        },
+        onError: (err: any) => {
+          toast.error("Failed to delete product: " + (err?.message || "Unknown error"));
+        }
+      });
     }
   };
 
@@ -50,9 +63,29 @@ const ManageReward = () => {
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentEdit) return;
-    // TODO: API UPDATE
-    setIsEditModalOpen(false);
-    setCurrentEdit(null);
+
+    updateProduct(
+      {
+        id: currentEdit.id,
+        payload: {
+          name: currentEdit.name,
+          description: currentEdit.description,
+          category: currentEdit.category,
+          price: currentEdit.price,
+          stock: currentEdit.stock,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Product updated successfully!");
+          setIsEditModalOpen(false);
+          setCurrentEdit(null);
+        },
+        onError: (err: any) => {
+          toast.error("Failed to update product: " + (err?.message || "Unknown error"));
+        },
+      }
+    );
   };
 
   if (isLoading) return <div className={`p-6 font-pixel text-accent ${fontClass}`}>{t("admin.rewardspage.loading")}</div>;
@@ -180,7 +213,7 @@ const ManageReward = () => {
                   </label>
                   <PixelInput
                     type="text"
-                    value={currentEdit.category}
+                    value={currentEdit.category || ""}
                     onChange={(e) =>
                       setCurrentEdit({ ...currentEdit, category: e.target.value })
                     }

@@ -30,7 +30,7 @@ const getStatusKey = (status: string) => {
 const QuestCard = ({ quest }: QuestCardProps) => {
   const { t, i18n } = useTranslation();
   const { data: bids = [] } = useGetBids(quest.id);
-  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[14px]";
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[18px]";
   const status = statusConfig[quest.status] || { color: "#ffffff", icon: "[ ]" };
 
   // ชุดสีสำหรับ Card (เข้ากับ Banner)
@@ -122,7 +122,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
               <motion.span
                 className={cn(
                   "uppercase flex items-center gap-1",
-                  i18n.language === "th" ? "text-[10px]" : "text-[8px]"
+                  i18n.language === "th" ? "text-[10px]" : "text-[12px]"
                 )}
                 style={{ color: status.color, textShadow: "1px 1px 0px #000" }}
                 animate={status.animate ? { opacity: [0.7, 1, 0.7] } : {}}
@@ -155,7 +155,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                     key={index}
                     className={cn(
                       "pixel-font bg-[#2a241e] border border-[#4a3e2a] px-2 py-0.5 text-[#e3b86a] uppercase",
-                      i18n.language === "th" ? "text-[12px]" : "text-[9px]"
+                      i18n.language === "th" ? "text-[12px]" : "text-[12px]"
                     )}
                   >
                     {skill.trim()}
@@ -180,7 +180,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
 
               <div className={cn(
                 "flex items-center justify-between pixel-font",
-                i18n.language === "th" ? "text-[12px]" : "text-[10px]"
+                i18n.language === "th" ? "text-[12px]" : "text-[12px]"
               )} style={{ color: theme.muted }}>
                 <span>⌛ {quest.estimatedTime}</span>
                 <span>⚔ {bids.length} {t("questCard.totalBids")}</span>
@@ -190,7 +190,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             {/* Footer: ผู้จ้างวาน */}
             <div className={cn(
               "pixel-font uppercase text-right mt-1",
-              i18n.language === "th" ? "text-[11px]" : "text-[9px]"
+              i18n.language === "th" ? "text-[11px]" : "text-[11px]"
             )} style={{ color: "#5a5a5a" }}>
               {t("questCard.issuedBy")} <span style={{ color: theme.muted }}>{quest.providerName}</span>
             </div>

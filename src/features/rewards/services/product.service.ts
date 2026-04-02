@@ -5,11 +5,12 @@ import { BackendProduct, Product, CreateProductPayload } from '../types';
 // ── Mapper: Backend → Frontend ────────────────────────────────────────────────
 const mapBackendProductToProduct = (p: BackendProduct): Product => ({
   id: p.id,
-  // code: p.sku,
+  sku: p.sku || '',
   name: p.name,
   description: p.description,
   price: p.price,
   stock: p.stock,
+  category: p.category,
 });
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
@@ -41,8 +42,43 @@ export const useCreateProduct = () => {
       return response.data;
     },
     onSuccess: () => {
-      // Refetch the product list after a successful create
       queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+/**
+ * PATCH /api/v1/product/:id — requires JWT.
+ */
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: Partial<CreateProductPayload> }) => {
+      const response = await apiClient.patch(`/product/${id}`, payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+    },
+  });
+};
+
+/**
+ * DELETE /api/v1/product/:id — requires JWT.
+ */
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await apiClient.delete(`/product/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
     },
   });
 };

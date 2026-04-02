@@ -27,7 +27,7 @@ const AdminLayout = () => {
   }, [queryClient]);
 
   return (
-    <div className="relative z-10 h-screen flex flex-col bg-background font-pixel">
+    <div className="relative z-10 h-screen flex flex-col bg-transparent">
       <Navbar />
       
       <div className="flex flex-1 overflow-hidden relative">
