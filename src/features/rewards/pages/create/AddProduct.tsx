@@ -8,19 +8,21 @@ import { useCreateProduct } from "../../services/product.service";
 import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { ChevronDown, Trash2 } from "lucide-react";
 import PixelStore from "@/components/icons/PixelStore";
-
-const CATEGORY_OPTIONS = [
-  { value: "coupon", label: "Coupon" },
-  { value: "accessories", label: "Accessories" },
-  { value: "clothing", label: "Clothing" },
-];
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const { t, i18n } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const CATEGORY_OPTIONS = [
+    { value: "coupon", label: t("createProduct.categories.coupon") },
+    { value: "accessories", label: t("createProduct.categories.accessories") },
+    { value: "clothing", label: t("createProduct.categories.clothing") },
+  ];
 
   useEffect(() => {
     if (user && !(user.role === 'ADMIN')) {
@@ -34,11 +36,38 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("coupon");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
 
-  const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
 
   const { mutate: createProduct, isPending } = useCreateProduct();
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      // Don't clear EVERYTHING if user cancels, just keep current
+      return;
+    }
+    if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
+      toast.error("Only .png and .jpg files are allowed");
+      return;
+    }
+    setFileName(file.name);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDeleteImage = () => {
+    setImageUrl("");
+    setFileName("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,17 +98,18 @@ const AddProduct = () => {
         category: category.trim(),
         price: parsedPrice,
         stock: parsedStock,
+        imageUrl: imageUrl || undefined,
       },
       {
         onSuccess: () => {
-          toast.success(t("createReward.successMsg"), {
+          toast.success(t("createProduct.successMsg"), {
             style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
           navigate("/reward-shop");
         },
         onError: (error: any) => {
           const raw = error?.response?.data?.error;
-          const msg = typeof raw === "string" ? raw : typeof raw?.message === "string" ? raw.message : t("createReward.errorMsg");
+          const msg = typeof raw === "string" ? raw : typeof raw?.message === "string" ? raw.message : t("createProduct.errorMsg");
           toast.error(msg, {
             style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
           });
@@ -97,25 +127,25 @@ const AddProduct = () => {
         className={`mb-6 font-pixel ${fontClass}`}
         onClick={() => navigate(-1)}
       >
-        ← {t("createReward.back")}
+        ← {t("createProduct.back")}
       </PixelButton>
 
       <PixelFrame>
         <h1 className={`flex items-center gap-2 font-pixel pixel-text-shadow mb-2 ${fontClass}`}>
-          <PixelStore size={24} className="text-yellow-500" /> {t("createReward.title")}
+          <PixelStore size={24} className="text-yellow-500" /> {t("createProduct.title")}
         </h1>
         <p className={`text-muted-foreground mb-6 font-pixel ${fontClass}`}>
-          {t("createReward.subtitle")}
+          {t("createProduct.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Product Name */}
           <div>
             <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-              {t("createReward.labels.name")}
+              {t("createProduct.labels.name")}
             </label>
             <PixelInput
-              placeholder={t("createReward.placeholders.name")}
+              placeholder={t("createProduct.placeholders.name")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={`font-pixel ${fontClass}`}
@@ -125,21 +155,60 @@ const AddProduct = () => {
           {/* Description */}
           <div>
             <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-              {t("createReward.labels.description")}
+              {t("createProduct.labels.description")}
             </label>
             <PixelTextarea
               rows={4}
-              placeholder={t("createReward.placeholders.description")}
+              placeholder={t("createProduct.placeholders.description")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className={`font-pixel ${fontClass}`}
             />
           </div>
 
+          {/* Image Upload */}
+          <div>
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createProduct.labels.image")}
+            </label>
+            <div className="flex items-center gap-0 w-full border border-[#333] bg-background overflow-hidden rounded-sm">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 font-pixel text-sm transition-colors border-r border-[#333]"
+              >
+                {t("createProduct.hints.chooseFile")}
+              </button>
+              <span className={`px-4 text-sm text-muted-foreground font-pixel truncate flex-1 ${fontClass}`}>
+                {fileName || t("createProduct.hints.noFileChosen")}
+              </span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".png, .jpg, .jpeg"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </div>
+            {imageUrl && (
+              <div className="mt-4 border border-[#333] p-2 inline-block bg-white/5 rounded relative group">
+                <img src={imageUrl} alt="Preview" className="max-h-40 rounded object-contain" />
+                <button
+                  type="button"
+                  onClick={handleDeleteImage}
+                  className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white p-1.5 rounded-sm shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                  title="Remove Image"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Category */}
           <div>
             <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-              {t("createReward.labels.category")}
+              {t("createProduct.labels.category")}
             </label>
             <div className="relative">
               <select
@@ -163,11 +232,11 @@ const AddProduct = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-                {t("createReward.labels.price")}
+                {t("createProduct.labels.price")}
               </label>
               <PixelInput
                 type="number"
-                placeholder={t("createReward.placeholders.price")}
+                placeholder={t("createProduct.placeholders.price")}
                 min="0"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
@@ -176,11 +245,11 @@ const AddProduct = () => {
             </div>
             <div>
               <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-                {t("createReward.labels.stock")}
+                {t("createProduct.labels.stock")}
               </label>
               <PixelInput
                 type="number"
-                placeholder={t("createReward.placeholders.stock")}
+                placeholder={t("createProduct.placeholders.stock")}
                 min="0"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
@@ -200,12 +269,12 @@ const AddProduct = () => {
             {isPending ? (
               <div className="flex items-center justify-center gap-2">
                 <PixelStore size={18} className="animate-pulse" />
-                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+                <span className={fontClass}>{t("createProduct.submitBtn")}</span>
               </div>
             ) : (
               <div className="flex items-center justify-center gap-2">
                 <PixelStore size={18} />
-                <span className={fontClass}>{t("createReward.submitBtn")}</span>
+                <span className={fontClass}>{t("createProduct.submitBtn")}</span>
               </div>
             )}
           </PixelButton>

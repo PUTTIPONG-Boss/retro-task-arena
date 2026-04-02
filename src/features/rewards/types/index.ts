@@ -32,6 +32,7 @@ export interface CreateProductPayload {
   price: number;
   stock: number;
   category?: string;
+  imageUrl?: string;
 }
 
 // ── Payload for updating a product (PATCH/PUT /product/:id) ───────────────────

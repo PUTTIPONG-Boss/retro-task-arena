@@ -24,6 +24,8 @@ export async function getUsersByRole(role: string): Promise<UserProfile[]> {
     email: u.email,
     role: u.role,
     points: u.points || 0,
+    questsInProgress: u.questsInProgress || 0,
+    questsInReview: u.questsInReview || 0,
     questsCompleted: u.questsCompleted || 0,
     rating: u.rating || 5.0,
     skills: u.skills ? u.skills.split(",") : [],

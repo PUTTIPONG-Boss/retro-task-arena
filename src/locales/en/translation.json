@@ -341,7 +341,8 @@
     "loaditem": "Failed to load items from the shop.",
     "running": "Make sure the backend is running and try again."
   },
-  "createReward": {
+
+  "createProduct": {
     "back": "BACK",
     "title": "Add New Product",
     "subtitle": "List a new item in the Reward Shop.",
@@ -349,6 +350,7 @@
       "code": "Product Code",
       "name": "Product Name",
       "description": "Description",
+      "image": "Product Image (.png, .jpg)",
       "category": "Category",
       "price": "Price (Points)",
       "stock": "Stock"
@@ -362,16 +364,50 @@
       "stock": "50"
     },
     "hints": {
-      "code": "Must be unique. Will be auto-uppercased."
+      "code": "Must be unique. Will be auto-uppercased.",
+      "chooseFile": "Choose File",
+      "noFileChosen": "No file chosen"
+    },
+    "categories": {
+      "coupon": "Coupon",
+      "accessories": "Accessories",
+      "clothing": "Clothing"
     },
     "submitBtn": "ADD PRODUCT",
     "successMsg": "Product added successfully!",
     "errorMsg": "Failed to add product."
   },
+    "editProduct": {
+    "back": "BACK",
+    "title": "Edit Product",
+    "subtitle": "Update the details of your product",
+    "labels": {
+      "name": "Product Name",
+      "description": "Description",
+      "category": "Category",
+      "price": "Price (Points)",
+      "stock": "Stock"
+    },
+    "hints": {
+      "name": "e.g. Mechanical Keyboard G3",
+      "description": "RGB Backlit, Blue Switches, Wireless 2.4GHz...",
+      "category": "e.g. Electronics",
+      "price": "2500",
+      "stock": "50"
+    },
+    "saveBtn": "Save Changes",
+    "categories": {
+      "coupon": "Coupon",
+      "accessories": "Accessories",
+      "clothing": "Clothing"
+    },
+    "successMsg": "Product updated successfully!"
+  },
   "rewardBanner": {
     "marquee": "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦",
     "description": "Trade your hard-earned points for items."
   },
+
   "admin": {
     "juniorpage": {
       "manage": "Manage Juniors",
@@ -379,6 +415,9 @@
       "username": "Username",
       "email": "Email",
       "quests": "Quests",
+      "questsInProgress": "In Progress Quests",
+      "questsInReview": "In Review Quests",
+      "questsCompleted": "Completed Quests",
       "role": "Role",
       "loading": "Loading Juniors...",
       "notfoundjunior": "No Juniors found in the system."
@@ -388,7 +427,7 @@
       "id": "ID",
       "username": "Username",
       "email": "Email",
-      "quests": "Quests",
+      "quests": "Posted Quests",
       "role": "Role",
       "loading": "Loading Seniors...",
       "notfoundsenior": "No Seniors found in the system."

@@ -195,20 +195,19 @@ const RewardShop = () => {
                     transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   >
                     <PixelFrame className="h-full flex flex-col">
-                      {/* Icon */}
-                      <div className="text-center mb-3">
-                        <span className="text-4xl">
-                          {getProductIcon(item.id)}
-                        </span>
+                      {/* Image or Icon */}
+                      <div className="flex items-center justify-center mb-3 h-36 bg-white/5 rounded overflow-hidden">
+                        {item.imageUrl ? (
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="w-full h-full object-contain p-2"
+                          />
+                        ) : (
+                          <span className="text-5xl">{getProductIcon(item.id)}</span>
+                        )}
                       </div>
-
-                      {/* ID badge */}
-                      <p className="text-[12px] text-muted-foreground text-center mb-1 tracking-widest uppercase font-pixel">
-                        [{item.id}]
-                      </p>
-
-
-
+                      
                       {/* Name */}
                       <h3
                         className={`text-foreground pixel-text-shadow text-center mb-2 ${fontClass}`}
@@ -245,7 +244,7 @@ const RewardShop = () => {
                       >
                         {item.stock === 0
                           ? "Out of Stock"
-                          : isRedeeming 
+                          : isRedeeming
                             ? "Processing..."
                             : user.points >= item.price
                               ? t("rewardShop.buy")
