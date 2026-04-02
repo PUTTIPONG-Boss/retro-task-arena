@@ -22,6 +22,7 @@ import SubmitBid from "@/features/bids/pages/SubmitBid";
 import ProviderBids from "@/features/bids/pages/ProviderBids";
 import RewardShop from "@/features/rewards/pages/RewardShop";
 import AddProduct from "@/features/rewards/pages/create/AddProduct";
+import EditProduct from "@/features/rewards/pages/edit/EditProduct";
 import UserProfile from "@/features/users/pages/UserProfile";
 import EditUserProfile from "@/features/users/pages/Edit/EditUserProfile";
 import ManageSenior from "@/features/admin/pages/ManageSenior";
@@ -78,6 +79,7 @@ const App = () => (
                   <Route path="/quest/:id/edit" element={<EditQuest />} />
                   <Route path="/reward-shop" element={<RewardShop />} />
                   <Route path="/add-product" element={<AddProduct />} />
+                  <Route path="/edit-product/:id" element={<EditProduct />} />
                   <Route path="/profile" element={<UserProfile />} />
                   <Route path="/profile/edit" element={<EditUserProfile />} />
                   <Route path="*" element={<NotFound />} />

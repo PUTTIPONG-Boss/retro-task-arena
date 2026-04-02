@@ -115,7 +115,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
           <div className="py-12 text-center">
             <p className={`text-muted-foreground font-pixel ${fontClass} opacity-50`}>
               {activeFilter === 'completed'
-                ? "ยังไม่มีภารกิจที่สำเร็จในหมวดนี้..."
+                ? (i18n.language === 'th' ? "ยังไม่มีภารกิจที่สำเร็จในหมวดนี้..." : "No completed quests yet...")
                 : t("userProfile.noActiveQuests")}
             </p>
           </div>

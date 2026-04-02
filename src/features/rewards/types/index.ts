@@ -4,9 +4,10 @@ export interface BackendProduct {
   sku: string;
   name: string;
   description: string;
-  category: string;
   price: number;
   stock: number;
+  category: string;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,7 +20,8 @@ export interface Product {
   description: string;
   price: number;
   stock: number;
-  category?: string;
+  category: string;
+  imageUrl?: string;
 }
 
 // ── Payload for creating a product (POST /product — requires JWT) ─────────────
@@ -30,6 +32,17 @@ export interface CreateProductPayload {
   price: number;
   stock: number;
   category?: string;
+  imageUrl?: string;
+}
+
+// ── Payload for updating a product (PATCH/PUT /product/:id) ───────────────────
+export interface UpdateProductPayload {
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  category?: string;
+  imageUrl?: string;
 }
 
 // ── Payload for creating an order (POST /order) ───────────────────────────────

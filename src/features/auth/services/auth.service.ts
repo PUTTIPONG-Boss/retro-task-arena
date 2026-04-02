@@ -4,13 +4,12 @@
 import { UserProfile } from "@/features/users/types";
 import { mockUser } from "@/data/mockData";
 import { mockSenior, mockAdmin } from "@/data/mockData";
+import { apiClient } from "@/lib/api";
 
 export interface OAuthTokenResponse {
   access_token: string;
   user: UserProfile;
 }
-
-const MOCK_DELAY = 800;
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -36,21 +35,20 @@ export async function loginWithOneID(username: string, password: string): Promis
       skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
       questsCompleted: userData.questsCompleted || 0,
       rating: userData.rating || 5.0,
+      totalRatings: userData.totalRatings || 0,
     },
   };
 }
+
 /**
  * Real login with email and password.
  */
-import { apiClient } from "@/lib/api";
-
 export async function login(email: string, password: string): Promise<OAuthTokenResponse> {
   // backend sets HttpOnly cookies อัตโนมัติ
   await apiClient.post("/user/login", { email, password });
 
   // ดึงข้อมูล user โดยใช้ cookie (interceptor will handle basic config)
   const userResponse = await apiClient.get("/user/me");
-
   const userData = userResponse.data;
 
   return {
@@ -65,6 +63,7 @@ export async function login(email: string, password: string): Promise<OAuthToken
       skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
       questsCompleted: userData.questsCompleted || 0,
       rating: userData.rating || 5.0,
+      totalRatings: userData.totalRatings || 0,
     },
   };
 }
@@ -96,23 +95,25 @@ export async function fetchOrCreateUser(
     id: userData.userId || userData.id,
     points: userData.points || 0,
     role: userData.role || "JUNIOR",
-    skills: userData.skills ? userData.skills.split(",") : [],
+    skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
+    questsCompleted: userData.questsCompleted || 0,
+    rating: userData.rating || 5.0,
+    totalRatings: userData.totalRatings || 0,
   };
 }
 
 /**
  * Logout — clear tokens.
- * Future: POST /auth/logout
  */
 export async function logout(): Promise<void> {
-  // await delay(200);
+  // Implementation for logout
 }
 
 /**
  * Mock login for Senior role.
  */
 export async function mockSeniorLogin(): Promise<OAuthTokenResponse> {
-  await delay(400); // ใช้ฟังก์ชัน delay ตัวเดิมของคุณ
+  await delay(400);
   return {
     access_token: "mock_senior_token_" + Date.now(),
     user: mockSenior,

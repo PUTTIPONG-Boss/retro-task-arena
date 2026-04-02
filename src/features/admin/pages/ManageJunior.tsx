@@ -4,17 +4,17 @@ import PixelFrame from "@/components/PixelFrame";
 import { useQuery } from "@tanstack/react-query";
 import { getUsersByRole } from "../services/admin.service";
 
-const STALE_TIME = 5 * 60 * 1_000; // must match AdminLayout prefetch
+const STALE_TIME = 5 * 60 * 1_000;
 
 const SkeletonRows = () => (
   <>
     {Array.from({ length: 6 }).map((_, i) => (
       <tr key={i} className="border-b border-[#333]/30">
-        {Array.from({ length: 5 }).map((__, j) => (
+        {Array.from({ length: 7 }).map((__, j) => (
           <td key={j} className="p-3">
             <div
               className="h-4 rounded bg-white/10 animate-pulse"
-              style={{ width: j === 2 ? "80%" : j === 4 ? "60%" : "50%" }}
+              style={{ width: j === 2 ? "80%" : j === 6 ? "60%" : "50%" }}
             />
           </td>
         ))}
@@ -27,7 +27,7 @@ const ManageJunior = () => {
   const { t, i18n } = useTranslation();
   const { data: juniors = [], isLoading } = useQuery({
     queryKey: ["admin", "users", "junior"],
-    queryFn: () => getUsersByRole("JUNIOR"),
+    queryFn: () => getUsersByRole("JUNIOR"),  
     staleTime: STALE_TIME,
     gcTime: 10 * 60 * 1_000,
   });
@@ -51,7 +51,9 @@ const ManageJunior = () => {
               <th className="p-3">{t("admin.juniorpage.id")}</th>
               <th className="p-3">{t("admin.juniorpage.username")}</th>
               <th className="p-3">{t("admin.juniorpage.email")}</th>
-              <th className="p-3 text-center">{t("admin.juniorpage.quests")}</th>
+              <th className="p-3 text-center">{t("admin.juniorpage.questsInProgress")}</th>
+              <th className="p-3 text-center">{t("admin.juniorpage.questsInReview")}</th>
+              <th className="p-3 text-center">{t("admin.juniorpage.questsCompleted")}</th>
               <th className="p-3 text-center">{t("admin.juniorpage.role")}</th>
             </tr>
           </thead>
@@ -60,7 +62,7 @@ const ManageJunior = () => {
               <SkeletonRows />
             ) : juniors.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                <td colSpan={7} className="p-6 text-center text-muted-foreground">
                   {t("admin.juniorpage.notfoundjunior")}
                 </td>
               </tr>
@@ -70,7 +72,9 @@ const ManageJunior = () => {
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{junior.id.substring(0, 8)}...</td>
                   <td className={`p-3 text-foreground ${fontClass}`}>{junior.username}</td>
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{junior.email}</td>
-                  <td className={`p-3 text-center text-accent ${fontClass}`}>{junior.questsCompleted}</td>
+                  <td className={`p-3 text-center text-orange-400 ${fontClass}`}>{junior.questsInProgress || 0}</td>
+                  <td className={`p-3 text-center text-blue-400 ${fontClass}`}>{junior.questsInReview || 0}</td>
+                  <td className={`p-3 text-center text-accent ${fontClass}`}>{junior.questsCompleted || 0}</td>
                   <td className="p-3 text-center">
                     <span className={`px-2 py-1 uppercase tracking-wider bg-green-900/50 text-green-400 border border-green-800 ${fontClass}`}>
                       {junior.role}

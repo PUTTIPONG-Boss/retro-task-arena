@@ -24,6 +24,8 @@ export async function getUsersByRole(role: string): Promise<UserProfile[]> {
     email: u.email,
     role: u.role,
     points: u.points || 0,
+    questsInProgress: u.questsInProgress || 0,
+    questsInReview: u.questsInReview || 0,
     questsCompleted: u.questsCompleted || 0,
     rating: u.rating || 5.0,
     skills: u.skills ? u.skills.split(",") : [],
@@ -54,6 +56,10 @@ export async function updateProduct(id: string, payload: any) {
 export async function deleteProduct(id: string) {
   const response = await apiClient.delete(`/product/${id}`);
   return response.data;
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  await apiClient.delete(`/tasks/${id}`);
 }
 
 export async function getAllOrders(params: { page?: number; limit?: number; status?: string; search?: string; sort?: string }) {

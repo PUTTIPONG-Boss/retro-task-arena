@@ -57,7 +57,7 @@ const Navbar = () => {
 
           <Link to="/" className="hover:opacity-80 transition-opacity flex items-center gap-2">
             <img
-              src="/src/assets/logoinetquest.png"
+              src="/src/assets/iconquestinet.png"
               alt="INETQUEST"
               className="h-10 w-auto"
               style={{

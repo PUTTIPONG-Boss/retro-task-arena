@@ -7,6 +7,8 @@ export interface UserProfile {
   level: number;
   totalExp: number;
   points: number;
+  questsInProgress?: number;
+  questsInReview?: number;
   questsCompleted: number;
   rating: number;
   totalRatings: number;

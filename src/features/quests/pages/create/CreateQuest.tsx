@@ -43,6 +43,7 @@ const CreateQuest = () => {
   const [rewardPoints, setRewardPoints] = useState("");
   const [difficulty, setDifficulty] = useState(1);
   const [estimatedTime, setEstimatedTime] = useState("");
+  const [timeUnit, setTimeUnit] = useState("Hours");
   const [category, setCategory] = useState("Frontend");
   const [repoUrl, setRepoUrl] = useState("");
   const [branchName, setBranchName] = useState("");
@@ -96,7 +97,7 @@ const CreateQuest = () => {
       title,
       description,
       point: parseInt(rewardPoints) || 0,
-      estimated_time: `${estimatedTime}`,
+      estimated_time: `${estimatedTime} ${timeUnit}`,
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
@@ -149,7 +150,6 @@ const CreateQuest = () => {
             <label
               className={`font-pixel text-foreground block mb-2 ${fontClass}`}
             >
-              {" "}
               {t("createQuest.labels.questTitle")}
             </label>
             <PixelInput
@@ -202,13 +202,34 @@ const CreateQuest = () => {
               <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
                 {t("createQuest.labels.estimatedTime")}
               </label>
-              <PixelInput
-                placeholder={t("createQuest.placeholders.time")}
-                value={estimatedTime}
-                onChange={(e) => setEstimatedTime(e.target.value)}
-                className={`font-pixel ${fontClass}`}
-                required
-              />
+              <div className="flex gap-2">
+                <PixelInput
+                  type="number"
+                  min="1"
+                  placeholder={t("createQuest.placeholders.time")}
+                  value={estimatedTime}
+                  onChange={(e) => setEstimatedTime(e.target.value)}
+                  className={`font-pixel ${fontClass} flex-1`}
+                  required
+                />
+                <div className="relative flex items-center border-2 bg-background focus-within:border-accent">
+                  <select
+                    value={timeUnit}
+                    onChange={(e) => setTimeUnit(e.target.value)}
+                    className={`px-3 py-2 pr-8 bg-background text-foreground outline-none font-pixel ${fontClass} appearance-none cursor-pointer w-full h-full`}
+                  >
+                    <option value="Hours">{t("createQuest.timeUnits.Hours", "Hours")}</option>
+                    <option value="Days">{t("createQuest.timeUnits.Days", "Days")}</option>
+                    <option value="Weeks">{t("createQuest.timeUnits.Weeks", "Weeks")}</option>
+                    <option value="Months">{t("createQuest.timeUnits.Months", "Months")}</option>
+                  </select>
+                  <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
+                    <svg className="w-4 h-4 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

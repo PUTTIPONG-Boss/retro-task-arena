@@ -13,7 +13,7 @@ interface QuestCardProps {
 
 // ปรับแต่งสีและไอคอนสไตล์ Retro
 const statusConfig: Record<string, { color: string; icon: string; animate?: boolean }> = {
-  open: { color: "#4ade80", icon: "![!]", animate: true }, // สีเขียวเรืองแสง
+  open: { color: "#4ade80", icon: "[!]", animate: true }, // สีเขียวเรืองแสง
   bidding: { color: "#e3b86a", icon: "[✉]", animate: true }, // สีทอง
   "in-progress": { color: "#e3b86a", icon: "[⚒]" },
   review: { color: "#a78bfa", icon: "[?]" }, // สีม่วง
@@ -40,6 +40,18 @@ const QuestCard = ({ quest }: QuestCardProps) => {
     accent: "#e3b86a", // สีทองเน้น
     muted: "#8a8a8a", // ตัวหนังสือรอง
     paper: "#22201e", // สีพื้นหลังย่อยด้านใน
+  };
+
+  const formatEstimatedTime = (timeStr: string) => {
+    if (!timeStr) return "";
+    if (i18n.language !== "th") return timeStr;
+    
+    let formatted = timeStr;
+    formatted = formatted.replace(/Days|Day/gi, "วัน");
+    formatted = formatted.replace(/Weeks|Week/gi, "สัปดาห์");
+    formatted = formatted.replace(/Months|Month/gi, "เดือน");
+    formatted = formatted.replace(/Hours|Hour/gi, "ชั่วโมง");
+    return formatted;
   };
 
   const styleTag = `
@@ -171,7 +183,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                   className={`pixel-font gold-text flex items-center gap-2 ${fontClass}`}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <span className={`text-[#f1c40f] ${fontClass}`}>●</span> {quest.rewardPoints} GP
+                  <span className={`text-[#f1c40f] ${fontClass}`}>●</span> {quest.rewardPoints} {t("questCard.GP")}
                 </motion.span>
                 <div className={`pixel-text ${fontClass}`}>
                   <DifficultyStars level={quest.difficulty} />
@@ -182,7 +194,7 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                 "flex items-center justify-between pixel-font",
                 i18n.language === "th" ? "text-[12px]" : "text-[12px]"
               )} style={{ color: theme.muted }}>
-                <span>⌛ {quest.estimatedTime}</span>
+                <span>⌛ {formatEstimatedTime(quest.estimatedTime)}</span>
                 <span>⚔ {bids.length} {t("questCard.totalBids")}</span>
               </div>
             </div>

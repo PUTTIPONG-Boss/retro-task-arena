@@ -214,7 +214,7 @@ const QuestBoard = () => {
 
           {searchQuery && (
             <p className={`font-pixel text-muted-foreground ${fontClass}`}>
-              {t("questBoard.found")}:{" "}
+              {t("questBoard.found")}
               <span className="text-accent">{filtered.length}</span>
             </p>
           )}
@@ -223,7 +223,6 @@ const QuestBoard = () => {
         {/* --- Quest Grid & Loading States --- */}
         {isLoading ? (
           <div className="text-center py-20 animate-pulse font-pixel text-accent">
-            {" "}
             {t("questBoard.loading")}
           </div>
         ) : (

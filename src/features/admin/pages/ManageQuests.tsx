@@ -5,8 +5,8 @@ import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelFrame from "@/components/PixelFrame";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
-import { useQuery } from "@tanstack/react-query";
-import { getAllTasks } from "../services/admin.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getAllTasks, deleteTask } from "../services/admin.service";
 
 const ManageQuest = () => {
   const { t, i18n } = useTranslation();
@@ -23,10 +23,23 @@ const ManageQuest = () => {
     staleTime: 30_000,
   });
 
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "quests"] });
+    },
+    onError: (error) => {
+      console.error("Failed to delete quest:", error);
+      alert("Failed to delete quest");
+    }
+  });
+
   // --- ฟังก์ชัน Delete ---
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this quest?")) {
-      // TODO: API DELETE
+      deleteMutation.mutate(id);
     }
   };
 
