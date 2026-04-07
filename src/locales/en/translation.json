@@ -226,10 +226,10 @@
   },
   "editProfile": {
     "cancel": "< CANCEL",
-    "title": "EDIT ADVENTURER",
+    "title": "EDIT PROFILE",
     "labels": {
       "username": "USERNAME",
-      "adventurerTitle": "ADVENTURER TITLE"
+      "adventurerTitle": "PROFILE TITLE"
     },
     "skills": {
       "title": "Edit Skills",
@@ -470,7 +470,7 @@
     "rewardspage": {
       "manage": "Manage Rewards",
       "id": "Reward ID",
-      "title": "Item Name",
+      "title": "Manage Rewards",
       "cost": "Cost",
       "stock": "Stock",
       "action": "Actions",
