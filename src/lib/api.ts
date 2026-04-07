@@ -3,14 +3,11 @@ import axios from 'axios';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { getCookie } from './utils';
 
-function getCookie(name: string): string {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  return match ? decodeURIComponent(match[2]) : '';
-}
+
 
 
 export const apiClient = axios.create({
-  baseURL: "http://localhost:5001/api/v1",
+  baseURL: "http://localhost:5000/api/v1",
   // baseURL: "http://127.0.0.1:5001/api/v1",
   withCredentials: true,
 });

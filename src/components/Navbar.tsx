@@ -11,6 +11,13 @@ import PixelCoin from "@/components/icons/PixelCoin";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import PixelSword from "@/components/icons/PixelSword";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const location = useLocation();
@@ -21,7 +28,7 @@ const Navbar = () => {
 
   if (!user) return null;
 
-  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[14px]";
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[18px]";
   const isAdmin = user.role === "ADMIN";
 
   const toggleLanguage = () => {
@@ -47,7 +54,6 @@ const Navbar = () => {
       ),
     }] : []),
     { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: <PixelStore className="text-yellow-400" size={20} /> },
-    { to: "/profile", label: t("navbar.profile", "Profile"), icon: <PixelUser className="text-yellow-400" size={20} /> },
   ];
 
   return (
@@ -84,65 +90,91 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* User HUD - RPG Status Plate Redesign */}
-            <div className="pixel-border bg-[#1a1c1e] flex flex-col min-w-[200px] overflow-hidden group hover:border-[#F59E0B] transition-colors duration-300">
-              {/* Header: Name & Logout */}
-              <div className="flex items-center justify-between px-2.5 py-1 bg-[#141517] border-b border-slate-800">
-                <span className="font-pixel text-[10px] text-[#9ca3af] truncate max-w-[140px] tracking-tight uppercase">
-                  {i18n.language === "th" ? (user.nameTh || user.username) : (user.nameEn || user.username)}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="font-pixel text-[#ef4444] hover:text-[#f87171] transition-colors text-[10px] opacity-60 group-hover:opacity-100"
-                >
-                  LOGOUT
-                </button>
-              </div>
-              
-              {/* Main Content: LV & Points */}
-              <div className="flex items-center justify-between px-2.5 py-1.5">
-                <div className="flex items-center gap-1.5 focus:outline-none">
-                  <div className="flex flex-col items-center leading-none">
-                    <span className="font-pixel text-[8px] text-[#6b7280] -mb-0.5 uppercase">LV</span>
-                    <span className="font-pixel text-[16px] text-white leading-none">
-                      {user.level}
+            {/* User HUD Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="pixel-border bg-[#1a1c1e] flex flex-col min-w-[200px] overflow-hidden cursor-pointer hover:border-[#F59E0B] transition-colors duration-300 focus:outline-none">
+                  {/* Header: Name */}
+                  <div className="flex items-center justify-between px-2.5 py-1 bg-[#141517] border-b border-slate-800">
+                    <span className="font-pixel text-[10px] text-[#9ca3af] truncate max-w-[160px] tracking-tight uppercase">
+                      {i18n.language === "th" ? (user.nameTh || user.username) : (user.nameEn || user.username)}
                     </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-[#F59E0B]">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
                   </div>
                   
-                  {/* EXP Bar - Inline but prominent */}
-                  <ExpBar 
-                    level={user.level} 
-                    totalExp={user.totalExp || 0} 
-                    size="sm" 
-                    className="w-[70px]"
-                  />
-                </div>
+                  {/* Main Content: LV & Points */}
+                  <div className="flex items-center justify-between px-2.5 py-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex flex-col items-center leading-none">
+                        <span className="font-pixel text-[8px] text-[#6b7280] -mb-0.5 uppercase">LV</span>
+                        <span className="font-pixel text-[16px] text-white leading-none">
+                          {user.level}
+                        </span>
+                      </div>
+                      <ExpBar 
+                        level={user.level} 
+                        totalExp={user.totalExp || 0} 
+                        size="sm" 
+                        className="w-[70px]"
+                      />
+                    </div>
 
-                <div className="flex items-center gap-1.5 bg-[#141517]/50 px-2 py-1 rounded-sm border border-slate-800/50">
-                  <PixelCoin size={14} className="text-[#fbbf24] drop-shadow-[0_0_2px_rgba(251,191,36,0.4)]" />
-                  <AnimatePresence mode="popLayout">
-                    <motion.span
-                      key={user.points}
-                      initial={{ y: 5, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ type: "spring", stiffness: 500, damping: 20 }}
-                      className="font-pixel text-[#f59e0b] text-[14px] leading-none tracking-wider"
-                    >
-                      {user.points.toLocaleString()}
-                    </motion.span>
-                  </AnimatePresence>
+                    <div className="flex items-center gap-1.5 bg-[#141517]/50 px-2 py-1 rounded-sm border border-slate-800/50">
+                      <PixelCoin size={14} className="text-[#fbbf24] drop-shadow-[0_0_2px_rgba(251,191,36,0.4)]" />
+                      <AnimatePresence mode="popLayout">
+                        <motion.span
+                          key={user.points}
+                          initial={{ y: 5, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 20 }}
+                          className="font-pixel text-[#f59e0b] text-[14px] leading-none tracking-wider"
+                        >
+                          {user.points.toLocaleString()}
+                        </motion.span>
+                      </AnimatePresence>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </DropdownMenuTrigger>
 
-            <PixelButton
-              onClick={toggleLanguage}
-              variant="ghost"
-              size="sm"
-              className="font-pixel text-[11px] min-w-[50px]"
-            >
-              {i18n.language === "th" ? "ENG" : "TH"}
-            </PixelButton>
+              <DropdownMenuContent
+                align="end"
+                className="bg-[#1a1c1e] pixel-border border-[#F59E0B]/60 min-w-[180px] p-1"
+              >
+                <DropdownMenuItem asChild className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-[#F59E0B]/10 focus:bg-[#F59E0B]/10 text-foreground hover:text-accent focus:text-accent gap-2 px-3 py-2">
+                  <Link to="/profile">
+                    <PixelUser className="text-yellow-400" size={16} />
+                    {t("navbar.profile", "Profile")}
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator className="bg-slate-700 my-1" />
+
+                <DropdownMenuItem
+                  onClick={toggleLanguage}
+                  className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-[#F59E0B]/10 focus:bg-[#F59E0B]/10 text-foreground hover:text-accent focus:text-accent gap-2 px-3 py-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-yellow-400">
+                    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                  {i18n.language === "th" ? "English" : "ภาษาไทย"}
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator className="bg-slate-700 my-1" />
+
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-red-500/10 focus:bg-red-500/10 text-[#ef4444] hover:text-[#f87171] focus:text-[#f87171] gap-2 px-3 py-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-[#ef4444]">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                  {t("navbar.logout", "Logout")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </nav>

@@ -404,7 +404,7 @@
     "successMsg": "Product added successfully!",
     "errorMsg": "Failed to add product."
   },
-    "editProduct": {
+  "editProduct": {
     "back": "BACK",
     "title": "Edit Product",
     "subtitle": "Update the details of your product",
@@ -480,6 +480,7 @@
       "branch": "Branch Name",
       "cancel": "CANCEL",
       "save": "SAVE CHANGES",
+      "all": "ALL",
       "status_values": {
         "open": "OPEN",
         "bidding": "BIDDING",
@@ -492,6 +493,10 @@
         "medium": "MEDIUM",
         "hard": "HARD",
         "low": "EASY"
+      },
+      "date": {
+        "newest": "Newest",
+        "oldest": "Oldest"
       }
     },
     "rewardspage": {
@@ -512,7 +517,26 @@
       "category": "Category",
       "cancel": "CANCEL",
       "save": "SAVE CHANGES",
-      "alert": "Are you sure you want to delete this reward item?"
+      "alert": "Are you sure you want to delete this reward item?",
+      "date": {
+        "dateAll": "Date: ALL",
+        "newest": "Newest",
+        "oldest": "Oldest"
+      }
+    },
+    "orders": {
+      "title": "Manage Orders",
+      "subtitile": "Manage redemptions and fulfillment",
+      "searchPlaceholder": "Search by order number...",
+      "orderNumber": "Order Number",
+      "customer": "Customer",
+      "total": "Total",
+      "status": "Status",
+      "actions": "Actions",
+      "confirmShipment": "Confirm Shipment",
+      "markCompleted": "Mark as Completed",
+      "confirmCancel": "Cancel Order",
+      "noOrders": "No Orders Found"
     }
   },
   "sidebar": {
@@ -520,6 +544,7 @@
     "senior": "Manage Seniors",
     "quest": "Manage Quests",
     "reward": "Manage Rewards",
+    "order": "Manage Orders",
     "admin": "ADMIN",
     "logout": "LOGOUT"
   }

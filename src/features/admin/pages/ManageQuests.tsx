@@ -16,6 +16,12 @@ const ManageQuest = () => {
 
   const [page, setPage] = useState(1);
   const LIMIT = 20;
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [filterDifficulty, setFilterDifficulty] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [sortReward, setSortReward] = useState("");
+  const [sortDate, setSortDate] = useState("");
 
   const { data: quests, isLoading } = useQuery({
     queryKey: ["admin", "quests", page],
@@ -36,19 +42,6 @@ const ManageQuest = () => {
     }
   });
 
-  // --- ฟังก์ชัน Delete ---
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this quest?")) {
-      deleteMutation.mutate(id);
-    }
-  };
-
-  // Helper สำหรับตัดข้อความที่ยาวเกินไป
-  const truncateText = (text: string, length: number = 20) => {
-    if (!text) return "";
-    return text.length > length ? text.substring(0, length) + "..." : text;
-  };
-
   const getStatusKey = (status: string) => {
     const s = status?.toLowerCase();
     if (s === "review") return "in_review";
@@ -57,14 +50,73 @@ const ManageQuest = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "open": return "bg-green-900/50 text-green-400 border border-green-800";
-      case "bidding": return "bg-blue-900/50 text-blue-400 border border-blue-800";
-      case "in-progress": return "bg-yellow-900/50 text-yellow-400 border border-yellow-800";
-      case "review": return "bg-purple-900/50 text-purple-400 border border-purple-800";
-      case "completed": return "bg-gray-800 text-gray-400 border border-gray-600";
-      default: return "bg-gray-800 text-gray-400";
+    const s = status?.toLowerCase();
+    switch (s) {
+      case "open":        return "bg-blue-900/50 text-blue-400 border border-blue-700";
+      case "in_progress": return "bg-yellow-900/50 text-yellow-400 border border-yellow-700";
+      case "review":
+      case "in_review":   return "bg-purple-900/50 text-purple-400 border border-purple-700";
+      case "completed":   return "bg-emerald-900/50 text-emerald-400 border border-emerald-700";
+      default:            return "bg-gray-800/50 text-gray-400 border border-gray-600";
     }
+  };
+
+  const questList: any[] = Array.isArray(quests) ? quests : [];
+  const uniqueTypes = Array.from(new Set(questList.map((q) => q.type).filter(Boolean))) as string[];
+
+  const filteredQuests = questList
+    .filter((q) => {
+      if (filterDifficulty && q.difficulty?.toLowerCase() !== filterDifficulty) return false;
+      if (filterType && q.type !== filterType) return false;
+      if (filterStatus && getStatusKey(q.status) !== filterStatus && q.status?.toLowerCase() !== filterStatus) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortReward === "asc") return (a.point ?? 0) - (b.point ?? 0);
+      if (sortReward === "desc") return (b.point ?? 0) - (a.point ?? 0);
+      if (sortDate === "newest") return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
+      if (sortDate === "oldest") return new Date(a.createdAt ?? 0).getTime() - new Date(b.createdAt ?? 0).getTime();
+      return 0;
+    });
+
+  // --- ฟังก์ชัน Delete ---
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this quest?")) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const isAllSelected = filteredQuests.length > 0 && filteredQuests.every((q: any) => selectedIds.has(q.id));
+
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredQuests.map((q: any) => q.id)));
+    }
+  };
+
+  const handleSelectOne = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedIds.size === 0) return;
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.size} quest(s)?`)) {
+      selectedIds.forEach(id => deleteMutation.mutate(id));
+      setSelectedIds(new Set());
+    }
+  };
+
+  // Helper สำหรับตัดข้อความที่ยาวเกินไป
+  const truncateText = (text: string, length: number = 20) => {
+    if (!text) return "";
+    return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
   if (isLoading) return <div className={`p-6 font-pixel text-accent ${fontClass}`}>{t("admin.questspage.loading")}</div>;
@@ -76,13 +128,70 @@ const ManageQuest = () => {
           <PixelClipboardList className="w-7 h-7" />
           {t("admin.questspage.manage")}
         </h1>
-        <PixelButton
-          variant="gold"
-          size="md"
-          className={fontClass}
-          onClick={() => navigate("/create-quest")}>
-          {t("admin.questspage.add")}
-        </PixelButton>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Filters */}
+          <select
+            value={filterDifficulty}
+            onChange={(e) => setFilterDifficulty(e.target.value)}
+            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+          >
+            <option value="">{t("admin.questspage.diff")}: {t("admin.questspage.all", "All")}</option>
+            <option value="easy">{t("admin.questspage.difficulty_values.easy", "Easy")}</option>
+            <option value="medium">{t("admin.questspage.difficulty_values.medium", "Medium")}</option>
+            <option value="hard">{t("admin.questspage.difficulty_values.hard", "Hard")}</option>
+          </select>
+
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+          >
+            <option value="">{t("admin.questspage.type")}: {t("admin.questspage.all", "All")}</option>
+            {uniqueTypes.map((type) => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+          >
+            <option value="">{t("admin.questspage.status")}: {t("admin.questspage.all", "All")}</option>
+            <option value="open">{t("admin.questspage.status_values.open", "Open")}</option>
+            <option value="in_progress">{t("admin.questspage.status_values.in_progress", "In Progress")}</option>
+            <option value="in_review">{t("admin.questspage.status_values.in_review", "In Review")}</option>
+            <option value="completed">{t("admin.questspage.status_values.completed", "Completed")}</option>
+          </select>
+
+          <select
+            value={sortDate}
+            onChange={(e) => { setSortDate(e.target.value); setSortReward(""); }}
+            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+          >
+            <option value="">{t("admin.questspage.sort_date", "Date")}: {t("admin.questspage.all", "All")}</option>
+            <option value="newest">{t("admin.questspage.date.newest")}</option>
+            <option value="oldest">{t("admin.questspage.date.oldest")}</option>
+          </select>
+
+          {selectedIds.size > 0 && (
+            <PixelButton
+              variant="danger"
+              size="md"
+              className={fontClass}
+              onClick={handleBulkDelete}
+            >
+              {t("admin.questspage.delete")} ({selectedIds.size})
+            </PixelButton>
+          )}
+          <PixelButton
+            variant="gold"
+            size="md"
+            className={fontClass}
+            onClick={() => navigate("/create-quest")}>
+            {t("admin.questspage.add")}
+          </PixelButton>
+        </div>
       </div>
 
       {/* --- ส่วนตารางแสดงข้อมูล --- */}
@@ -90,11 +199,31 @@ const ManageQuest = () => {
         <table className="w-full text-left border-collapse table-fixed">
           <thead>
             <tr className={`border-b border-[#333] text-muted-foreground uppercase tracking-wider ${fontClass}`}>
+              <th className="p-3 w-[4%] text-center">
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={handleSelectAll}
+                  className="w-4 h-4 cursor-pointer accent-yellow-400"
+                />
+              </th>
               <th className="p-3 w-[10%]">{t("admin.questspage.id")}</th>
               <th className="p-3 w-[10%]">{t("admin.questspage.title")}</th>
               <th className="p-3 w-[16%]">{t("admin.questspage.desc")}</th>
-              <th className="p-3 w-[8%] text-center">{t("admin.questspage.reward")}</th>
-              <th className="p-3 w-[8%] text-center">{t("admin.questspage.est")}</th>
+              <th className="p-3 w-[8%] text-center">
+                <button
+                  onClick={() => {
+                    setSortDate("");
+                    setSortReward(sortReward === "" ? "desc" : sortReward === "desc" ? "asc" : "");
+                  }}
+                  className="flex items-center justify-center gap-1 w-full hover:text-yellow-400 transition-colors"
+                >
+                  {t("admin.questspage.reward")}
+                  <span className="text-xs">
+                    {sortReward === "asc" ? "▲" : sortReward === "desc" ? "▼" : "⇅"}
+                  </span>
+                </button>
+              </th>
               <th className="p-3 w-[8%] text-center">{t("admin.questspage.type")}</th>
               <th className="p-3 w-[8%] text-center">{t("admin.questspage.diff")}</th>
               <th className="p-3 w-[15%] text-center">{t("admin.questspage.status")}</th>
@@ -102,15 +231,23 @@ const ManageQuest = () => {
             </tr>
           </thead>
           <tbody>
-            {!quests || quests.length === 0 ? (
+            {filteredQuests.length === 0 ? (
               <tr>
                 <td colSpan={9} className="p-6 text-center text-muted-foreground">
                   {t("admin.questspage.notfoundquest")}
                 </td>
               </tr>
             ) : (
-              quests.map((quest: any) => (
+              filteredQuests.map((quest: any) => (
                 <tr key={quest.id} className="border-b border-[#333]/30 hover:bg-white/5 transition-colors">
+                  <td className="p-3 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(quest.id)}
+                      onChange={() => handleSelectOne(quest.id)}
+                      className="w-4 h-4 cursor-pointer accent-yellow-400"
+                    />
+                  </td>
                   <td className="p-3">
                     <div className={`font-medium text-foreground truncate ${fontClass}`} title={quest.id}>{quest.id}</div>
                   </td>
@@ -123,10 +260,7 @@ const ManageQuest = () => {
                     </div>
                   </td>
                   <td className={`p-3 text-center text-yellow-400 font-bold truncate ${fontClass}`}>
-                    {quest.point} pts
-                  </td>
-                  <td className={`p-3 text-center text-accent truncate ${fontClass}`}>
-                    {quest.estimatedTime}
+                    {quest.point}
                   </td>
                   <td className={`p-3 text-center text-muted-foreground truncate ${fontClass}`}>
                     {quest.type}

@@ -243,7 +243,7 @@ const RewardShop = () => {
                       {/* Buy Button */}
                       <PixelButton
                         variant={
-                          (user.points ?? 0) >= item.price ? "primary" : "ghost"
+                          (user.points ?? 0) >= item.price ? "gold" : "primary"
                         }
                         size="sm"
                         className={`w-full ${fontClass}`}

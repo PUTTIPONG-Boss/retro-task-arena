@@ -25,7 +25,7 @@ const ManageOrders = () => {
   const [sort, setSort] = useState("desc"); // 'desc' for newest, 'asc' for oldest
   const limit = 10;
 
-  const fontClass = i18n.language === "th" ? "font-noto-thai" : "font-pixel";
+  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
   // Fetch orders
   const { data, isLoading } = useQuery({
@@ -73,11 +73,11 @@ const ManageOrders = () => {
             <Package className="w-6 h-6 text-accent" />
           </div>
           <div>
-            <h1 className={`text-2xl text-accent pixel-text-shadow ${fontClass}`}>
+            <h1 className={`text-[24px] text-accent pixel-text-shadow ${fontClass}`}>
               {t("admin.orders.title")}
             </h1>
-            <p className="text-xs text-muted-foreground opacity-70">
-              Manage redemptions and fulfillment
+            <p className="text-muted-foreground opacity-70">
+              {t("admin.orders.subtitle")}
             </p>
           </div>
         </div>
@@ -101,7 +101,7 @@ const ManageOrders = () => {
           <button
             key={s}
             onClick={() => handleStatusChange(s)}
-            className={`px-4 py-2 text-[10px] uppercase tracking-wider transition-all pixel-border ${status === s
+            className={`px-4 py-2 text-[12px] uppercase tracking-wider transition-all pixel-border ${status === s
               ? "bg-accent text-black border-accent"
               : "bg-secondary text-muted-foreground border-transparent hover:border-[#444]"
               } font-pixel`}
@@ -114,7 +114,7 @@ const ManageOrders = () => {
       <div className="flex justify-end px-1">
         <button
           onClick={() => setSort(s => s === "desc" ? "asc" : "desc")}
-          className="flex items-center gap-2 text-[10px] text-accent hover:text-accent/80 transition-colors font-pixel uppercase tracking-widest bg-secondary/50 px-3 py-1.5 pixel-border border-[#333]"
+          className="flex items-center gap-2 text-[12px] text-accent hover:text-accent/80 transition-colors font-pixel uppercase tracking-widest bg-secondary/50 px-3 py-1.5 pixel-border border-[#333]"
         >
           <Filter className="w-3 h-3" />
           {sort === "desc" ? "Newest First (ล่าสุด)" : "Oldest First (เก่าสุด)"}
@@ -140,8 +140,8 @@ const ManageOrders = () => {
                   {/* Order Info */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-accent font-pixel">#{order.orderNumber}</span>
-                      <span className={`px-2 py-0.5 text-[9px] pixel-border ${statusColors[order.status] || ""} font-pixel`}>
+                      <span className="text-accent font-pixel">#{order.orderNumber}</span>
+                      <span className={`px-2 py-0.5 pixel-border ${statusColors[order.status] || ""} font-pixel`}>
                         {order.status}
                       </span>
                     </div>
@@ -149,10 +149,10 @@ const ManageOrders = () => {
                       <div className="w-6 h-6 bg-[#333] pixel-border border-[#444] flex items-center justify-center text-[10px]">
                         {order.user?.username?.[0]?.toUpperCase() || "?"}
                       </div>
-                      <span className="text-sm font-medium">{order.user?.username || "Quest Hunter"}</span>
+                      <span className="font-medium">{order.user?.username || "Quest Hunter"}</span>
                       {/* <span className="text-muted-foreground text-xs">({order.user?.email || "Unknown Email"})</span> */}
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground">
                       {new Date(order.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -161,14 +161,14 @@ const ManageOrders = () => {
                   <div className="flex-1 border-l-2 border-[#333] md:pl-6">
                     <div className="space-y-1">
                       {order.orderItems?.map((item: any) => (
-                        <div key={item.id} className="flex justify-between text-xs">
+                        <div key={item.id} className="flex justify-between">
                           <span className="text-[#e3d8c1]">x{item.quantity} {item.product?.name || "Item"}</span>
-                          <span className="text-accent">{item.totalPrice} GP</span>
+                          <span className="text-accent">{item.totalPrice} P</span>
                         </div>
                       ))}
                       <div className="pt-2 mt-2 border-t border-[#333] flex justify-between font-bold text-accent">
                         <span>{t("admin.orders.total")}</span>
-                        <span>{order.totalPrice} GP</span>
+                        <span>{order.totalPrice} P</span>
                       </div>
                     </div>
                   </div>
