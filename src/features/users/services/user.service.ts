@@ -26,8 +26,8 @@ export const useGetProfile = (enabled: boolean = true) => {
         skills: Array.isArray(userData.skills)
           ? userData.skills
           : userData.skills
-          ? userData.skills.split(',')
-          : [],
+            ? userData.skills.split(',')
+            : [],
         title: userData.titleEn || userData.title,
         level: userData.level || 1,
         github: userData.github || '',
@@ -66,7 +66,10 @@ export const useGetProfile = (enabled: boolean = true) => {
       return mappedUser;
     },
     enabled,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 30, // 30 seconds stale
+    refetchInterval: 30000, // Poll every 30 seconds for "real-time" points
+    refetchIntervalInBackground: false,
+    gcTime: 1000 * 60 * 10, // 10 minutes
   });
 };
 

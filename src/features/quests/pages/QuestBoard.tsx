@@ -7,10 +7,11 @@ import GuildBanner from "@/features/quests/components/GuildBanner";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
-import { isSeniorOrEmployer } from "@/features/users/utils/roleUtils";
+import { isSeniorOrAdmin } from "@/features/users/utils/roleUtils";
 import { ListFilter, X } from "lucide-react";
 import PixelSearch from "@/components/icons/PixelSearch";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
+import { cn } from "@/lib/utils";
 
 const QuestBoard = () => {
   const user = useAuthStore((s) => s.user);
@@ -20,12 +21,12 @@ const QuestBoard = () => {
 
   // States
   const [filter, setFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("active");
+  const [statusFilter, setStatusFilter] = useState<string>("open");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
-  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[14px]";
 
   // ปิด popup เมื่อคลิกข้างนอก
   useEffect(() => {
@@ -46,8 +47,8 @@ const QuestBoard = () => {
   }, []);
 
   const categories = ["all", "frontend", "backend", "BUG FIX", "FEATURE"];
-  const statuses = ["active", "in_progress", "completed", "all"];
-  const isSeniorOrEmployerUser = isSeniorOrEmployer(user?.role || "");
+  const statuses = ["open", "in_progress", "completed", "all"];
+  const isSeniorOrAdminUser = isSeniorOrAdmin(user?.role || "");
 
   const filtered = quests.filter((q) => {
     const catMatch =
@@ -55,8 +56,8 @@ const QuestBoard = () => {
     const statusMatch =
       statusFilter === "all"
         ? true
-        : statusFilter === "active"
-          ? (q.status === "open" || q.status === "bidding")
+        : statusFilter === "open"
+          ? (q.status === "open" || q.status === "bidding" || q.status === "in-progress" || q.status === "review")
           : q.status === (statusFilter === "in_progress" ? "in-progress" : statusFilter);
     const searchMatch =
       searchQuery.trim() === "" ||
@@ -103,7 +104,10 @@ const QuestBoard = () => {
                 <div className="space-y-6">
                   <div>
                     <p
-                      className={`font-pixel text-[10px] text-accent mb-3 uppercase border-b border-white/10 pb-1 ${fontClass}`}
+                      className={cn(
+                        "font-pixel text-accent mb-3 uppercase border-b border-white/10 pb-1",
+                        i18n.language === "th" ? "text-[14px]" : "text-[11px]"
+                      )}
                     >
                       {t("questBoard.queststatus")}
                     </p>
@@ -114,10 +118,13 @@ const QuestBoard = () => {
                           onClick={() => {
                             setStatusFilter(s);
                           }}
-                          className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${statusFilter === s
-                            ? "border-gold text-gold bg-gold/10"
-                            : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
-                            } ${fontClass}`}
+                          className={cn(
+                            "font-pixel px-2 py-1 border-2 transition-colors",
+                            statusFilter === s
+                              ? "border-gold text-gold bg-gold/10"
+                              : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                            i18n.language === "th" ? "text-[13px]" : "text-[10px]"
+                          )}
                         >
                           {t(`questBoard.queststatuses.${s}`)}
                         </button>
@@ -127,7 +134,10 @@ const QuestBoard = () => {
 
                   <div>
                     <p
-                      className={`font-pixel text-[10px] text-accent mb-3 uppercase border-b border-white/10 pb-1 ${fontClass}`}
+                      className={cn(
+                        "font-pixel text-accent mb-3 uppercase border-b border-white/10 pb-1",
+                        i18n.language === "th" ? "text-[14px]" : "text-[11px]"
+                      )}
                     >
                       {t("questBoard.category")}
                     </p>
@@ -138,10 +148,13 @@ const QuestBoard = () => {
                           onClick={() => {
                             setFilter(cat);
                           }}
-                          className={`font-pixel text-[10px] px-2 py-1 border-2 transition-colors ${filter === cat
-                            ? "border-gold text-gold bg-gold/10"
-                            : "border-zinc-700 text-zinc-500 hover:border-zinc-500"
-                            } ${fontClass}`}
+                          className={cn(
+                            "font-pixel px-2 py-1 border-2 transition-colors",
+                            filter === cat
+                              ? "border-gold text-gold bg-gold/10"
+                              : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                            i18n.language === "th" ? "text-[13px]" : "text-[10px]"
+                          )}
                         >
                           {t(`questBoard.categories.${cat}`)}
                         </button>
@@ -166,7 +179,7 @@ const QuestBoard = () => {
                       className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 text-white ${fontClass}`}
                       onClick={() => {
                         setFilter("all");
-                        setStatusFilter("active");
+                        setStatusFilter("open");
                         setSearchQuery("");
                         setIsFilterOpen(false);
                       }}
@@ -182,7 +195,7 @@ const QuestBoard = () => {
 
         {/* Post Quest & Result Count */}
         <div className="mb-6 flex justify-between items-end">
-          {isSeniorOrEmployerUser ? (
+          {isSeniorOrAdminUser ? (
             <Link to="/create-quest">
               <PixelButton
                 variant="gold"

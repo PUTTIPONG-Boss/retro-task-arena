@@ -1,4 +1,4 @@
-export const isSeniorOrEmployer = (role: string) => {
+export const isSeniorOrAdmin = (role: string) => {
   const r = role.toLowerCase();
-  return r.includes("senior") || r === "employer" || r === "admin";
+  return r.includes("senior") || r === "admin";
 };

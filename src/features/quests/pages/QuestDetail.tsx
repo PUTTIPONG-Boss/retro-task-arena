@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import DifficultyStars from "@/features/quests/components/DifficultyStars";
+import { useCreateReview, useGetReviewsByTaskId } from "@/features/bids/services/review.service";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import {
   useUpdateQuestStatus,
@@ -16,7 +17,8 @@ import {
 import { toast } from "sonner";
 import { Coins } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { isSeniorOrEmployer } from "@/features/users/utils/roleUtils";
+import { isSeniorOrAdmin } from "@/features/users/utils/roleUtils";
+import { getErrorMessage } from "@/lib/errorUtils";
 
 const statusColor: Record<string, string> = {
   open: "text-success",
@@ -41,6 +43,9 @@ const QuestDetail = () => {
 
   // --- Fetch quest directly from API ---
   const { data: quest, isLoading: questLoading } = useGetQuestById(id);
+
+  // --- Fetch reviews if quest is completed ---
+  const { data: reviews = [], isLoading: reviewsLoading } = useGetReviewsByTaskId(id);
 
   const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
@@ -92,18 +97,9 @@ const QuestDetail = () => {
     );
   }
 
-  const isSeniorOrEmployerUser = isSeniorOrEmployer(user?.role || "");
+  const isSeniorOrAdminUser = isSeniorOrAdmin(user?.role || "");
 
   const isOwner = user?.id === quest.providerId;
-
-  const handleCompleteQuest = async () => {
-    try {
-      await updateStatus.mutateAsync({ id: quest.id, status: "completed" });
-      toast.success("Order marked as completed! Points awarded.");
-    } catch {
-      toast.error("Failed to update order status.");
-    }
-  };
 
   const handleSubmitBid = async () => {
     if (!user) {
@@ -126,9 +122,8 @@ const QuestDetail = () => {
       });
       toast.success("⚔ Bid submitted successfully!");
       setShowBidForm(false);
-    } catch (e: unknown) {
-      const err = e as { response?: { data?: { error?: string } } };
-      toast.error(err?.response?.data?.error || "Failed to submit bid");
+    } catch (e) {
+      toast.error(getErrorMessage(e));
     }
   };
 
@@ -149,12 +144,12 @@ const QuestDetail = () => {
       });
 
       toast.success("✅ Bid accepted! Quest is now In Progress.");
-    } catch {
-      toast.error("Failed to accept bid.");
+    } catch (e) {
+      toast.error(getErrorMessage(e));
     }
   };
 
-  const myBid = bids.find((b) => b.userId === user?.id);
+  const myBid = bids.find((b) => (b.userId || (b as any).user_id) === user?.id);
 
   const handleEditBid = () => {
     if (!myBid) return;
@@ -255,6 +250,39 @@ const QuestDetail = () => {
             </div>
           </PixelFrame>
 
+          {/* ===== REVIEW SECTION ===== */}
+          {quest.status === "completed" && (
+            <PixelFrame className="border-accent bg-accent/5">
+              <h2 className={`font-pixel text-accent pixel-text-shadow mb-4 flex items-center gap-2 ${fontClass}`}>
+                🏆 {t("questDetail.finalReview.title")}
+              </h2>
+              
+              {reviewsLoading ? (
+                <p className={`font-pixel text-muted-foreground animate-pulse ${fontClass}`}>{t("questBoard.loading")}</p>
+              ) : reviews.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className={`font-pixel text-foreground ${fontClass}`}>{t("questDetail.finalReview.rating")}:</span>
+                    <DifficultyStars level={Math.round(reviews[0].rating)} />
+                    <span className="text-gold font-pixel ml-1">({reviews[0].rating.toFixed(1)})</span>
+                  </div>
+                  <div className="pixel-inset bg-background/50 p-4 border-l-4 border-accent">
+                    <p className={`text-muted-foreground uppercase text-[10px] mb-2 font-pixel tracking-tighter ${fontClass}`}>
+                      {t("questDetail.finalReview.comment")}
+                    </p>
+                    <p className={`text-foreground italic leading-relaxed whitespace-pre-line ${fontClass}`}>
+                      "{reviews[0].comment}"
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <p className={`font-pixel text-muted-foreground ${fontClass}`}>
+                  {t("questDetail.finalReview.noReview")}
+                </p>
+              )}
+            </PixelFrame>
+          )}
+
           {/* ===== BID SECTION ===== */}
           {/* OWNER VIEW: see all bids with details */}
           {isOwner && quest.status === "open" && (
@@ -341,9 +369,13 @@ const QuestDetail = () => {
                         <input
                           type="number"
                           value={editBidAmount}
-                          onChange={(e) => setEditBidAmount(Number(e.target.value))}
+                          onChange={(e) => {
+                            const val = Number(e.target.value);
+                            if (val <= 1000) setEditBidAmount(val);
+                          }}
                           className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
                           min={1}
+                          max={1000}
                         />
                       </div>
                       <div>
@@ -385,14 +417,6 @@ const QuestDetail = () => {
                     <>
                       <div className="flex justify-between items-start">
                         <p className={`font-pixel text-success mb-1 ${fontClass}`}>⚔ {t("questDetail.viewmode.yourbidsub")}</p>
-                        {myBid.status === "PENDING" && (
-                          <button
-                            onClick={handleEditBid}
-                            className={`font-pixel text-accent hover:text-foreground border border-accent px-2 py-1 transition-colors ${fontClass}`}
-                          >
-                            {t("questDetail.editbid.editbids")}
-                          </button>
-                        )}
                       </div>
                       <p className={`text-foreground ${fontClass}`}>{t("questDetail.viewmode.amount")} : <span className="text-accent">{myBid.bidAmount} {t("questDetail.viewmode.GP")}</span></p>
                       <p className={`text-muted-foreground ${fontClass}`}>{t("questDetail.viewmode.duration")}: {myBid.waitDuration}</p>
@@ -403,6 +427,17 @@ const QuestDetail = () => {
                           {myBid.status}
                         </span>
                       </p>
+
+                      {myBid.status === "PENDING" && (
+                        <PixelButton
+                          variant="gold"
+                          size="md"
+                          className={`w-full mt-4 ${fontClass}`}
+                          onClick={handleEditBid}
+                        >
+                          <span className={fontClass}>⚙ {t("questDetail.editbid.editbids")}</span>
+                        </PixelButton>
+                      )}
                     </>
                   )}
                 </div>
@@ -413,10 +448,14 @@ const QuestDetail = () => {
                     <input
                       type="number"
                       value={bidAmount}
-                      onChange={(e) => setBidAmount(Number(e.target.value))}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        if (val <= 1000) setBidAmount(val);
+                      }}
                       className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
                       placeholder="e.g. 500"
                       min={1}
+                      max={1000}
                     />
                   </div>
                   <div>
@@ -531,17 +570,7 @@ const QuestDetail = () => {
                 <span className={fontClass}>{t("questDetail.sidebar.openWorkspace")}</span>
               </PixelButton>
 
-              {isSeniorOrEmployerUser && quest.status === "review" && (
-                <PixelButton
-                  variant="gold"
-                  size="md"
-                  className={`w-full ${fontClass}`}
-                  onClick={handleCompleteQuest}
-                  disabled={updateStatus.isPending}
-                >
-                  <span className={fontClass}>{t("questDetail.sidebar.completeQuest")}</span>
-                </PixelButton>
-              )}
+
             </div>
           )}
 

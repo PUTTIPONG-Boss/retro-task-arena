@@ -4,13 +4,12 @@
 import { UserProfile } from "@/features/users/types";
 import { mockUser } from "@/data/mockData";
 import { mockSenior, mockAdmin } from "@/data/mockData";
+import { apiClient } from "@/lib/api";
 
 export interface OAuthTokenResponse {
   access_token: string;
   user: UserProfile;
 }
-
-const MOCK_DELAY = 800;
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -19,7 +18,7 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * Future: POST /auth/oauth/oneid
  */
 export async function loginWithOneID(username: string, password: string): Promise<OAuthTokenResponse> {
-  // login → backend set HttpOnly cookie อัตโนมัติ
+  // login → backend sets HttpOnly cookies อัตโนมัติ (access_token, refresh_token)
   await apiClient.post("/user/login", { username, password });
 
   // ดึงข้อมูล user (cookie ถูกส่งไปอัตโนมัติจาก withCredentials: true)
@@ -27,38 +26,33 @@ export async function loginWithOneID(username: string, password: string): Promis
   const userData = userResponse.data;
 
   return {
-    access_token: "",  // ← ไม่ต้องเก็บ token ใน JS memory เลย
+    access_token: "cookie_based", // Placeholder indicate cookie is used
     user: {
       ...mockUser,
       ...userData,
       id: userData.userId || userData.id,
       role: userData.role || "JUNIOR",
-      skills: userData.skills ? userData.skills.split(",") : [],
+      skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
       questsCompleted: userData.questsCompleted || 0,
       rating: userData.rating || 5.0,
+      totalRatings: userData.totalRatings || 0,
     },
   };
 }
+
 /**
  * Real login with email and password.
  */
-import { apiClient } from "@/lib/api";
-
 export async function login(email: string, password: string): Promise<OAuthTokenResponse> {
-  const response = await apiClient.post("/user/login", { email, password });
-  const token = response.data.token;
+  // backend sets HttpOnly cookies อัตโนมัติ
+  await apiClient.post("/user/login", { email, password });
 
-  // After login, fetch user profile using the new /user/me endpoint
-  // The token is automatically attached by the interceptor if we wait for the store to update,
-  // but here we can pass it manually for the very first call.
-  const userResponse = await apiClient.get("/user/me", {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
+  // ดึงข้อมูล user โดยใช้ cookie (interceptor will handle basic config)
+  const userResponse = await apiClient.get("/user/me");
   const userData = userResponse.data;
 
   return {
-    access_token: token,
+    access_token: "cookie_based",
     user: {
       ...mockUser, // Fallback fields
       ...userData,
@@ -66,9 +60,10 @@ export async function login(email: string, password: string): Promise<OAuthToken
       username: userData.username,
       points: userData.points || 0,
       role: userData.role || "JUNIOR",
-      skills: userData.skills ? userData.skills.split(",") : [],
+      skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
       questsCompleted: userData.questsCompleted || 0,
       rating: userData.rating || 5.0,
+      totalRatings: userData.totalRatings || 0,
     },
   };
 }
@@ -100,23 +95,25 @@ export async function fetchOrCreateUser(
     id: userData.userId || userData.id,
     points: userData.points || 0,
     role: userData.role || "JUNIOR",
-    skills: userData.skills ? userData.skills.split(",") : [],
+    skills: userData.skills ? (typeof userData.skills === 'string' ? userData.skills.split(",") : []) : [],
+    questsCompleted: userData.questsCompleted || 0,
+    rating: userData.rating || 5.0,
+    totalRatings: userData.totalRatings || 0,
   };
 }
 
 /**
  * Logout — clear tokens.
- * Future: POST /auth/logout
  */
 export async function logout(): Promise<void> {
-  // await delay(200);
+  // Implementation for logout
 }
 
 /**
  * Mock login for Senior role.
  */
 export async function mockSeniorLogin(): Promise<OAuthTokenResponse> {
-  await delay(400); // ใช้ฟังก์ชัน delay ตัวเดิมของคุณ
+  await delay(400);
   return {
     access_token: "mock_senior_token_" + Date.now(),
     user: mockSenior,

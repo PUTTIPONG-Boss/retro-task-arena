@@ -56,26 +56,64 @@ export const FileViewer = ({ repoUrl, path, branch = 'main' }: FileViewerProps) 
   }
 
   if (isError) {
-    const isPrivate = (error as any)?.response?.status === 401 || (error as any)?.response?.status === 404;
-    return (
-      <div className="h-full flex flex-col items-center justify-center p-10 text-center max-w-md mx-auto">
-        {isPrivate ? (
-          <>
-            <div className="pixel-border bg-destructive/10 border-destructive p-6 mb-6">
-              <AlertTriangle size={32} className="text-destructive mx-auto mb-4" />
-              <h3 className="font-pixel text-[10px] text-destructive mb-3 uppercase">Access Denied</h3>
-              <p className="font-pixel text-[8px] text-foreground leading-relaxed mb-4">
-                This repository is PRIVATE. Our system cannot read its contents without a secret key.
-              </p>
-              <div className="pixel-inset bg-background p-3 text-left">
-                <p className="font-pixel text-[7px] text-muted-foreground mb-1">RECOMMENDED ACTION:</p>
-                <p className="text-lg text-foreground">Follow the instructions in the 🛡️ Workflow tab to clone and work on this quest locally.</p>
-              </div>
+    const status = (error as any)?.response?.status;
+    const isRateLimit = status === 429;
+    const isPrivate = status === 401 || status === 403;
+    const isNotFound = status === 404;
+
+    if (isRateLimit) {
+      return (
+        <div className="h-full flex flex-col items-center justify-center p-10 text-center max-w-md mx-auto">
+          <div className="pixel-border bg-yellow-500/10 border-yellow-500/50 p-6 mb-4 w-full">
+            <div className="text-4xl mb-3">⏳</div>
+            <h3 className="font-pixel text-[10px] text-yellow-400 mb-3 uppercase tracking-widest">
+              GitHub API Rate Limit
+            </h3>
+            <p className="font-pixel text-[8px] text-foreground/80 leading-relaxed mb-4">
+              ขณะนี้ระบบใช้ GitHub API เกินโควต้าฟรี (60 req/hr) แล้ว
+              กรุณารอสักครู่แล้วลองใหม่ หรือแจ้งผู้ดูแลระบบเพื่อตั้งค่า GitHub Token
+            </p>
+            <div className="pixel-inset bg-background/50 p-3 text-left space-y-1">
+              <p className="font-pixel text-[7px] text-muted-foreground uppercase mb-2">ระหว่างนี้ทำได้:</p>
+              <p className="text-sm text-foreground/70">📋 ดูขั้นตอนการทำงานในแท็บ <span className="text-accent">Workflow</span></p>
+              <p className="text-sm text-foreground/70">🔗 เปิด repo โดยตรงผ่านลิงก์ด้านล่าง</p>
             </div>
-          </>
-        ) : (
-          <p className="font-pixel text-[8px] text-destructive">Error: Failed to fetch file content.</p>
-        )}
+          </div>
+          <a
+            href={repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-pixel text-[8px] text-accent hover:text-foreground border border-accent/50 hover:border-accent px-4 py-2 transition-colors"
+          >
+            🔗 เปิด Repository โดยตรง
+          </a>
+        </div>
+      );
+    }
+
+    if (isPrivate) {
+      return (
+        <div className="h-full flex flex-col items-center justify-center p-10 text-center max-w-md mx-auto">
+          <div className="pixel-border bg-destructive/10 border-destructive p-6 mb-6">
+            <AlertTriangle size={32} className="text-destructive mx-auto mb-4" />
+            <h3 className="font-pixel text-[10px] text-destructive mb-3 uppercase">Access Denied</h3>
+            <p className="font-pixel text-[8px] text-foreground leading-relaxed mb-4">
+              This repository is PRIVATE. Our system cannot read its contents without a secret key.
+            </p>
+            <div className="pixel-inset bg-background p-3 text-left">
+              <p className="font-pixel text-[7px] text-muted-foreground mb-1">RECOMMENDED ACTION:</p>
+              <p className="text-lg text-foreground">Follow the instructions in the 🛡️ Workflow tab to clone and work on this quest locally.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-10 text-center">
+        <p className="font-pixel text-[8px] text-destructive">
+          {isNotFound ? '⚠ ไม่พบไฟล์ที่ระบุ' : 'Error: Failed to fetch file content.'}
+        </p>
       </div>
     );
   }

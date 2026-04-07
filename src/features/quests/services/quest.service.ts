@@ -41,7 +41,7 @@ const mapBackendBid = (b: BackendBid): Bid => ({
 // The Backend Response Types
 interface BackendTask {
   id: string;
-  employerId: string;
+  ownerId: string;
   assigneeId: string | null;
   title: string;
   description: string;
@@ -55,7 +55,7 @@ interface BackendTask {
   status: string;
   createdAt: string;
   updatedAt: string;
-  employerName: string;
+  ownerName: string;
 }
 
 interface FetchTasksResponse {
@@ -86,13 +86,14 @@ const mapTaskToQuest = (task: BackendTask): Quest => {
     estimatedTime: task.estimatedTime,
     category: task.type,
     status: status,
-    providerId: task.employerId,
-    providerName: task.employerName || "Unknown Guild Master",
+    providerId: task.ownerId,
+    providerName: task.ownerName || "Unknown Guild Master",
     repoUrl: task.gitRepoUrl || undefined,
     branchName: task.reqBranchName || undefined,
     bids: [], // TODO: Bids not yet supported by backend API
     assignedTo: task.assigneeId || undefined,
     skills: task.skills || "General",
+    createdAt: task.createdAt,
   };
 };
 
@@ -100,11 +101,10 @@ export const useGetQuests = () => {
   return useQuery({
     queryKey: ['quests'],
     queryFn: async (): Promise<Quest[]> => {
-      const response = await apiClient.get<FetchTasksResponse>('/tasks');
-      if (!response.data || !response.data.data) return [];
-
-      // Ensure data is array before mapping (sometimes APIs return null if empty)
-      const tasks = Array.isArray(response.data.data) ? response.data.data : [];
+      const response = await apiClient.get('/tasks');
+      // Backend may return data as flat array or wrapped in {message, data}
+      const raw = response.data;
+      const tasks: BackendTask[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
       return tasks.map(mapTaskToQuest);
     },
   });
@@ -115,9 +115,12 @@ export const useGetQuestById = (id: string | undefined) => {
     queryKey: ['quest', id],
     queryFn: async (): Promise<Quest | null> => {
       if (!id) return null;
-      const response = await apiClient.get<{ message: string; data: BackendTask }>(`/tasks/${id}`);
-      if (!response.data?.data) return null;
-      return mapTaskToQuest(response.data.data);
+      const response = await apiClient.get(`/tasks/${id}`);
+      const raw = response.data;
+      // Backend may return task directly or wrapped in {data: ...}
+      const task: BackendTask | null = raw?.data ?? (raw?.id ? raw : null);
+      if (!task) return null;
+      return mapTaskToQuest(task);
     },
     enabled: !!id,
   });
@@ -143,15 +146,20 @@ export const useUpdateQuestStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: QuestStatus }) => {
+    mutationFn: async ({ id, status, comment }: { id: string; status: QuestStatus; comment?: string }) => {
       // Map frontend status to backend enum (uppercase snake_case)
       const backendStatus = status === "review" ? "IN_REVIEW" : status.toUpperCase().replace("-", "_");
 
-      const response = await apiClient.put(`/tasks/${id}`, { status: backendStatus });
+      const response = await apiClient.patch(`/tasks/${id}/status`, { 
+        status: backendStatus,
+        comment: comment 
+      });
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['quest', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
   });
 };
@@ -167,6 +175,7 @@ export const useUpdateQuest = () => {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['quests'] });
       queryClient.invalidateQueries({ queryKey: ['quest', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
   });
 };
@@ -178,10 +187,11 @@ export const useGetBids = (taskId: string | undefined) => {
     queryKey: ['bids', taskId],
     queryFn: async (): Promise<Bid[]> => {
       if (!taskId) return [];
-      const response = await apiClient.get<{ message: string; data: BackendBid[] | null }>(`/tasks/${taskId}/bids`);
-      const data = response.data?.data;
-      if (!data || !Array.isArray(data)) return [];
-      return data.map(mapBackendBid);
+      const response = await apiClient.get<any>(`/tasks/${taskId}/bids`);
+      const raw = response.data;
+      // Handle either flat array or wrapped in {message, data}
+      const bids: BackendBid[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
+      return bids.map(mapBackendBid);
     },
     enabled: !!taskId,
   });
@@ -231,7 +241,31 @@ export const useAcceptBid = () => {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['bids', variables.taskId] });
+      queryClient.invalidateQueries({ queryKey: ['quest', variables.taskId] });
       queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
+  });
+};
+
+export interface TaskLog {
+  id: string;
+  taskId: string;
+  fromStatus: string;
+  toStatus: string;
+  comment: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export const useGetTaskLogs = (taskId: string | undefined) => {
+  return useQuery({
+    queryKey: ['task_logs', taskId],
+    queryFn: async (): Promise<TaskLog[]> => {
+      if (!taskId) return [];
+      const response = await apiClient.get(`/tasks/${taskId}/logs`);
+      return response.data?.data || [];
+    },
+    enabled: !!taskId,
   });
 };

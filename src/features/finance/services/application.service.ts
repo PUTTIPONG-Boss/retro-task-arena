@@ -23,6 +23,7 @@ export interface MyBid {
   status: "PENDING" | "ACCEPTED" | "REJECTED";
   createdAt: string;
   taskTitle: string;   // from JOIN with tasks table
+  latestComment?: string;
 }
 
 export async function getMyApplications(): Promise<TaskApplication[]> {
@@ -45,5 +46,6 @@ export async function getMyBids(): Promise<MyBid[]> {
     status: b.status || b.Status || "PENDING",
     createdAt: b.createdAt || b.CreatedAt || "",
     taskTitle: b.taskTitle || b.TaskTitle || "Unknown Quest",
+    latestComment: b.latestComment || b.LatestComment || "",
   }));
 }

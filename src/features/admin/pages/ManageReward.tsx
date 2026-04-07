@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import PixelButton from "@/components/PixelButton";
-import PixelInput from "@/components/PixelInput";
 import PixelFrame from "@/components/PixelFrame";
 import PixelStore from "@/components/icons/PixelStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllProducts, deleteProduct } from "../services/admin.service";
+import { getAllProducts } from "../services/admin.service";
+import { useDeleteProduct } from "../../rewards/services/product.service";
+import { toast } from "sonner";
 
 const ManageReward = () => {
   const { t, i18n } = useTranslation();
@@ -24,14 +25,26 @@ const ManageReward = () => {
     staleTime: 30_000,
   });
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm(t("admin.rewardspage.alert"))) {
-      try {
-        await deleteProduct(id);
-        queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
-      } catch (err) {
-        console.error("Failed to delete product:", err);
-      }
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  // Helper สำหรับตัดข้อความที่ยาวเกินไป
+  const truncateText = (text: string, length: number = 20) => {
+    if (!text) return "";
+    return text.length > length ? text.substring(0, length) + "..." : text;
+  };
+
+  // --- ฟังก์ชัน Delete ---
+  const handleDelete = (id: string) => {
+    if (window.confirm(t("admin.rewardspage.alert") || "Are you sure you want to delete this product?")) {
+      deleteProduct(id, {
+        onSuccess: () => {
+          toast.success("Product deleted successfully!");
+          queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
+        },
+        onError: (err: any) => {
+          toast.error("Failed to delete product: " + (err?.message || "Unknown error"));
+        }
+      });
     }
   };
 
@@ -90,7 +103,7 @@ const ManageReward = () => {
                   </td>
                   <td className="p-3">
                     <div className={`text-muted-foreground truncate ${fontClass}`} title={reward.description}>
-                      {reward.description}
+                      {truncateText(reward.description, 50)}
                     </div>
                   </td>
                   <td className={`p-3 text-center text-yellow-400 font-bold truncate ${fontClass}`}>

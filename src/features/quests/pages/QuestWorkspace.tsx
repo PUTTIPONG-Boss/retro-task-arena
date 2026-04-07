@@ -3,7 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import {
   useGetQuestById,
   useUpdateQuestStatus,
-  useGetBids
+  useGetBids,
+  useGetTaskLogs
 } from "@/features/quests/services/quest.service";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
@@ -13,18 +14,22 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { RepoExplorer } from "../components/RepoExplorer";
 import { FileViewer } from "../components/FileViewer";
+import RequestChangesModal from "../components/RequestChangesModal";
 import { Layout, Terminal, FileText, FolderTree, CheckCircle2, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { getErrorMessage } from "@/lib/errorUtils";
 
 const QuestWorkspace = () => {
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((state) => state.user);
   const [activeTab, setActiveTab] = useState<"workflow" | "readme" | "files">("workflow");
   const [showRating, setShowRating] = useState(false);
+  const [showRequestChanges, setShowRequestChanges] = useState(false);
 
   const { data: quest, isLoading: isLoadingQuest } = useGetQuestById(id);
   const { data: bids = [] } = useGetBids(id);
+  const { data: logs = [] } = useGetTaskLogs(id);
 
   const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
@@ -93,7 +98,7 @@ const QuestWorkspace = () => {
 
   const handleSubmitReview = async () => {
     try {
-      await updateStatus.mutateAsync({ id: quest.id, status: "review" as any });
+      await updateStatus.mutateAsync({ id: quest.id, status: "in_review" as any });
       toast.success(t("questWorkspace.toasts.submitted"));
     } catch (err: any) {
       const msg = err.response?.data?.error || t("questWorkspace.toasts.submitFailed");
@@ -124,18 +129,25 @@ const QuestWorkspace = () => {
 
       toast.success(t("questWorkspace.toasts.approved"));
     } catch (err: any) {
-      const msg = err.response?.data?.error || t("questWorkspace.toasts.approveFailed");
-      const details = err.response?.data?.details;
-      toast.error(`${msg}${details ? `: ${details}` : ""}`);
+      toast.error(getErrorMessage(err));
     }
   };
 
-  const handleRequestChanges = async () => {
+  const handleRequestChanges = () => {
+    setShowRequestChanges(true);
+  };
+
+  const handleRequestChangesSubmit = async (reason: string) => {
+    setShowRequestChanges(false);
     try {
-      await updateStatus.mutateAsync({ id: quest.id, status: "in-progress" as any });
-      toast(t("questWorkspace.toasts.changesRequested"));
-    } catch {
-      toast.error(t("questWorkspace.toasts.requestFailed"));
+      await updateStatus.mutateAsync({
+        id: quest.id,
+        status: "in-progress" as any,
+        comment: reason,
+      });
+      toast.success(t("questWorkspace.toasts.changesRequested"));
+    } catch (e) {
+      toast.error(getErrorMessage(e));
     }
   };
 
@@ -255,37 +267,7 @@ const QuestWorkspace = () => {
             </div>
           </PixelFrame>
 
-          {/* Provider Review Tools */}
-          {isOwner && quest.status === "review" && (
-            <PixelFrame className={`border-accent ${fontClass}`}>
-              <div className={`flex items-center gap-3 mb-4 ${fontClass}`}>
-                <Layout size={20} className="text-accent" />
-                <h2 className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>{t("questWorkspace.review.title")}</h2>
-              </div>
-              <p className={`text-muted-foreground mb-6 ${fontClass}`}>
-                {t("questWorkspace.review.desc")}
-              </p>
-              <div className="flex gap-4">
-                <PixelButton variant="gold" size="md" onClick={handleApprove} className={`flex-1 ${fontClass}`}>
-                  <span className={fontClass}>{t("questWorkspace.review.approveBtn")}</span>
-                </PixelButton>
-                <PixelButton variant="danger" size="md" onClick={handleRequestChanges} className={`flex-1 ${fontClass}`}>
-                  <span className={fontClass}>{t("questWorkspace.review.requestChangesBtn")}</span>
-                </PixelButton>
-              </div>
-            </PixelFrame>
-          )}
 
-          {/* Completion Banner */}
-          {quest.status === "completed" && (
-            <PixelFrame className={`bg-success/5 border-success border-2 ${fontClass}`}>
-              <div className="text-center py-6">
-                <CheckCircle2 size={48} className="text-success mx-auto mb-4" />
-                <h2 className={`font-pixel text-success pixel-text-shadow mb-2 ${fontClass}`}>{t("questWorkspace.victory")}</h2>
-                <p className={`font-pixel text-accent ${fontClass}`}>{t("questWorkspace.rewardAwarded", { reward: quest.rewardPoints })}</p>
-              </div>
-            </PixelFrame>
-          )}
         </div>
 
         {/* Info Sidebar */}
@@ -307,7 +289,7 @@ const QuestWorkspace = () => {
           <PixelFrame>
             <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>{t("questWorkspace.sidebar.statusReport")}</h3>
             <div className="space-y-4">
-                <span className={`font-pixel text-accent ${fontClass}`}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP</span>
+              <span className={`font-pixel text-accent ${fontClass}`}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP</span>
               <div className="flex justify-between items-center">
                 <span className={`text-muted-foreground uppercase ${fontClass}`}>{t("questWorkspace.sidebar.estimated")}</span>
                 <span className={`text-foreground ${fontClass}`}>{quest.estimatedTime}</span>
@@ -318,6 +300,38 @@ const QuestWorkspace = () => {
               </div>
             </div>
           </PixelFrame>
+
+          {/* Provider Review Tools */}
+          {isOwner && quest.status === "review" && (
+            <PixelFrame className={`border-accent ${fontClass}`}>
+              <div className={`flex items-center gap-3 mb-4 ${fontClass}`}>
+                <Layout size={20} className="text-accent" />
+                <h2 className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>{t("questWorkspace.review.title")}</h2>
+              </div>
+              <p className={`text-muted-foreground mb-4 text-xs ${fontClass}`}>
+                {t("questWorkspace.review.desc")}
+              </p>
+              <div className="flex flex-col gap-3">
+                <PixelButton variant="gold" size="md" onClick={handleApprove} className={`w-full ${fontClass}`}>
+                  <span className={fontClass}>{t("questWorkspace.review.approveBtn")}</span>
+                </PixelButton>
+                <PixelButton variant="danger" size="md" onClick={handleRequestChanges} className={`w-full ${fontClass}`}>
+                  <span className={fontClass}>{t("questWorkspace.review.requestChangesBtn")}</span>
+                </PixelButton>
+              </div>
+            </PixelFrame>
+          )}
+
+          {/* Completion Banner */}
+          {quest.status === "completed" && (
+            <PixelFrame className={`bg-success/5 border-success border-2 ${fontClass}`}>
+              <div className="text-center py-4">
+                <CheckCircle2 size={32} className="text-success mx-auto mb-3" />
+                <h2 className={`font-pixel text-success pixel-text-shadow mb-1 ${fontClass}`}>{t("questWorkspace.victory")}</h2>
+                <p className={`font-pixel text-accent text-sm ${fontClass}`}>{t("questWorkspace.rewardAwarded", { reward: quest.rewardPoints })}</p>
+              </div>
+            </PixelFrame>
+          )}
 
           {/* Action Button for Worker */}
           {user?.id === quest.assignedTo && quest.status === "in-progress" && (
@@ -342,6 +356,43 @@ const QuestWorkspace = () => {
               {t("questWorkspace.actions.waitingReview")}
             </PixelButton>
           )}
+
+          {/* Revision Reason (Visible to both Owner and Worker) */}
+          {quest.status === "in-progress" && (
+            <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+              {(() => {
+                // Find latest log where status became in-progress and has a comment
+                const revisionLog = [...logs]
+                  .reverse()
+                  .find(l => {
+                    const status = l.toStatus.toUpperCase().replace("-", "_");
+                    return status === "IN_PROGRESS" && l.comment;
+                  });
+
+                if (revisionLog) {
+                  return (
+                    <PixelFrame className={`border-danger bg-danger/5 ${fontClass}`}>
+                      <div className={`flex items-center gap-2 mb-3 text-danger ${fontClass}`}>
+                        <FileText size={18} />
+                        <h3 className={`font-pixel text-[10px] uppercase tracking-wider ${fontClass}`}>
+                          {t("questWorkspace.review.revisionRequired")}
+                        </h3>
+                      </div>
+                      <div className={`pixel-inset bg-background/50 p-3 ${fontClass}`}>
+                        <p className={`text-foreground leading-relaxed italic ${fontClass}`}>
+                          "{revisionLog.comment}"
+                        </p>
+                      </div>
+                      <p className={`text-[10px] text-muted-foreground mt-3 text-right font-pixel ${fontClass}`}>
+                        — {new Date(revisionLog.createdAt).toLocaleDateString()}
+                      </p>
+                    </PixelFrame>
+                  );
+                }
+                return null;
+              })()}
+            </div>
+          )}
         </div>
       </div>
 
@@ -349,6 +400,14 @@ const QuestWorkspace = () => {
         open={showRating}
         onClose={() => setShowRating(false)}
         onSubmit={handleRatingSubmit}
+        workerUsername={workerUsername}
+        questTitle={quest.title}
+      />
+
+      <RequestChangesModal
+        open={showRequestChanges}
+        onClose={() => setShowRequestChanges(false)}
+        onSubmit={handleRequestChangesSubmit}
         workerUsername={workerUsername}
         questTitle={quest.title}
       />

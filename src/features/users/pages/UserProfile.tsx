@@ -40,9 +40,8 @@ const UserProfile = () => {
 
   return (
     <div
-      className={`max-w-[900px] mx-auto px-4 py-8 ${
-        i18n.language === "th" ? "font-['TA_8bit']" : ""
-      }`}
+      className={`max-w-[900px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""
+        }`}
     >
       <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -64,7 +63,7 @@ const UserProfile = () => {
         />
       )}
 
-      {activeTab === "activity" && <ActivityTab bids={bids} />}
+      {activeTab === "activity" && <ActivityTab bids={bids} quests={quests} user={user} />}
     </div>
   );
 };

@@ -25,11 +25,11 @@ import AddProduct from "@/features/rewards/pages/create/AddProduct";
 import EditProduct from "@/features/rewards/pages/edit/EditProduct";
 import UserProfile from "@/features/users/pages/UserProfile";
 import EditUserProfile from "@/features/users/pages/Edit/EditUserProfile";
-import PointsAnimation from "@/features/users/components/PointsAnimation";
 import ManageSenior from "@/features/admin/pages/ManageSenior";
 import ManageJunior from "@/features/admin/pages/ManageJunior";
 import ManageQuests from "@/features/admin/pages/ManageQuests";
 import ManageReward from "@/features/admin/pages/ManageReward";
+import ManageOrders from "@/features/admin/pages/ManageOrders";
 
 import NotFound from "./pages/NotFound";
 import AuthSyncProvider from "@/features/auth/components/AuthSyncProvider";
@@ -40,13 +40,12 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const { isLoading } = useAuthStore();
 
   if (isLoading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center text-accent font-pixel">Loading Guild Data...</div>;
+    return <div className="min-h-screen bg-transparent flex items-center justify-center text-accent font-pixel">Loading Guild Data...</div>;
   }
 
   return (
     <ProtectedRoute>
-      <PointsAnimation />
-      <div className="relative z-10 h-screen flex flex-col bg-background">
+      <div className="relative z-10 h-screen flex flex-col bg-transparent">
         <Navbar />
         <main className="flex-1 h-full overflow-y-auto w-full relative z-10">
           {children}
@@ -100,6 +99,7 @@ const App = () => (
             <Route path="managejunior" element={<ManageJunior />} />
             <Route path="managequest" element={<ManageQuests />} />
             <Route path="managereward" element={<ManageReward />} />
+            <Route path="manageorder" element={<ManageOrders />} />
           </Route>
         </Routes>
       </BrowserRouter>

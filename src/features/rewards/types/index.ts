@@ -15,7 +15,7 @@ export interface BackendProduct {
 // ── Frontend Display Model (camelCase) ────────────────────────────────────────
 export interface Product {
   id: string;
-  // code: string;
+  sku: string;
   name: string;
   description: string;
   price: number;
@@ -26,7 +26,7 @@ export interface Product {
 
 // ── Payload for creating a product (POST /product — requires JWT) ─────────────
 export interface CreateProductPayload {
-  // sku: string;
+  sku?: string; // Optional — backend will generate if missing
   name: string;
   description: string;
   price: number;
@@ -54,7 +54,8 @@ export interface OrderItemPayload {
 
 export interface CreateOrderPayload {
   orderItems: OrderItemPayload[];
-  paymentMethod: 'POINTS' | 'THB';
+  paymentMethod: 'POINT' | 'POINTS' | 'THB';
+  shippingAddress?: string;
 }
 
 export interface OrderItem {

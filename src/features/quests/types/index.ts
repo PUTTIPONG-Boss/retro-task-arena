@@ -59,6 +59,7 @@ export interface Quest {
   bids: Bid[];
   assignedTo?: string;
   skills?: string;
+  createdAt: string;
 }
 
 export interface CreateQuestPayload {

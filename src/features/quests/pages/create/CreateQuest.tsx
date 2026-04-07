@@ -13,6 +13,7 @@ import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
+import { getErrorMessage } from "@/lib/errorUtils";
 
 const difficulties: { label: string; value: number }[] = [
   { label: "Easy", value: 1 },
@@ -27,9 +28,13 @@ const CreateQuest = () => {
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (user && !(user.role.toUpperCase() === 'SENIOR' || user.role.toUpperCase() === 'ADMIN')) {
-      toast.error("Access denied. Only Senior Adventurers or Admins can post quests.");
-      navigate("/");
+    if (user) {
+      const role = user.role.toLowerCase();
+      const isAuthorized = role.includes('admin') || role.includes('senior');
+      if (!isAuthorized) {
+        toast.error("Access denied. Only Senior Adventurers or Admins can post quests.");
+        navigate("/");
+      }
     }
   }, [user, navigate]);
 
@@ -109,8 +114,8 @@ const CreateQuest = () => {
       },
       onError: (error: any) => {
         console.error("Failed to post quest:", error);
-        const msg = error?.response?.data?.message || error?.message || "Unknown error";
-        toast.error(`Failed to post quest: ${msg}`, {
+        const errorMsg = getErrorMessage(error);
+        toast.error(errorMsg, {
           style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
         });
       },
@@ -179,9 +184,16 @@ const CreateQuest = () => {
               </label>
               <PixelInput
                 type="number"
+                min="0"
+                max="1000"
                 placeholder={t("createQuest.placeholders.reward")}
                 value={rewardPoints}
-                onChange={(e) => setRewardPoints(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "" || (parseInt(val) <= 1000 && parseInt(val) >= 0)) {
+                    setRewardPoints(val);
+                  }
+                }}
                 className={`font-pixel ${fontClass}`}
                 required
               />

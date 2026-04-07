@@ -1,85 +1,3 @@
-// import { Quest } from "@/data/mockData";
-// import { Link } from "react-router-dom";
-// import DifficultyStars from "./DifficultyStars";
-// import { motion } from "framer-motion";
-
-// interface QuestCardProps {
-//   quest: Quest;
-// }
-
-// const statusColors: Record<string, string> = {
-//   open: "text-success",
-//   bidding: "text-accent",
-//   "in-progress": "text-accent",
-//   review: "text-accent",
-//   completed: "text-muted-foreground",
-// };
-
-// const statusIcons: Record<string, string> = {
-//   open: "🟢",
-//   bidding: "📨",
-//   "in-progress": "⚒",
-//   review: "🔍",
-//   completed: "✅",
-// };
-
-// const QuestCard = ({ quest }: QuestCardProps) => {
-//   return (
-//     <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 500, damping: 25 }}>
-//       <Link to={`/quest/${quest.id}`}>
-//         <div className="bg-card pixel-border p-5 hover:gold-glow cursor-pointer h-full flex flex-col gap-3 transition-shadow duration-200 hover:shadow-[0_0_12px_2px_hsl(var(--gold)/0.25)]">
-//           {/* Header row */}
-//           <div className="flex items-center justify-between">
-//             <span className="font-pixel text-[8px] uppercase tracking-widest text-muted-foreground flex items-center gap-1">
-//               📂 {quest.category}
-//             </span>
-//             <span className={`font-pixel text-[8px] uppercase flex items-center gap-1 ${statusColors[quest.status] || "text-foreground"}`}>
-//               {statusIcons[quest.status] || "●"} {quest.status}
-//             </span>
-//           </div>
-
-//           {/* Title */}
-//           <h3 className="font-pixel text-[11px] leading-relaxed text-foreground pixel-text-shadow flex items-start gap-2">
-//             <span className="text-base mt-0.5">📜</span>
-//             <span>{quest.title}</span>
-//           </h3>
-
-//           {/* Description */}
-//           <p className="text-lg leading-snug text-muted-foreground line-clamp-2 flex-1">
-//             {quest.description}
-//           </p>
-
-//           {/* Stats */}
-//           <div className="border-t-2 border-border pt-3 flex flex-col gap-2">
-//             <div className="flex items-center justify-between">
-//               <span className="font-pixel text-[9px] text-accent pixel-text-shadow flex items-center gap-1">
-//                 <Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP
-//               </span>
-//               <DifficultyStars level={quest.difficulty} />
-//             </div>
-//             <div className="flex items-center justify-between">
-//               <span className="text-base text-muted-foreground flex items-center gap-1">
-//                 ⏳ {quest.estimatedTime}
-//               </span>
-//               <span className="text-base text-muted-foreground flex items-center gap-1">
-//                 📋 {quest.bids.length} bid{quest.bids.length !== 1 ? "s" : ""}
-//               </span>
-//             </div>
-//           </div>
-
-//           {/* Footer */}
-//           <div className="text-sm text-muted-foreground font-pixel text-[7px] flex items-center gap-1">
-//             👤 {quest.providerName}
-//           </div>
-//         </div>
-//       </Link>
-//     </motion.div>
-//   );
-// };
-
-// export default QuestCard;
-
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -87,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Quest } from "../types";
 import DifficultyStars from "./DifficultyStars";
 import { useGetBids } from "../services/quest.service";
+import { cn } from "@/lib/utils";
 
 interface QuestCardProps {
   quest: Quest;
@@ -99,6 +18,13 @@ const statusConfig: Record<string, { color: string; icon: string; animate?: bool
   "in-progress": { color: "#e3b86a", icon: "[⚒]" },
   review: { color: "#a78bfa", icon: "[?]" }, // สีม่วง
   completed: { color: "#6a6a6a", icon: "[x]" }, // สีเทา
+};
+
+const getStatusKey = (status: string) => {
+  const s = status?.toLowerCase();
+  if (s === "review") return "in_review";
+  if (s === "in-progress") return "in_progress";
+  return s;
 };
 
 const QuestCard = ({ quest }: QuestCardProps) => {
@@ -198,17 +124,23 @@ const QuestCard = ({ quest }: QuestCardProps) => {
           <div className={`retro-card-inner h-full p-4 pt-5 flex flex-col gap-3 ${fontClass}`}>
             {/* Header: หมวดหมู่ และ สถานะ */}
             <div className="flex items-center justify-between border-b border-[#332d26] pb-2">
-              <span className={`uppercase tracking-widest ${fontClass}`} style={{ color: theme.muted }}>
+              <span className={cn(
+                "uppercase tracking-widest",
+                i18n.language === "th" ? "text-[12px]" : "text-[10px]"
+              )} style={{ color: theme.muted }}>
                 [{quest.category}]
               </span>
 
               <motion.span
-                className={`uppercase flex items-center gap-1 ${fontClass}`}
+                className={cn(
+                  "uppercase flex items-center gap-1",
+                  i18n.language === "th" ? "text-[10px]" : "text-[12px]"
+                )}
                 style={{ color: status.color, textShadow: "1px 1px 0px #000" }}
                 animate={status.animate ? { opacity: [0.7, 1, 0.7] } : {}}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
-                {status.icon} {t(`questDetail.status.${quest.status}`)}
+                {status.icon} {t(`questDetail.status.${getStatusKey(quest.status)}`)}
               </motion.span>
             </div>
 
@@ -233,7 +165,10 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                 {quest.skills.split(',').map((skill, index) => (
                   <span
                     key={index}
-                    className={`pixel-font bg-[#2a241e] border border-[#4a3e2a] px-2 py-0.5 text-[#e3b86a] uppercase ${fontClass}`}
+                    className={cn(
+                      "pixel-font bg-[#2a241e] border border-[#4a3e2a] px-2 py-0.5 text-[#e3b86a] uppercase",
+                      i18n.language === "th" ? "text-[12px]" : "text-[12px]"
+                    )}
                   >
                     {skill.trim()}
                   </span>
@@ -255,15 +190,21 @@ const QuestCard = ({ quest }: QuestCardProps) => {
                 </div>
               </div>
 
-              <div className={`flex items-center justify-between pixel-font ${fontClass}`} style={{ color: theme.muted }}>
-                <span className={fontClass}>⌛ {formatEstimatedTime(quest.estimatedTime)}</span>
-                <span className={fontClass}>⚔ {bids.length} {t("questCard.totalBids")}</span>
+              <div className={cn(
+                "flex items-center justify-between pixel-font",
+                i18n.language === "th" ? "text-[12px]" : "text-[12px]"
+              )} style={{ color: theme.muted }}>
+                <span>⌛ {formatEstimatedTime(quest.estimatedTime)}</span>
+                <span>⚔ {bids.length} {t("questCard.totalBids")}</span>
               </div>
             </div>
 
             {/* Footer: ผู้จ้างวาน */}
-            <div className={`pixel-font uppercase text-right mt-1 ${fontClass}`} style={{ color: "#5a5a5a" }}>
-              {t("questCard.issuedBy")} <span className={fontClass} style={{ color: theme.muted }}>{quest.providerName}</span>
+            <div className={cn(
+              "pixel-font uppercase text-right mt-1",
+              i18n.language === "th" ? "text-[11px]" : "text-[11px]"
+            )} style={{ color: "#5a5a5a" }}>
+              {t("questCard.issuedBy")} <span style={{ color: theme.muted }}>{quest.providerName}</span>
             </div>
           </div>
         </Link>
