@@ -10,6 +10,8 @@ import PixelUser from "@/components/icons/PixelUser";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import PixelSword from "@/components/icons/PixelSword";
+import PixelBell from "@/components/icons/PixelBell";
+import PixelAdmin from "@/components/icons/PixelAdmin";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -18,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNotificationStore } from "@/store/notificationStore";
 
 const Navbar = () => {
   const location = useLocation();
@@ -25,6 +28,7 @@ const Navbar = () => {
   const user = useUserStore((state) => state.user);
   const logout = useAuthStore((s) => s.logout);
   const { t, i18n } = useTranslation();
+  const { notifications, unreadCount, markAllRead, clearAll } = useNotificationStore();
 
   if (!user) return null;
 
@@ -47,11 +51,7 @@ const Navbar = () => {
     ...(isAdmin ? [{
       to: "/admin/managequest",
       label: t("navbar.admin"),
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="text-yellow-400" width={20} height={20}>
-          <path d="M6 22H4v-4h2v4Zm12 0h-2v-2h2v2Zm4 0h-2v-2h2v2Zm-2-2h-2v-2h2v2ZM8 18H6v-2h2v2Zm10 0h-2v-2h2v2Zm4 0h-2v-2h2v2Zm-8-2H8v-2h6v2Zm1-4H9v-2h6v2Zm-6-2H7V4h2v6Zm8 0h-2V4h2v6Zm-2-6H9V2h6v2Z" />
-        </svg>
-      ),
+      icon: <PixelAdmin size={20} className="text-yellow-400" />,
     }] : []),
     { to: "/reward-shop", label: t("navbar.reward_shop", "Reward Shop"), icon: <PixelStore className="text-yellow-400" size={20} /> },
   ];
@@ -90,15 +90,56 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Notification Bell (Placeholder for WebSockets) */}
-            <button className="relative p-2 text-foreground hover:text-accent transition-colors flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-yellow-400 relative z-10">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-              </svg>
-              {/* Optional: unread indicator */}
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse border-2 border-[#1a1c1e] z-20"></span>
-            </button>
+            {/* Notification Bell */}
+            <DropdownMenu onOpenChange={(open) => { if (!open) markAllRead(); }}>
+              <DropdownMenuTrigger asChild>
+                <button className="relative p-2 text-foreground hover:text-accent transition-colors flex items-center justify-center">
+                  <PixelBell size={24} className="text-yellow-400 relative z-10" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1.5 right-1.5 min-w-[16px] h-[16px] flex items-center justify-center bg-red-500 rounded-full text-[8px] font-pixel text-white px-0.5 animate-pulse border border-[#1a1c1e] z-20">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="bg-[#1a1c1e] pixel-border border-[#F59E0B]/60 w-[300px] p-0 max-h-[380px] flex flex-col"
+              >
+                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
+                  <span className="font-pixel text-[14px] uppercase tracking-wider text-[#F59E0B]">Notifications</span>
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={clearAll}
+                      className="font-pixel text-[14px] uppercase tracking-wider text-slate-400 hover:text-red-400 transition-colors"
+                    >
+                      Clear all
+                    </button>
+                  )}
+                </div>
+                <div className="overflow-y-auto flex-1">
+                  {notifications.length === 0 ? (
+                    <div className="px-3 py-6 text-center font-pixel text-[14px] text-slate-500 uppercase">
+                      No notifications
+                    </div>
+                  ) : (
+                    notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        className={`px-3 py-2.5 border-b border-slate-800 flex flex-col gap-0.5 ${
+                          !n.read ? 'bg-[#F59E0B]/5' : ''
+                        }`}
+                      >
+                        <span className="font-pixel text-[14px] text-foreground leading-snug">{n.message}</span>
+                        <span className="font-pixel text-[12px] text-slate-500">
+                          {n.timestamp.toLocaleTimeString()}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* User HUD Dropdown */}
             <DropdownMenu>

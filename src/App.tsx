@@ -33,11 +33,13 @@ import ManageOrders from "@/features/admin/pages/ManageOrders";
 
 import NotFound from "./pages/NotFound";
 import AuthSyncProvider from "@/features/auth/components/AuthSyncProvider";
+import { useOwnerBidNotifications } from "@/hooks/useOwnerBidNotifications";
 
 const queryClient = new QueryClient();
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const { isLoading } = useAuthStore();
+  useOwnerBidNotifications();
 
   if (isLoading) {
     return <div className="min-h-screen bg-transparent flex items-center justify-center text-accent font-pixel">Loading Guild Data...</div>;

@@ -19,6 +19,7 @@ import { Coins } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isSeniorOrAdmin } from "@/features/users/utils/roleUtils";
 import { getErrorMessage } from "@/lib/errorUtils";
+import { useBidSocket } from "@/hooks/useBidSocket";
 
 const statusColor: Record<string, string> = {
   open: "text-success",
@@ -70,6 +71,12 @@ const QuestDetail = () => {
   const [editNote, setEditNote] = useState("");
   const updateBid = useUpdateBid();
 
+  const isSeniorOrAdminUser = isSeniorOrAdmin(user?.role || "");
+
+  const isOwner = user?.id === quest?.providerId;
+
+  useBidSocket(id, isOwner, quest?.title);
+
   if (questLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -96,10 +103,6 @@ const QuestDetail = () => {
       </div>
     );
   }
-
-  const isSeniorOrAdminUser = isSeniorOrAdmin(user?.role || "");
-
-  const isOwner = user?.id === quest.providerId;
 
   const handleSubmitBid = async () => {
     if (!user) {
@@ -143,7 +146,7 @@ const QuestDetail = () => {
         },
       });
 
-      toast.success("✅ Bid accepted! Quest is now In Progress.");
+      toast.success("Bid accepted! Quest is now In Progress.");
     } catch (e) {
       toast.error(getErrorMessage(e));
     }
