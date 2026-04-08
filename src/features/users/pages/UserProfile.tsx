@@ -27,6 +27,7 @@ const UserProfile = () => {
   const { data: orders = [] } = useGetMyOrders(user?.id);
 
   const { i18n } = useTranslation();
+  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
   useEffect(() => {
     if (activeTab === "financials") {
@@ -40,8 +41,7 @@ const UserProfile = () => {
 
   return (
     <div
-      className={`max-w-[900px] mx-auto px-4 py-8 ${i18n.language === "th" ? "font-['TA_8bit']" : ""
-        }`}
+      className={`max-w-[900px] mx-auto px-4 py-8 font-pixel ${fontClass}`}
     >
       <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 

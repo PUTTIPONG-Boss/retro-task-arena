@@ -90,6 +90,16 @@ const Navbar = () => {
               </Link>
             ))}
 
+            {/* Notification Bell (Placeholder for WebSockets) */}
+            <button className="relative p-2 text-foreground hover:text-accent transition-colors flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-yellow-400 relative z-10">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              {/* Optional: unread indicator */}
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse border-2 border-[#1a1c1e] z-20"></span>
+            </button>
+
             {/* User HUD Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

@@ -106,7 +106,7 @@ const QuestBoard = () => {
                     <p
                       className={cn(
                         "font-pixel text-accent mb-3 uppercase border-b border-white/10 pb-1",
-                        i18n.language === "th" ? "text-[14px]" : "text-[11px]"
+                        i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                       )}
                     >
                       {t("questBoard.queststatus")}
@@ -123,7 +123,7 @@ const QuestBoard = () => {
                             statusFilter === s
                               ? "border-gold text-gold bg-gold/10"
                               : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
-                            i18n.language === "th" ? "text-[13px]" : "text-[10px]"
+                            i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                           )}
                         >
                           {t(`questBoard.queststatuses.${s}`)}
@@ -136,7 +136,7 @@ const QuestBoard = () => {
                     <p
                       className={cn(
                         "font-pixel text-accent mb-3 uppercase border-b border-white/10 pb-1",
-                        i18n.language === "th" ? "text-[14px]" : "text-[11px]"
+                        i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                       )}
                     >
                       {t("questBoard.category")}
@@ -153,7 +153,7 @@ const QuestBoard = () => {
                             filter === cat
                               ? "border-gold text-gold bg-gold/10"
                               : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
-                            i18n.language === "th" ? "text-[13px]" : "text-[10px]"
+                            i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                           )}
                         >
                           {t(`questBoard.categories.${cat}`)}

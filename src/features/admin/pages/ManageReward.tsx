@@ -8,6 +8,16 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllProducts } from "../services/admin.service";
 import { useDeleteProduct } from "../../rewards/services/product.service";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ManageReward = () => {
   const { t, i18n } = useTranslation();
@@ -21,6 +31,9 @@ const ManageReward = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sortConfig, setSortConfig] = useState<{ key: "price" | "stock"; dir: "asc" | "desc" } | null>(null);
   const [dateFilter, setDateFilter] = useState<"all" | "newest" | "oldest">("all");
+  const [searchTitle, setSearchTitle] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [bulkDeletePending, setBulkDeletePending] = useState(false);
 
   const handleSort = (key: "price" | "stock") => {
     setSortConfig(prev =>
@@ -58,14 +71,21 @@ const ManageReward = () => {
 
   const handleBulkDelete = () => {
     if (selectedIds.size === 0) return;
-    if (window.confirm(`Are you sure you want to delete ${selectedIds.size} product(s)?`)) {
-      selectedIds.forEach(id => {
-        deleteProduct(id, {
-          onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "products"] }),
-        });
+    setBulkDeletePending(true);
+  };
+
+  const confirmBulkDelete = () => {
+    selectedIds.forEach(id => {
+      deleteProduct(id, {
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "products"] }),
       });
-      setSelectedIds(new Set());
-    }
+    });
+    toast.success(t("admin.rewardspage.deleteSuccess"), {
+      style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
+      position: "bottom-right",
+    });
+    setSelectedIds(new Set());
+    setBulkDeletePending(false);
   };
 
   // Helper สำหรับตัดข้อความที่ยาวเกินไป
@@ -76,16 +96,27 @@ const ManageReward = () => {
 
   // --- ฟังก์ชัน Delete ---
   const handleDelete = (id: string) => {
-    if (window.confirm(t("admin.rewardspage.alert") || "Are you sure you want to delete this product?")) {
-      deleteProduct(id, {
+    setDeleteTargetId(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteTargetId) {
+      deleteProduct(deleteTargetId, {
         onSuccess: () => {
-          toast.success("Product deleted successfully!");
+          toast.success(t("admin.rewardspage.deleteSuccess"), {
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
+            position: "bottom-right",
+          });
           queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
         },
         onError: (err: any) => {
-          toast.error("Failed to delete product: " + (err?.message || "Unknown error"));
+          toast.error(t("admin.rewardspage.deleteError"), {
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
+            position: "bottom-right",
+          });
         }
       });
+      setDeleteTargetId(null);
     }
   };
 
@@ -93,6 +124,9 @@ const ManageReward = () => {
 
   const sortedRewards = (() => {
     let list = Array.isArray(rewards) ? [...rewards] : [];
+    if (searchTitle) {
+      list = list.filter((r: any) => r.name?.toLowerCase().includes(searchTitle.toLowerCase()));
+    }
     if (dateFilter === "newest") {
       list = list.sort((a: any, b: any) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime());
     } else if (dateFilter === "oldest") {
@@ -113,9 +147,16 @@ const ManageReward = () => {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-accent pixel-text-shadow flex items-center gap-2">
           <PixelStore className="w-7 h-7" />
-          {t("admin.rewardspage.title")}
+          {t("admin.rewardspage.manage")}
         </h1>
         <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={searchTitle}
+            onChange={(e) => setSearchTitle(e.target.value)}
+            placeholder={t("admin.rewardspage.searchTitle", "Search Product Name...")}
+            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-3 py-1.5 leading-none hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
+          />
           {selectedIds.size > 0 && (
             <PixelButton
               variant="danger"
@@ -256,6 +297,55 @@ const ManageReward = () => {
           </tbody>
         </table>
       </PixelFrame>
+      {/* Single delete confirm */}
+      <AlertDialog open={!!deleteTargetId} onOpenChange={(open) => !open && setDeleteTargetId(null)}>
+        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+          <AlertDialogHeader>
+            <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
+              {t("admin.rewardspage.deleteConfirmTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className={`text-muted-foreground ${fontClass}`}>
+              {t("admin.rewardspage.deleteConfirmDesc")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+              {t("admin.rewardspage.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className={`bg-red-700 hover:bg-red-600 text-white border border-red-600 font-pixel ${fontClass}`}
+            >
+              {t("admin.rewardspage.confirmDelete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk delete confirm */}
+      <AlertDialog open={bulkDeletePending} onOpenChange={(open) => !open && setBulkDeletePending(false)}>
+        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+          <AlertDialogHeader>
+            <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
+              {t("admin.rewardspage.deleteBulkConfirmTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className={`text-muted-foreground ${fontClass}`}>
+              {t("admin.rewardspage.deleteBulkConfirmDesc", { count: selectedIds.size })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+              {t("admin.rewardspage.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className={`bg-red-700 hover:bg-red-600 text-white border border-red-600 font-pixel ${fontClass}`}
+            >
+              {t("admin.rewardspage.confirmDelete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

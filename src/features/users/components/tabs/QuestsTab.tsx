@@ -26,7 +26,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
   const [myQuestsSortOrder, setMyQuestsSortOrder] = React.useState<"asc" | "desc">("desc");
   const [postedQuestsSortOrder, setPostedQuestsSortOrder] = React.useState<"asc" | "desc">("desc");
 
-  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[14px]";
+  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
   // 1. Quests I am doing (Assigned to me)
   const myQuests = quests.filter((q) => q.assignedTo === user.id);
@@ -91,7 +91,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                   onClick={() => setActiveFilter(filter)}
                   className={cn(
                     "px-3 py-1 font-pixel transition-all",
-                    i18n.language === "th" ? "text-[12px]" : "text-[10px]",
+                    i18n.language === "th" ? "text-[14px]" : "text-[14px]",
                     activeFilter === filter
                       ? "bg-accent text-accent-foreground shadow-[inset_-2px_-2px_0px_#00000044]"
                       : "text-muted-foreground hover:bg-muted/50"
@@ -104,7 +104,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
             
             <button 
               onClick={() => setMyQuestsSortOrder(myQuestsSortOrder === "desc" ? "asc" : "desc")}
-              className={`pixel-border bg-secondary hover:bg-muted px-2 py-1 font-pixel text-[8px] text-accent transition-colors ${i18n.language === "th" ? "text-[12px]" : "text-[10px]"}`}
+              className={`pixel-border bg-secondary hover:bg-muted px-2 py-1 font-pixel text-[14px] text-accent transition-colors`}
             >
               {myQuestsSortOrder === "desc" ? "↓ " + t("userProfile.activity.sortNewest") : "↑ " + t("userProfile.activity.sortOldest")}
             </button>

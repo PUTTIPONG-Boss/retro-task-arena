@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
@@ -7,21 +8,34 @@ import PixelFrame from "@/components/PixelFrame";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAllTasks, deleteTask } from "../services/admin.service";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ManageQuest = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   const [page, setPage] = useState(1);
   const LIMIT = 20;
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [bulkDeletePending, setBulkDeletePending] = useState(false);
   const [filterDifficulty, setFilterDifficulty] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [sortReward, setSortReward] = useState("");
   const [sortDate, setSortDate] = useState("");
+  const [searchTitle, setSearchTitle] = useState("");
 
   const { data: quests, isLoading } = useQuery({
     queryKey: ["admin", "quests", page],
@@ -35,10 +49,17 @@ const ManageQuest = () => {
     mutationFn: deleteTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "quests"] });
+      toast.success(t("admin.questspage.deleteSuccess"), {
+        style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
+        position: "bottom-right",
+      });
     },
     onError: (error) => {
       console.error("Failed to delete quest:", error);
-      alert("Failed to delete quest");
+      toast.error(t("admin.questspage.deleteError"), {
+        style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
+        position: "bottom-right",
+      });
     }
   });
 
@@ -66,6 +87,7 @@ const ManageQuest = () => {
 
   const filteredQuests = questList
     .filter((q) => {
+      if (searchTitle && !q.title?.toLowerCase().includes(searchTitle.toLowerCase())) return false;
       if (filterDifficulty && q.difficulty?.toLowerCase() !== filterDifficulty) return false;
       if (filterType && q.type !== filterType) return false;
       if (filterStatus && getStatusKey(q.status) !== filterStatus && q.status?.toLowerCase() !== filterStatus) return false;
@@ -81,8 +103,13 @@ const ManageQuest = () => {
 
   // --- ฟังก์ชัน Delete ---
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this quest?")) {
-      deleteMutation.mutate(id);
+    setDeleteTargetId(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteTargetId) {
+      deleteMutation.mutate(deleteTargetId);
+      setDeleteTargetId(null);
     }
   };
 
@@ -107,10 +134,13 @@ const ManageQuest = () => {
 
   const handleBulkDelete = () => {
     if (selectedIds.size === 0) return;
-    if (window.confirm(`Are you sure you want to delete ${selectedIds.size} quest(s)?`)) {
-      selectedIds.forEach(id => deleteMutation.mutate(id));
-      setSelectedIds(new Set());
-    }
+    setBulkDeletePending(true);
+  };
+
+  const confirmBulkDelete = () => {
+    selectedIds.forEach(id => deleteMutation.mutate(id));
+    setSelectedIds(new Set());
+    setBulkDeletePending(false);
   };
 
   // Helper สำหรับตัดข้อความที่ยาวเกินไป
@@ -129,6 +159,14 @@ const ManageQuest = () => {
           {t("admin.questspage.manage")}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
+          {/* Search by title */}
+          <input
+            type="text"
+            value={searchTitle}
+            onChange={(e) => setSearchTitle(e.target.value)}
+            placeholder={t("admin.questspage.searchTitle", "Search Quest Name...")}
+            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 leading-none hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
+          />
           {/* Filters */}
           <select
             value={filterDifficulty}
@@ -309,7 +347,55 @@ const ManageQuest = () => {
         </table>
       </PixelFrame>
 
+      {/* Single delete confirm */}
+      <AlertDialog open={!!deleteTargetId} onOpenChange={(open) => !open && setDeleteTargetId(null)}>
+        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+          <AlertDialogHeader>
+            <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
+              {t("admin.questspage.deleteConfirmTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className={`text-muted-foreground ${fontClass}`}>
+              {t("admin.questspage.deleteConfirmDesc")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+              {t("admin.questspage.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className={`bg-red-700 hover:bg-red-600 text-white border border-red-600 font-pixel ${fontClass}`}
+            >
+              {t("admin.questspage.confirmDelete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
+      {/* Bulk delete confirm */}
+      <AlertDialog open={bulkDeletePending} onOpenChange={(open) => !open && setBulkDeletePending(false)}>
+        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+          <AlertDialogHeader>
+            <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
+              {t("admin.questspage.deleteBulkConfirmTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className={`text-muted-foreground ${fontClass}`}>
+              {t("admin.questspage.deleteBulkConfirmDesc", { count: selectedIds.size })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+              {t("admin.questspage.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className={`bg-red-700 hover:bg-red-600 text-white border border-red-600 font-pixel ${fontClass}`}
+            >
+              {t("admin.questspage.confirmDelete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -35,7 +35,7 @@
     const [imageUrl, setImageUrl] = useState<string>("");
     const [fileName, setFileName] = useState<string>("");
 
-    const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+    const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
     // Admin access check
     useEffect(() => {
@@ -124,7 +124,7 @@
         {
           onSuccess: () => {
             toast.success(t("admin.rewardspage.saveSuccess") || "Product updated successfully!", {
-              style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
+              style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
             });
             navigate("/admin/managereward");
           },
@@ -132,7 +132,7 @@
             const raw = error?.response?.data?.error;
             const msg = typeof raw === "string" ? raw : typeof raw?.message === "string" ? raw.message : "Failed to update product.";
             toast.error(msg, {
-              style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
+              style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px " },
             });
           },
         }

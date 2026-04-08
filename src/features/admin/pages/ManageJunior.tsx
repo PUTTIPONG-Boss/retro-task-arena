@@ -3,6 +3,13 @@ import { useTranslation } from "react-i18next";
 import PixelFrame from "@/components/PixelFrame";
 import { useQuery } from "@tanstack/react-query";
 import { getUsersByRole } from "../services/admin.service";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { UserProfile } from "@/features/users/types";
 
 const STALE_TIME = 5 * 60 * 1_000;
 
@@ -26,6 +33,7 @@ const SkeletonRows = () => (
 const ManageJunior = () => {
   const { t, i18n } = useTranslation();
   const [search, setSearch] = React.useState("");
+  const [selectedJunior, setSelectedJunior] = React.useState<UserProfile | null>(null);
   const { data: juniors = [], isLoading } = useQuery({
     queryKey: ["admin", "users", "junior"],
     queryFn: () => getUsersByRole("JUNIOR"),  
@@ -84,7 +92,11 @@ const ManageJunior = () => {
               </tr>
             ) : (
               filteredJuniors.map((junior: any) => (
-                <tr key={junior.id} className="border-b border-[#333]/30 hover:bg-white/5 transition-colors">
+                <tr
+                  key={junior.id}
+                  className="border-b border-[#333]/30 hover:bg-white/5 transition-colors cursor-pointer"
+                  onClick={() => setSelectedJunior(junior)}
+                >
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{junior.id.substring(0, 8)}...</td>
                   <td className={`p-3 text-foreground ${fontClass}`}>{junior.username}</td>
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{junior.email}</td>
@@ -102,6 +114,89 @@ const ManageJunior = () => {
           </tbody>
         </table>
       </PixelFrame>
+
+      <Dialog open={!!selectedJunior} onOpenChange={(open) => !open && setSelectedJunior(null)}>
+        <DialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel max-w-lg">
+          <DialogHeader>
+            <DialogTitle className={`text-accent pixel-text-shadow ${fontClass}`}>
+              {t("admin.juniorpage.dialog.title")}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedJunior && (
+            <div className={`space-y-3 ${fontClass}`}>
+              <div className="grid grid-cols-[140px_1fr] gap-x-3 gap-y-2">
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.fullId")}</span>
+                <span className="text-foreground break-all">{selectedJunior.id}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.username")}</span>
+                <span className="text-foreground">{selectedJunior.username}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.email")}</span>
+                <span className="text-foreground">{selectedJunior.email || t("admin.juniorpage.dialog.notSpecified")}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.nameTh")}</span>
+                <span className="text-foreground">
+                  {selectedJunior.firstNameTh || selectedJunior.lastNameTh
+                    ? `${selectedJunior.firstNameTh ?? ""} ${selectedJunior.lastNameTh ?? ""}`.trim()
+                    : t("admin.juniorpage.dialog.notSpecified")}
+                </span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.nameEn")}</span>
+                <span className="text-foreground">
+                  {selectedJunior.firstNameEn || selectedJunior.lastNameEn
+                    ? `${selectedJunior.firstNameEn ?? ""} ${selectedJunior.lastNameEn ?? ""}`.trim()
+                    : t("admin.juniorpage.dialog.notSpecified")}
+                </span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.role")}</span>
+                <span className="text-green-400 uppercase">{selectedJunior.role}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.points")}</span>
+                <span className="text-accent">{selectedJunior.points ?? 0}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.rating")}</span>
+                <span className="text-yellow-400">{selectedJunior.rating ?? 0}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.questsInProgress")}</span>
+                <span className="text-orange-400">{selectedJunior.questsInProgress ?? 0}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.questsInReview")}</span>
+                <span className="text-blue-400">{selectedJunior.questsInReview ?? 0}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.questsCompleted")}</span>
+                <span className="text-accent">{selectedJunior.questsCompleted ?? 0}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.github")}</span>
+                <span className="text-foreground">
+                  {selectedJunior.github
+                    ? <a href={selectedJunior.github} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedJunior.github}</a>
+                    : t("admin.juniorpage.dialog.notSpecified")}
+                </span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.linkedin")}</span>
+                <span className="text-foreground">
+                  {selectedJunior.linkin
+                    ? <a href={selectedJunior.linkin} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedJunior.linkin}</a>
+                    : t("admin.juniorpage.dialog.notSpecified")}
+                </span>
+              </div>
+
+              <div className="pt-2">
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.skills")}</span>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {selectedJunior.skills && selectedJunior.skills.length > 0
+                    ? selectedJunior.skills.map((skill, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-accent/20 border border-accent/40 text-accent text-xs">
+                          {skill}
+                        </span>
+                      ))
+                    : <span className="text-muted-foreground">{t("admin.juniorpage.dialog.noSkills")}</span>}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

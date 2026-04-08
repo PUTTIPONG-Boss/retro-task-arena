@@ -20,7 +20,7 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
   const [sortBy, setSortBy] = useState<SortOrder>("date-desc");
   const [displayLimit, setDisplayLimit] = useState<DisplayLimit>(5);
 
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
   // --- Logic for Filtering and Sorting ---
   const filteredAndSortedOrders = useMemo(() => {
@@ -107,11 +107,11 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
           <div className="flex flex-wrap items-center gap-3">
             {/* Sort Controls */}
             <div className="flex items-center gap-2">
-              <span className={`text-[10px] text-muted-foreground font-pixel ${fontClass}`}>{t("userProfile.financials.sortBy")}:</span>
+              <span className={`text-[16px] text-muted-foreground ${fontClass}`}>{t("userProfile.financials.sortBy")}</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOrder)}
-                className="bg-[#1a1a1b] border-2 border-[#4a3e2a] text-[#e3b86a] font-pixel text-[10px] px-2 py-1 outline-none focus:border-[#e3b86a]"
+                className="bg-[#1a1a1b] border-2 border-[#4a3e2a] text-[#e3b86a] font-pixel text-[16px] px-2 py-1 outline-none focus:border-[#e3b86a]"
               >
                 <option value="date-desc">🕒 {t("userProfile.activity.sortNewest")}</option>
                 <option value="date-asc">🕒 {t("userProfile.activity.sortOldest")}</option>
@@ -122,15 +122,15 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
 
             {/* Display Limit Controls */}
             <div className="flex items-center gap-2">
-              <span className={`text-[10px] text-muted-foreground font-pixel ${fontClass}`}>
-                {t("userProfile.financials.displayLimit")}:
+              <span className={`text-[16px] text-muted-foreground font-pixel ${fontClass}`}>
+                {t("userProfile.financials.displayLimit")}
               </span>
               <div className="flex gap-1">
                 {[5, 10, 0].map((limit) => (
                   <button
                     key={limit}
                     onClick={() => setDisplayLimit(limit as DisplayLimit)}
-                    className={`font-pixel text-[10px] px-2 py-1 border-2 transition-all ${
+                    className={`font-pixel text-[16px] px-2 py-1 border-2 transition-all ${
                       displayLimit === limit
                         ? "bg-[#e3b86a] border-[#e3b86a] text-[#1a1a1b]"
                         : "bg-[#1a1a1b] border-[#4a3e2a] text-[#8a8a8a] hover:border-[#8a8a8a]"
@@ -158,10 +158,10 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
                 <div key={order.id} className="pixel-border bg-secondary p-4 hover:bg-secondary/80 transition-colors">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <p className={`font-pixel text-[11px] text-[#e3b86a] ${fontClass}`}>
+                      <p className={`font-pixel text-[20px] text-[#e3b86a] ${fontClass}`}>
                         Order #{order.orderNumber.split('-').pop()}
                       </p>
-                      <p className={`text-[10px] text-muted-foreground font-pixel mt-1 ${fontClass}`}>
+                      <p className={`font-pixel text-[20px] text-muted-foreground font-pixel mt-1 ${fontClass}`}>
                         {new Date(order.createdAt).toLocaleString()}
                       </p>
                     </div>
@@ -182,11 +182,11 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
                     {order.orderItems?.map((item: any) => (
                       <div key={item.id} className="flex justify-between items-center text-[12px] font-pixel text-white">
                         <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground">x{item.quantity}</span>
-                          <span className="text-[#e3d8c1]">{item.product?.name || "Unknown Product"}</span>
+                          <span className="font-pixel text-[20px] text-muted-foreground">x{item.quantity}</span>
+                          <span className="text-[#e3d8c1] font-pixel text-[20px]">{item.product?.name || "Unknown Product"}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-yellow-400">
-                          <PixelCoin size={14} />
+                        <div className="flex items-center gap-1 text-yellow-400 font-pixel text-[20px]">
+                          <PixelCoin size={22} />
                           <span>{item.totalPrice?.toLocaleString()}</span>
                         </div>
                       </div>
@@ -194,10 +194,10 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
                   </div>
 
                   <div className="flex justify-between items-center mt-4 pt-3 border-t-2 border-dashed border-[#4a3e2a]">
-                    <span className={`font-pixel text-[10px] text-muted-foreground ${fontClass}`}>{t("userProfile.financials.total") || "TOTAL"}</span>
-                    <div className="flex items-center gap-2 text-[#e3b86a] font-pixel text-[14px]">
-                      <PixelCoin size={16} />
-                      <span>{order.totalPrice?.toLocaleString()} GP</span>
+                    <span className={`font-pixel text-[20px] text-muted-foreground ${fontClass}`}>{t("userProfile.financials.total") || "TOTAL"}</span>
+                    <div className="flex items-center gap-2 text-[#e3b86a] font-pixel text-[20px]">
+                      <PixelCoin size={22} />
+                      <span>{order.totalPrice?.toLocaleString()} P</span>
                     </div>
                   </div>
                 </div>

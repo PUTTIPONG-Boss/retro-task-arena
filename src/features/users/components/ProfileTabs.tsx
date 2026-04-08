@@ -10,7 +10,7 @@ interface ProfileTabsProps {
 
 const ProfileTabs: React.FC<ProfileTabsProps> = ({ activeTab, setActiveTab }) => {
   const { t, i18n } = useTranslation();
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "!text-[16px]" : "text-[16px]";
 
   const tabs: TabType[] = ["quests", "financials", "activity"];
 

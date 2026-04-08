@@ -39,7 +39,7 @@ const AddProduct = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
 
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   const { mutate: createProduct, isPending } = useCreateProduct();
 
@@ -74,7 +74,7 @@ const AddProduct = () => {
 
     if (!name.trim() || !description.trim() || !category.trim() || !price || !stock) {
       toast.error("Please fill in all required fields.", {
-        style: { fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]" },
+        style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
       });
       return;
     }

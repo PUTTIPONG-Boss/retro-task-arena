@@ -50,7 +50,7 @@ const EditQuest = () => {
   const { mutate: updateQuest, isPending } = useUpdateQuest();
 
   const { t, i18n } = useTranslation();
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   useEffect(() => {
     if (quest) {
@@ -148,8 +148,8 @@ const EditQuest = () => {
       { id, payload: updatedQuest },
       {
         onSuccess: () => {
-          toast.success("Quest updated successfully!", {
-            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
+          toast.success(t("editQuest.successMsg"), {
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
           });
           navigate(-1);
         },
@@ -157,7 +157,7 @@ const EditQuest = () => {
           console.error("Failed to update quest:", error);
           const msg = error?.response?.data?.message || error?.message || "Unknown error";
           toast.error(`Failed to update quest: ${msg}`, {
-            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
+            style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
           });
         },
       }
@@ -406,17 +406,12 @@ const EditQuest = () => {
             className="w-full font-pixel h-14"
             disabled={isPending}
           >
-            {isPending ? (
-              <div className="flex items-center justify-center gap-2">
-                <PixelClipboardList size={18} />
-                <span className={fontClass}>{t("editQuest.submitBtn", "Updating Quest...")}</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-2">
-                <PixelClipboardList size={18} />
-                <span className={fontClass}>{t("editQuest.submitBtn", "Update Quest")}</span>
-              </div>
-            )}
+            <div className="flex items-center justify-center gap-2">
+              <PixelClipboardList size={18} />
+              <span className={fontClass}>
+                {isPending ? t("editQuest.updatingBtn") : t("editQuest.submitBtn")}
+              </span>
+            </div>
           </PixelButton>
         </form>
       </PixelFrame>

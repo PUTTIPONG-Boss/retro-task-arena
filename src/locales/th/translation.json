@@ -1,22 +1,22 @@
 {
   "navbar": {
-    "quest_board": "กระดานภารกิจ",
-    "post_quest": "ลงภารกิจใหม่",
+    "quest_board": "กระดานเควสต์",
+    "post_quest": "สร้างเควสต์ใหม่",
     "reward_shop": "ร้านค้ารางวัล",
     "profile": "โปรไฟล์",
     "admin": "เมนูแอดมิน",
     "logout": "ออกจากระบบ"
   },
   "questBoard": {
-    "title": "กระดานภารกิจ",
-    "subtitle": "กระดานภารกิจ ✦ มีเควสต์ใหม่ทุกวัน ✦ ยอมรับโชคชะตาของคุณ ✦ กระดานภารกิจ",
-    "guildBoard": "กระดานภารกิจกิลด์",
+    "title": "กระดานเควสต์",
+    "subtitle": "กระดานเควสต์ ✦ มีเควสต์ใหม่ทุกวัน ✦ ยอมรับโชคชะตาของคุณ ✦ กระดานเควสต์",
+    "guildBoard": "กระดานเควสต์กิลด์",
     "searchPlaceholder": "ค้นหา",
-    "postNewQuest": "ประกาศภารกิจใหม่",
-    "loading": "กำลังอัญเชิญภารกิจจากต่างมิติ...",
+    "postNewQuest": "ประกาศเควสต์ใหม่",
+    "loading": "กำลังอัญเชิญเควสต์จากต่างมิติ...",
     "found": "พบ",
-    "quests": "ภารกิจ",
-    "noQuests": "ไม่พบภารกิจที่ตรงกับเงื่อนไขที่ค้นหา...",
+    "quests": "เควสต์",
+    "noQuests": "ไม่พบเควสต์ที่ตรงกับเงื่อนไขที่ค้นหา...",
     "clearFilters": "ล้าง",
     "error": {
       "title": "ไม่สามารถเชื่อมต่อกับโลก Backend ได้",
@@ -37,7 +37,7 @@
       "FEATURE": "FEATURE"
     },
     "category": "หมวดหมู่",
-    "queststatus": "สถานะภารกิจ",
+    "queststatus": "สถานะเควสต์",
     "reward": "แลกรางวัล",
     "order": "รายการสั่งซื้อ",
     "filter": "ฟิลเตอร์"
@@ -50,7 +50,7 @@
     "difficulty": "ความยาก",
     "provider": "โพสต์โดย",
     "totalBids": "คำเสนอรวม",
-    "issuedBy": "ผู้มอบภารกิจ:",
+    "issuedBy": "ผู้สร้างเควสต์:",
     "GP": "แต้ม"
   },
   "questDetail": {
@@ -101,13 +101,13 @@
       "completed": "เสร็จสิ้น"
     },
     "sidebar": {
-      "providerTitle": "ผู้มอบภารกิจ",
+      "providerTitle": "ผู้สร้างเควสต์",
       "line": "ไลน์",
       "repoTitle": "Repository",
       "branch": "Branch:",
       "openWorkspace": "เปิดขั้นตอนการทำงาน",
       "completeQuest": "ยืนยันผลและมอบรางวัล",
-      "questCompleted": "ภารกิจเสร็จสมบูรณ์"
+      "questCompleted": "เควสต์เสร็จสมบูรณ์"
     },
     "finalReview": {
       "title": "รีวิวจากผู้จ้างวาน",
@@ -118,7 +118,7 @@
   },
   "questWorkspace": {
     "loading": "กำลังเข้าสู่พื้นที่ทำงาน...",
-    "notFound": "ไม่พบภารกิจ...",
+    "notFound": "ไม่พบเควสต์...",
     "backToQuest": "← กลับสู่หน้าเควสต์",
     "tabs": {
       "workflow": "ขั้นตอนการทำงาน",
@@ -133,7 +133,7 @@
         },
         "branch": {
           "label": "สร้าง Branch",
-          "desc": "สร้างและสลับไปยัง Branch สำหรับภารกิจนี้"
+          "desc": "สร้างและสลับไปยัง Branch สำหรับเควสต์นี้"
         },
         "solve": {
           "label": "ลงมือแก้ไขงาน",
@@ -155,7 +155,7 @@
       "copyBtn": "[ คัดลอก ]",
       "copied": "คัดลอกคำสั่งแล้ว!"
     },
-    "noRepo": "ไม่ได้ระบุ URL ของ Repository สำหรับภารกิจนี้",
+    "noRepo": "ไม่ได้ระบุ URL ของ Repository สำหรับเควสต์นี้",
     "review": {
       "title": "สถานะการตรวจสอบ",
       "desc": "นักผจญภัยส่งงานแล้ว โปรดตรวจสอบโค้ดในแท็บ 'ไฟล์งาน' ก่อนอนุมัติ",
@@ -163,7 +163,7 @@
       "requestChangesBtn": "🔄 ขอให้แก้ไขงาน",
       "revisionRequired": "🚩 ต้องปรับปรุงงานตามแจ้ง"
     },
-    "victory": "ชัยชนะในภารกิจ!",
+    "victory": "ชัยชนะในเควสต์!",
     "rewardAwarded": "รางวัล: {{reward}} GP ได้รับแล้ว",
     "sidebar": {
       "provider": "ผู้จ้างวาน",
@@ -180,10 +180,10 @@
     "toasts": {
       "submitted": "ส่งงานให้ตรวจสอบแล้ว! ผู้จ้างวานจะได้รับแจ้งเตือน",
       "submitFailed": "ส่งงานไม่สำเร็จ",
-      "noWorker": "ไม่มีผู้รับผิดชอบภารกิจนี้",
-      "approved": "อนุมัติภารกิจและมอบรางวัลเรียบร้อย!",
-      "approveFailed": "อนุมัติภารกิจไม่สำเร็จ",
-      "changesRequested": "แจ้งขอแก้ไขงานแล้ว สถานะภารกิจกลับเป็น 'กำลังดำเนินการ'",
+      "noWorker": "ไม่มีผู้รับผิดชอบเควสต์นี้",
+      "approved": "อนุมัติเควสต์และมอบรางวัลเรียบร้อย!",
+      "approveFailed": "อนุมัติเควสต์ไม่สำเร็จ",
+      "changesRequested": "แจ้งขอแก้ไขงานแล้ว สถานะเควสต์กลับเป็น 'กำลังดำเนินการ'",
       "requestFailed": "แจ้งขอแก้ไขงานไม่สำเร็จ"
     },
     "modals": {
@@ -198,7 +198,7 @@
     }
   },
   "userProfile": {
-    "editProfile": "[ แก้ไขโปรไฟล์ ]",
+    "editProfile": "แก้ไขโปรไฟล์",
     "joined": "เข้าร่วมเมื่อ",
     "level": "เลเวล",
     "stats": {
@@ -232,11 +232,12 @@
       "noTransactions": "ไม่พบประวัติการทำธุรกรรม",
       "redemptions": "ประวัติการแลกรางวัล",
       "noRedemptions": "ยังไม่มีประวัติการแลกของรางวัล",
-      "total": "รวมทั้งหมด",
-      "priceHigh": "แต้ม: มาก -> น้อย",
-      "priceLow": "แต้ม: น้อย -> มาก",
+      "all": "ทั้งหมด",
+      "priceHigh": "มาก -> น้อย",
+      "priceLow": "น้อย -> มาก",
       "sortBy": "เรียงตาม",
-      "displayLimit": "แสดง"
+      "displayLimit": "แสดง",
+      "total": "ยอดรวมทั้งหมด"
     },
     "activity": {
       "title": "ประวัติกิจกรรมของคุณ",
@@ -247,13 +248,13 @@
       "sortNewest": "ล่าสุด",
       "sortOldest": "เก่าสุด",
       "types": {
-        "posted": "ประกาศภารกิจใหม่: {{title}}",
-        "applied": "ยื่นข้อเสนอในภารกิจ: {{title}}",
-        "accepted": "ยอมรับข้อเสนอในภารกิจ: {{title}}",
-        "completed": "ภารกิจเสร็จสมบูรณ์! ได้รับ {{reward}} GP",
-        "submitted": "ส่งงานในภารกิจ: {{title}} ให้ตรวจสอบแล้ว",
+        "posted": "ประกาศเควสต์ใหม่: {{title}}",
+        "applied": "ยื่นข้อเสนอในเควสต์: {{title}}",
+        "accepted": "ยอมรับข้อเสนอในเควสต์: {{title}}",
+        "completed": "เควสต์เสร็จสมบูรณ์! ได้รับ {{reward}} GP",
+        "submitted": "ส่งงานในเควสต์: {{title}} ให้ตรวจสอบแล้ว",
         "reviewed": "ได้รับรีวิว: {{comment}}",
-        "changes_requested": "ภารกิจ: {{title}} ถูกขอให้แก้ไข: {{reason}}"
+        "changes_requested": "เควสต์: {{title}} ถูกขอให้แก้ไข: {{reason}}"
       },
       "status": {
         "pending": "รอพิจารณา",
@@ -283,11 +284,11 @@
   },
   "createQuest": {
     "back": "ย้อนกลับ",
-    "title": "ลงภารกิจใหม่",
-    "subtitle": "กำหนดรายละเอียดภารกิจให้นักผจญภัย",
+    "title": "สร้างเควสต์ใหม่",
+    "subtitle": "กำหนดรายละเอียดเควสต์ให้นักผจญภัย",
     "labels": {
-      "questTitle": "ชื่อภารกิจ",
-      "questDesc": "รายละเอียดภารกิจ",
+      "questTitle": "ชื่อเควสต์",
+      "questDesc": "รายละเอียดเควสต์",
       "baseReward": "แต้ม",
       "estimatedTime": "เวลาที่ใช้หรือรอบ",
       "difficulty": "ความยาก",
@@ -299,7 +300,7 @@
     },
     "placeholders": {
       "questTitle": "เช่น ปราบมังกร Authentication",
-      "questDesc": "อธิบายสิ่งที่ต้องการในภารกิจนี้",
+      "questDesc": "อธิบายสิ่งที่ต้องการในเควสต์นี้",
       "reward": "เช่น 100 แต้ม",
       "time": "เช่น 8",
       "customSkill": "เพิ่มสกิลอื่น ๆ (เช่น Golang, Angular)"
@@ -321,8 +322,8 @@
       "Medium": "ปานกลาง",
       "Hard": "ยาก"
     },
-    "submitBtn": "ลงภารกิจ",
-    "successMsg": "ลงภารกิจบนกระดานสำเร็จ!"
+    "submitBtn": "สร้างเควสต์",
+    "successMsg": "สร้างเควสต์บนกระดานสำเร็จ!"
   },
   "editQuest": {
     "back": "กลับไปหน้าเควสต์",
@@ -345,6 +346,8 @@
     },
     "errorMsg": "ไม่สามารถแก้ไขเควสต์ที่มีการเสนอราคาแล้วได้",
     "saveBtn": "บันทึกการเปลี่ยนแปลง",
+    "submitBtn": "บันทึกการเปลี่ยนแปลง",
+    "updatingBtn": "กำลังบันทึกการเปลี่ยนแปลง...",
     "successMsg": "แก้ไขเควสต์บนกระดานสำเร็จ!"
   },
   "rewardShop": {
@@ -447,7 +450,20 @@
       "questsCompleted": "เควสที่เสร็จแล้ว",
       "role": "บทบาท",
       "loading": "กำลังโหลดข้อมูล...",
-      "notfoundjunior": "ไม่พบจูเนียร์ในระบบ"
+      "notfoundjunior": "ไม่พบจูเนียร์ในระบบ",
+      "dialog": {
+        "title": "โปรไฟล์จูเนียร์",
+        "fullId": "รหัสเต็ม (ID)",
+        "nameTh": "ชื่อ (ไทย)",
+        "nameEn": "ชื่อ (อังกฤษ)",
+        "github": "GitHub",
+        "linkedin": "LinkedIn",
+        "skills": "ทักษะ",
+        "points": "แต้ม",
+        "rating": "เรตติ้ง",
+        "noSkills": "ยังไม่มีทักษะ",
+        "notSpecified": "ไม่ระบุ"
+      }
     },
     "seniorpage": {
       "manage": "จัดการซีเนียร์",
@@ -457,7 +473,21 @@
       "quests": "เควสที่เคยโพส",
       "role": "บทบาท",
       "loading": "กำลังโหลดข้อมูล...",
-      "notfoundsenior": "ไม่พบซีเนียร์ในระบบ"
+      "notfoundsenior": "ไม่พบซีเนียร์ในระบบ",
+      "dialog": {
+        "title": "โปรไฟล์ซีเนียร์",
+        "fullId": "รหัสเต็ม (ID)",
+        "nameTh": "ชื่อ (ไทย)",
+        "nameEn": "ชื่อ (อังกฤษ)",
+        "github": "GitHub",
+        "linkedin": "LinkedIn",
+        "skills": "ทักษะ",
+        "points": "แต้ม",
+        "rating": "เรตติ้ง",
+        "postedQuests": "เควสที่โพส",
+        "noSkills": "ยังไม่มีทักษะ",
+        "notSpecified": "ไม่ระบุ"
+      }
     },
     "questspage": {
       "manage": "จัดการเควสต์",
@@ -468,9 +498,17 @@
       "action": "การจัดการ",
       "loading": "กำลังโหลดเควสต์...",
       "notfoundquest": "ไม่พบเควสต์ในระบบ",
+      "searchTitle": "ค้นหาชื่อเควสต์...",
       "add": "เพิ่มเควสต์ใหม่",
       "edit": "แก้ไข",
       "delete": "ลบ",
+      "deleteConfirmTitle": "ลบเควสต์",
+      "deleteConfirmDesc": "คุณแน่ใจหรือไม่ว่าต้องการลบเควสต์นี้?",
+      "deleteBulkConfirmTitle": "ลบเควสต์",
+      "deleteBulkConfirmDesc": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{count}} เควสต์?",
+      "confirmDelete": "ยืนยันการลบ",
+      "deleteSuccess": "ลบเควสต์สำเร็จ!",
+      "deleteError": "ไม่สามารถลบเควสต์ได้",
       "desc": "รายละเอียด",
       "type": "ประเภท",
       "diff": "ความยาก",
@@ -508,6 +546,7 @@
       "action": "การจัดการ",
       "loading": "กำลังโหลดรางวัล...",
       "notfoundquest": "ไม่พบรางวัลในระบบ",
+      "searchTitle": "ค้นหาชื่อสินค้า...",
       "add": "เพิ่มรางวัลใหม่",
       "edit": "แก้ไข",
       "delete": "ลบ",
@@ -518,6 +557,13 @@
       "cancel": "ยกเลิก",
       "save": "บันทึกการเปลี่ยนแปลง",
       "alert": "คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?",
+      "deleteConfirmTitle": "ลบสินค้า",
+      "deleteConfirmDesc": "คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?",
+      "deleteBulkConfirmTitle": "ลบสินค้า",
+      "deleteBulkConfirmDesc": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{count}} สินค้า?",
+      "confirmDelete": "ยืนยันการลบ",
+      "deleteSuccess": "ลบสินค้าสำเร็จ!",
+      "deleteError": "ไม่สามารถลบสินค้าได้",
       "date": {
         "dateAll": "วันที่: ทั้งหมด",
         "newest": "ใหม่ที่สุด",

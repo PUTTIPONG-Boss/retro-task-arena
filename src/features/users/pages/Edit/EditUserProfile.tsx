@@ -45,11 +45,7 @@ const EditUserProfile = () => {
       });
 
       toast.success(t("editProfile.successMsg"), {
-        style: {
-          fontFamily:
-            i18n.language === "th" ? "text-[16px]" : "text-[16px] font-pixel",
-          fontSize: "10px",
-        }
+        style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
       });
       navigate(-1);
     } catch (err) {

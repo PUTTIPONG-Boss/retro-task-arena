@@ -54,7 +54,7 @@ const CreateQuest = () => {
   const { mutate: createQuest, isPending } = useCreateQuest();
 
   const { t, i18n } = useTranslation();
-  const fontClass = i18n.language === "th" ? "text-[16px] pt-1" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
   const toggleSkill = (skill: string) => {
     if (selectedSkills.includes(skill)) {
@@ -108,7 +108,7 @@ const CreateQuest = () => {
     createQuest(newQuest, {
       onSuccess: () => {
         toast.success(t("createQuest.successMsg"), {
-          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
+          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
         });
         navigate("/");
       },
@@ -116,7 +116,7 @@ const CreateQuest = () => {
         console.error("Failed to post quest:", error);
         const errorMsg = getErrorMessage(error);
         toast.error(errorMsg, {
-          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"Press Start 2P"', fontSize: "10px" },
+          style: { fontFamily: i18n.language === "th" ? '"TA_8bit"' : '"TA_8bit"', fontSize: "16px" },
         });
       },
     });

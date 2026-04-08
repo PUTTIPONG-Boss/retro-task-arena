@@ -42,7 +42,7 @@ interface ActivityEvent {
 const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
   const { t, i18n } = useTranslation();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
   const activities = useMemo(() => {
     const events: ActivityEvent[] = [];
@@ -165,13 +165,13 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
   return (
     <PixelFrame>
       <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-        <h2 className={`font-pixel text-[10px] text-foreground pixel-text-shadow flex items-center gap-2 ${fontClass}`}>
+        <h2 className={`font-pixel text-[20px] text-foreground pixel-text-shadow flex items-center gap-2 ${fontClass}`}>
           <PixelHeart size={20} className="text-yellow-400" /> {t("userProfile.activity.title")}
         </h2>
         
         <button 
           onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
-          className={`pixel-border bg-secondary hover:bg-muted px-2 py-1 font-pixel text-[8px] text-accent transition-colors ${fontClass}`}
+          className={`pixel-border bg-secondary hover:bg-muted px-2 py-1 font-pixel text-[16px] text-accent`}
         >
           {sortOrder === "desc" ? "↓ " + t("userProfile.activity.sortNewest") : "↑ " + t("userProfile.activity.sortOldest")}
         </button>
@@ -209,11 +209,11 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
                       "font-pixel leading-tight",
                       event.type === "QUEST_COMPLETED" ? "text-gold pixel-text-shadow-gold" : 
                       event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-foreground",
-                      i18n.language === "th" ? "text-[12px]" : "text-[11px]"
+                      i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                     )}>
                       {getEventText(event)}
                     </p>
-                    <span className="text-[8px] text-muted-foreground font-pixel opacity-70">
+                    <span className="text-[16px] text-muted-foreground font-pixel opacity-70">
                       {new Date(event.timestamp).toLocaleDateString()}
                     </span>
                   </div>
@@ -221,9 +221,9 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
                   {(event.type === "QUEST_POSTED" || event.type === "BID_SUBMITTED" || event.type === "WORK_SUBMITTED" || event.type === "CHANGES_REQUESTED") && (
                     <Link 
                       to={`/quest/${event.metadata.taskId}`}
-                      className="inline-flex items-center gap-1 text-[9px] text-accent hover:underline font-pixel mt-2"
+                      className="inline-flex items-center gap-1 text-[16px] text-accent hover:underline font-pixel mt-2"
                     >
-                      {t("questDetail.back")} <ArrowRight size={10} />
+                      {t("questDetail.back")} <ArrowRight size={16} />
                     </Link>
                   )}
 
@@ -231,7 +231,7 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
                     <div className="mt-3 flex gap-4">
                        <Link 
                         to={`/quest/${event.metadata.taskId}`}
-                        className="pixel-border px-3 py-1 bg-gold/10 text-gold font-pixel text-[9px] hover:bg-gold/20 transition-all"
+                        className="pixel-border px-3 py-1 bg-gold/10 text-gold font-pixel text-[16px] hover:bg-gold/20 transition-all"
                       >
                         VIEW REWARDS
                       </Link>
