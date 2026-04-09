@@ -5,6 +5,7 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/lib/api';
 import { useNotificationStore } from '@/store/notificationStore';
 import { useGetQuests } from '@/features/quests/services/quest.service';
+import { toast } from 'sonner';
 
 interface NewBidPayload {
   taskId: string;
@@ -46,7 +47,12 @@ export function useOwnerBidNotifications() {
       sub.on('publication', (ctx) => {
         const data = ctx.data as NewBidPayload;
         queryClient.invalidateQueries({ queryKey: ['bids', quest.id] });
-        addNotification(`⚔️ [${quest.title}] New bid arrived! ${data.bidAmount} GP`, 'bid');
+        const msg = `⚔️ [${quest.title}] New bid arrived! ${data.bidAmount} GP`;
+        addNotification(msg, 'bid');
+        toast.info(msg, {
+          style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+          duration: 6000,
+        });
       });
 
       sub.on('error', (ctx) => {

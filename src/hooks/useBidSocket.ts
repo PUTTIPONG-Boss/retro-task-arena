@@ -3,7 +3,7 @@ import { Centrifuge } from 'centrifuge';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/lib/api';
-import { useNotificationStore } from '@/store/notificationStore';
+import { toast } from 'sonner';
 
 interface NewBidPayload {
   taskId: string;
@@ -13,10 +13,10 @@ interface NewBidPayload {
   note: string;
 }
 
-export function useBidSocket(taskId: string | undefined, isOwner: boolean, questTitle?: string) {
+export function useBidSocket(taskId: string | undefined, isOwner: boolean) {
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const addNotification = useNotificationStore((s) => s.addNotification);
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     if (!taskId || !isAuthenticated) return;
@@ -33,13 +33,12 @@ export function useBidSocket(taskId: string | undefined, isOwner: boolean, quest
 
     sub.on('publication', (ctx) => {
         const data = ctx.data as NewBidPayload;
-        console.log("🔔 ข้อมูลมาถึงแล้ว!:", data);
 
         queryClient.invalidateQueries({ queryKey: ['bids', taskId] });
 
-        if (isOwner) {
-          const title = questTitle ? `[${questTitle}] ` : '';
-          addNotification(`⚔️ ${title}New bid arrived! ${data.bidAmount} GP`, 'bid');
+        // แสดง toast เฉพาะฝั่งเจ้าของ quest เท่านั้น (ไม่ใช่คนที่เพิ่งกด bid เอง)
+        if (isOwner && data.userId !== user?.id) {
+          toast.info(`⚔️ New bid arrived! ${data.bidAmount} GP`);
         }
     });
 
