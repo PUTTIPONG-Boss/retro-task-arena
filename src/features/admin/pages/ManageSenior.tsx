@@ -63,7 +63,7 @@ const ManageSenior = () => {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search ID / Username / Email..."
+          placeholder={`${t("admin.seniorpage.id")}/ ${t("admin.seniorpage.username")}/ ${t("admin.seniorpage.email")}`}
           className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-3 py-1.5 w-72 hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
         />
       </div>

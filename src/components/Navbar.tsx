@@ -107,20 +107,20 @@ const Navbar = () => {
                 className="bg-[#1a1c1e] pixel-border border-[#F59E0B]/60 w-[300px] p-0 max-h-[380px] flex flex-col"
               >
                 <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
-                  <span className="font-pixel text-[14px] uppercase tracking-wider text-[#F59E0B]">Notifications</span>
+                  <span className="font-pixel text-[14px] uppercase tracking-wider text-[#F59E0B]">{t('navbar.notifications', 'Notifications')}</span>
                   {notifications.length > 0 && (
                     <button
                       onClick={clearAll}
                       className="font-pixel text-[14px] uppercase tracking-wider text-slate-400 hover:text-red-400 transition-colors"
                     >
-                      Clear all
+                      {t('navbar.clearAll', 'Clear all')}
                     </button>
                   )}
                 </div>
                 <div className="overflow-y-auto flex-1">
                   {notifications.length === 0 ? (
                     <div className="px-3 py-6 text-center font-pixel text-[14px] text-slate-500 uppercase">
-                      No notifications
+                      {t('navbar.noNotifications', 'No notifications')}
                     </div>
                   ) : (
                     notifications.map((n) => (
@@ -130,7 +130,9 @@ const Navbar = () => {
                           !n.read ? 'bg-[#F59E0B]/5' : ''
                         }`}
                       >
-                        <span className="font-pixel text-[14px] text-foreground leading-snug">{n.message}</span>
+                        <span className="font-pixel text-[14px] text-foreground leading-snug">
+                          {n.i18nKey ? t(n.i18nKey, n.i18nParams) : n.message}
+                        </span>
                         <span className="font-pixel text-[12px] text-slate-500">
                           {n.timestamp.toLocaleTimeString()}
                         </span>

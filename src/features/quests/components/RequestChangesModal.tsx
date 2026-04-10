@@ -10,6 +10,7 @@ import PixelButton from "@/components/PixelButton";
 import PixelTextarea from "@/components/PixelTextarea";
 import { useTranslation } from "react-i18next";
 import { AlertCircle } from "lucide-react";
+import PixelFlag from "@/components/icons/PixelFlag";
 
 interface RequestChangesModalProps {
   open: boolean;
@@ -40,10 +41,10 @@ const RequestChangesModal = ({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="pixel-border bg-card border-none max-w-md p-0 gap-0">
         <DialogHeader className="p-6 pb-4">
-          <DialogTitle className={`font-pixel text-[11px] text-danger pixel-text-shadow text-center flex items-center justify-center gap-2 ${fontClass}`}>
-            🚩 {t("questWorkspace.modals.requestChanges.title")}
+          <DialogTitle className={`font-pixel text-danger pixel-text-shadow text-center flex items-center justify-center gap-2 ${fontClass}`}>
+            <PixelFlag size={18} color="#b91c1c" flagColor="#ef4444" /> {t("questWorkspace.modals.requestChanges.title")}
           </DialogTitle>
-          <DialogDescription className={`text-center text-muted-foreground text-[12px] mt-2 leading-relaxed ${fontClass}`}>
+          <DialogDescription className={`text-center text-muted-foreground mt-2 leading-relaxed ${fontClass}`}>
             {t("questWorkspace.modals.requestChanges.desc")}
           </DialogDescription>
         </DialogHeader>
@@ -51,11 +52,11 @@ const RequestChangesModal = ({
         <div className="px-6 pb-6 space-y-5">
           {/* Quest & Worker info */}
           <div className="pixel-border bg-secondary/50 p-3 space-y-1">
-            <div className="flex justify-between items-center text-[10px]">
+            <div className="flex justify-between items-center">
               <span className={`text-muted-foreground uppercase ${fontClass}`}>{t("questWorkspace.sidebar.statusReport")}</span>
               <span className={`font-pixel text-foreground truncate max-w-[150px] ${fontClass}`}>{questTitle}</span>
             </div>
-            <div className="flex justify-between items-center text-[10px]">
+            <div className="flex justify-between items-center">
               <span className={`text-muted-foreground uppercase ${fontClass}`}>{t("questWorkspace.sidebar.name")}</span>
               <span className={`font-pixel text-accent pixel-text-shadow ${fontClass}`}>{workerUsername}</span>
             </div>
@@ -63,7 +64,7 @@ const RequestChangesModal = ({
 
           {/* Feedback */}
           <div>
-            <p className={`font-pixel text-[8px] text-muted-foreground mb-2 uppercase ${fontClass}`}>
+            <p className={`font-pixel text-muted-foreground mb-2 uppercase ${fontClass}`}>
               {t("questWorkspace.modals.requestChanges.reasonLabel")}
             </p>
             <PixelTextarea
@@ -92,7 +93,7 @@ const RequestChangesModal = ({
               onClick={handleSubmit}
               disabled={!reason.trim()}
             >
-              📤 {t("questWorkspace.modals.requestChanges.submitBtn")}
+              {t("questWorkspace.modals.requestChanges.submitBtn")}
             </PixelButton>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { apiClient } from '@/lib/api';
 import { useNotificationStore } from '@/store/notificationStore';
 import { useGetQuests } from '@/features/quests/services/quest.service';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface NewBidPayload {
   taskId: string;
@@ -20,6 +21,9 @@ export function useOwnerBidNotifications() {
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const addNotification = useNotificationStore((s) => s.addNotification);
+  const { t } = useTranslation();
+  const tRef = useRef(t);
+  useEffect(() => { tRef.current = t; }, [t]);
 
   const { data: quests = [] } = useGetQuests();
 
@@ -46,9 +50,10 @@ export function useOwnerBidNotifications() {
 
       sub.on('publication', (ctx) => {
         const data = ctx.data as NewBidPayload;
+        const t = tRef.current;
         queryClient.invalidateQueries({ queryKey: ['bids', quest.id] });
-        const msg = `⚔️ [${quest.title}] New bid arrived! ${data.bidAmount} GP`;
-        addNotification(msg, 'bid');
+        const msg = t('notifications.newBid', { title: quest.title, amount: data.bidAmount });
+        addNotification(msg, 'bid', 'notifications.newBid', { title: quest.title, amount: String(data.bidAmount) });
         toast.info(msg, {
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
           duration: 6000,

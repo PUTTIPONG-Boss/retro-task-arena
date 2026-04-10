@@ -19,6 +19,10 @@ import { Layout, Terminal, FileText, FolderTree, CheckCircle2, Coins } from "luc
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/lib/errorUtils";
+import PixelCheck from "@/components/icons/PixelCheck";
+import PixelRecycle from "@/components/icons/PixelRecycle";
+import PixelInbox from "@/components/icons/PixelInbox";
+import PixelHourglass from "@/components/icons/PixelHourglass";
 
 const QuestWorkspace = () => {
   const { id } = useParams<{ id: string }>();
@@ -99,10 +103,14 @@ const QuestWorkspace = () => {
   const handleSubmitReview = async () => {
     try {
       await updateStatus.mutateAsync({ id: quest.id, status: "in_review" as any });
-      toast.success(t("questWorkspace.toasts.submitted"));
+      toast.success(t("questWorkspace.toasts.submitted"), {
+        style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+      });
     } catch (err: any) {
       const msg = err.response?.data?.error || t("questWorkspace.toasts.submitFailed");
-      toast.error(msg);
+      toast.error(msg, {
+        style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+      });
     }
   };
 
@@ -112,7 +120,9 @@ const QuestWorkspace = () => {
     setShowRating(false);
     try {
       if (!quest.assignedTo) {
-        toast.error(t("questWorkspace.toasts.noWorker"));
+        toast.error(t("questWorkspace.toasts.noWorker"), {
+          style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+        });
         return;
       }
 
@@ -127,9 +137,13 @@ const QuestWorkspace = () => {
         pointsAwarded: quest.rewardPoints,
       });
 
-      toast.success(t("questWorkspace.toasts.approved"));
+      toast.success(t("questWorkspace.toasts.approved"), {
+        style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+      });
     } catch (err: any) {
-      toast.error(getErrorMessage(err));
+      toast.error(getErrorMessage(err), {
+        style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+      });
     }
   };
 
@@ -145,9 +159,13 @@ const QuestWorkspace = () => {
         status: "in-progress" as any,
         comment: reason,
       });
-      toast.success(t("questWorkspace.toasts.changesRequested"));
+      toast.success(t("questWorkspace.toasts.changesRequested"), {
+        style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+      });
     } catch (e) {
-      toast.error(getErrorMessage(e));
+      toast.error(getErrorMessage(e), {
+        style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+      });
     }
   };
 
@@ -229,7 +247,9 @@ const QuestWorkspace = () => {
                             className={`absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity font-pixel text-muted-foreground hover:text-accent ${fontClass}`}
                             onClick={() => {
                               navigator.clipboard.writeText(step.cmd!);
-                              toast.success(t("questWorkspace.workflow.copied"));
+                              toast.success(t("questWorkspace.workflow.copied"), {
+                                style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+                              });
                             }}
                           >
                             {t("questWorkspace.workflow.copyBtn")}
@@ -313,9 +333,15 @@ const QuestWorkspace = () => {
               </p>
               <div className="flex flex-col gap-3">
                 <PixelButton variant="gold" size="md" onClick={handleApprove} className={`w-full ${fontClass}`}>
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white mr-2">
+                    <PixelCheck size={14} color="#22c55e" />
+                  </span>
                   <span className={fontClass}>{t("questWorkspace.review.approveBtn")}</span>
                 </PixelButton>
                 <PixelButton variant="danger" size="md" onClick={handleRequestChanges} className={`w-full ${fontClass}`}>
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white mr-2">
+                    <PixelRecycle size={14} color="#ef4444" />
+                  </span>
                   <span className={fontClass}>{t("questWorkspace.review.requestChangesBtn")}</span>
                 </PixelButton>
               </div>
@@ -342,7 +368,10 @@ const QuestWorkspace = () => {
               onClick={handleSubmitReview}
               isLoading={updateStatus.isPending}
             >
-              <span className={fontClass}>{t("questWorkspace.actions.submitWork")}</span>
+              <span className="flex items-center justify-center gap-2">
+                <PixelInbox size={16} color="currentColor" />
+                <span className={fontClass}>{t("questWorkspace.actions.submitWork")}</span>
+              </span>
             </PixelButton>
           )}
 
@@ -350,10 +379,13 @@ const QuestWorkspace = () => {
             <PixelButton
               variant="blue"
               size="lg"
-              className="w-full py-6 cursor-not-allowed"
+              className={`w-full py-6 cursor-not-allowed ${fontClass}`}
               disabled
             >
-              {t("questWorkspace.actions.waitingReview")}
+              <span className="flex items-center justify-center gap-2">
+                <PixelHourglass size={16} color="currentColor" />
+                <span className={fontClass}>{t("questWorkspace.actions.waitingReview")}</span>
+              </span>
             </PixelButton>
           )}
 

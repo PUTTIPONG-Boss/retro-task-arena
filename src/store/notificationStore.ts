@@ -4,6 +4,8 @@ import { persist } from 'zustand/middleware';
 export interface AppNotification {
   id: string;
   message: string;
+  i18nKey?: string;
+  i18nParams?: Record<string, string>;
   timestamp: Date;
   read: boolean;
   type: 'bid' | 'general';
@@ -12,7 +14,7 @@ export interface AppNotification {
 interface NotificationState {
   notifications: AppNotification[];
   unreadCount: number;
-  addNotification: (message: string, type?: AppNotification['type']) => void;
+  addNotification: (message: string, type?: AppNotification['type'], i18nKey?: string, i18nParams?: Record<string, string>) => void;
   markAllRead: () => void;
   clearAll: () => void;
 }
@@ -23,10 +25,12 @@ export const useNotificationStore = create<NotificationState>()(
       notifications: [],
       unreadCount: 0,
 
-      addNotification: (message, type = 'general') => {
+      addNotification: (message, type = 'general', i18nKey, i18nParams) => {
         const newNotif: AppNotification = {
           id: crypto.randomUUID(),
           message,
+          i18nKey,
+          i18nParams,
           timestamp: new Date(),
           read: false,
           type,
@@ -46,7 +50,7 @@ export const useNotificationStore = create<NotificationState>()(
       clearAll: () => set({ notifications: [], unreadCount: 0 }),
     }),
     {
-      name: 'notification-storage',
+      name: 'notification-storage-v2',
       partialize: (state) => ({
         notifications: state.notifications,
         unreadCount: state.unreadCount,

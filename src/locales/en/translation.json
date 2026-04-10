@@ -4,7 +4,10 @@
     "post_quest": "Post Quest",
     "reward_shop": "Reward Shop",
     "profile": "Profile",
-    "admin": "ADMIN PANEL"
+    "admin": "ADMIN PANEL",
+    "notifications": "Notifications",
+    "clearAll": "Clear All",
+    "noNotifications": "No Notifications"
   },
   "questBoard": {
     "title": "Inet Quest Board",
@@ -80,6 +83,12 @@
     "note": "Note",
     "Submitting": "Submitting...",
     "btncancel": "CANCEL",
+    "toast": {
+      "mustLogin": "You must be logged in to submit a bid.",
+      "fillFields": "Please fill in all required bid fields.",
+      "bidSubmitted": "Bid submitted successfully!",
+      "bidAccepted": "Bid accepted! Quest is now In Progress."
+    },
     "editbid": {
       "editbids": "Edit Your Bid",
       "bidamount": "BID AMOUNT (Points)",
@@ -157,8 +166,8 @@
     "review": {
       "title": "Review Status",
       "desc": "The worker has submitted their work. Please verify the code in the 'Files' tab before approving.",
-      "approveBtn": "✅ Approve Results",
-      "requestChangesBtn": "🔄 Request Changes",
+      "approveBtn": "Approve Results",
+      "requestChangesBtn": "Request Changes",
       "revisionRequired": "🚩 REVISION REQUIRED"
     },
     "victory": "Quest Victory!",
@@ -172,8 +181,8 @@
       "category": "Category"
     },
     "actions": {
-      "submitWork": "📤 Submit Work",
-      "waitingReview": "⏳ Waiting for Review"
+      "submitWork": "Submit Work",
+      "waitingReview": "Waiting for Review"
     },
     "toasts": {
       "submitted": "Quest submitted for review! The provider will be notified.",
@@ -186,12 +195,22 @@
     },
     "modals": {
       "requestChanges": {
-        "title": "⚔ REQUEST CHANGES",
+        "title": "REQUEST CHANGES",
         "desc": "Specify what needs to be fixed by the adventurer",
         "reasonLabel": "REVISION REASON",
         "placeholder": "e.g. Add error handling, Fix CSS alignment...",
         "cancelBtn": "CANCEL",
         "submitBtn": "SEND REQUEST"
+      },
+      "rating": {
+        "title": "APPROVE RESULTS",
+        "desc": "Rate the quality of work submitted by the adventurer.",
+        "questLabel": "Quest",
+        "workerLabel": "Worker",
+        "ratingLabel": "YOUR RATING",
+        "feedbackLabel": "FEEDBACK (OPTIONAL)",
+        "feedbackPlaceholder": "Leave feedback about the work...",
+        "submitBtn": "SUBMIT REVIEW"
       }
     }
   },
@@ -599,5 +618,13 @@
     "order": "Manage Orders",
     "admin": "ADMIN",
     "logout": "LOGOUT"
+  },
+  "notifications": {
+    "bidAccepted": "[{{title}}] Your bid has been accepted!",
+    "workSubmitted": "[{{title}}] Work has been submitted for review!",
+    "workApproved": "[{{title}}] Your work has been approved!{{points}}",
+    "changesRequested": "[{{title}}] Changes requested{{comment}}",
+    "statusChanged": "[{{title}}] Status changed to {{status}}",
+    "newBid": "[{{title}}] New bid arrived! {{amount}} GP"
   }
 }

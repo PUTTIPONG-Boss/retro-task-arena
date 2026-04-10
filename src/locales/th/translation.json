@@ -5,7 +5,10 @@
     "reward_shop": "ร้านค้ารางวัล",
     "profile": "โปรไฟล์",
     "admin": "เมนูแอดมิน",
-    "logout": "ออกจากระบบ"
+    "logout": "ออกจากระบบ",
+    "notifications": "การแจ้งเตือน",
+    "clearAll": "ล้างทั้งหมด",
+    "noNotifications": "ไม่มีการแจ้งเตือน"
   },
   "questBoard": {
     "title": "กระดานเควสต์",
@@ -81,6 +84,12 @@
     "note": "หมายเหตุ",
     "btncancel": "ยกเลิก",
     "Submitting": "กำลังยื่นข้อเสนอ...",
+    "toast": {
+      "mustLogin": "คุณต้องเข้าสู่ระบบก่อนยื่นข้อเสนอ",
+      "fillFields": "กรุณากรอกข้อมูลการยื่นข้อเสนอให้ครบถ้วน",
+      "bidSubmitted": "ยื่นข้อเสนอสำเร็จ!",
+      "bidAccepted": "ยอมรับข้อเสนอแล้ว! เควสต์เริ่มต้นแล้ว"
+    },
     "editbid": {
       "editbids": "แก้ไขข้อเสนอ",
       "bidamount": "จำนวนที่เสนอ (แต้ม)",
@@ -159,9 +168,9 @@
     "review": {
       "title": "สถานะการตรวจสอบ",
       "desc": "นักผจญภัยส่งงานแล้ว โปรดตรวจสอบโค้ดในแท็บ 'ไฟล์งาน' ก่อนอนุมัติ",
-      "approveBtn": "✅ อนุมัติผลงาน",
-      "requestChangesBtn": "🔄 ขอให้แก้ไขงาน",
-      "revisionRequired": "🚩 ต้องปรับปรุงงานตามแจ้ง"
+      "approveBtn": "อนุมัติผลงาน",
+      "requestChangesBtn": "ขอให้แก้ไขงาน",
+      "revisionRequired": "ต้องปรับปรุงงานตามแจ้ง"
     },
     "victory": "ชัยชนะในเควสต์!",
     "rewardAwarded": "รางวัล: {{reward}} GP ได้รับแล้ว",
@@ -174,8 +183,8 @@
       "category": "หมวดหมู่"
     },
     "actions": {
-      "submitWork": "📤 ส่งงาน",
-      "waitingReview": "⏳ รอการตรวจสอบ"
+      "submitWork": "ส่งงาน",
+      "waitingReview": "รอการตรวจสอบ"
     },
     "toasts": {
       "submitted": "ส่งงานให้ตรวจสอบแล้ว! ผู้จ้างวานจะได้รับแจ้งเตือน",
@@ -194,6 +203,16 @@
         "placeholder": "เช่น เพิ่มการดักจับ Error, ปรับปรุง CSS ตามรูป...",
         "cancelBtn": "ยกเลิก",
         "submitBtn": "ส่งคำขอแก้ไข"
+      },
+      "rating": {
+        "title": "อนุมัติผลงาน",
+        "desc": "ให้คะแนนคุณภาพงานที่นักผจญภัยส่งมา",
+        "questLabel": "เควสต์",
+        "workerLabel": "ผู้รับงาน",
+        "ratingLabel": "คะแนนของคุณ",
+        "feedbackLabel": "ความคิดเห็น (ไม่บังคับ)",
+        "feedbackPlaceholder": "แสดงความคิดเห็นเกี่ยวกับงานที่ส่งมา...",
+        "submitBtn": "ยืนยันผลงาน"
       }
     }
   },
@@ -593,5 +612,13 @@
     "order": "จัดการรายการสั่งซื้อ",
     "admin": "แอดมิน",
     "logout": "ออกจากระบบ"
+  },
+  "notifications": {
+    "bidAccepted": "[{{title}}] ข้อเสนอของคุณได้รับการยอมรับแล้ว!",
+    "workSubmitted": "[{{title}}] ส่งงานให้ตรวจสอบแล้ว!",
+    "workApproved": "[{{title}}] งานของคุณได้รับการอนุมัติแล้ว!{{points}}",
+    "changesRequested": "[{{title}}] มีการขอให้แก้ไขงาน{{comment}}",
+    "statusChanged": "[{{title}}] สถานะเปลี่ยนเป็น {{status}}",
+    "newBid": "[{{title}}] มีข้อเสนอใหม่! {{amount}} แต้ม"
   }
 }

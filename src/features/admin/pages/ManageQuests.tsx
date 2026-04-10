@@ -233,8 +233,8 @@ const ManageQuest = () => {
       </div>
 
       {/* --- ส่วนตารางแสดงข้อมูล --- */}
-      <PixelFrame variant="dark" className="relative p-6">
-        <table className="w-full text-left border-collapse table-fixed">
+      <PixelFrame variant="dark" className="relative p-6 overflow-x-auto">
+        <table className="w-full min-w-[900px] text-left border-collapse table-fixed">
           <thead>
             <tr className={`border-b border-[#333] text-muted-foreground uppercase tracking-wider ${fontClass}`}>
               <th className="p-3 w-[4%] text-center">

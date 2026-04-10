@@ -20,6 +20,11 @@ import { useTranslation } from "react-i18next";
 import { isSeniorOrAdmin } from "@/features/users/utils/roleUtils";
 import { getErrorMessage } from "@/lib/errorUtils";
 import { useBidSocket } from "@/hooks/useBidSocket";
+import PixelCheck from "@/components/icons/PixelCheck";
+import PixelUsers from "@/components/icons/PixelUsers";
+import PixelHourglass from "@/components/icons/PixelHourglass";
+import PixelScroll from "@/components/icons/PixelScroll";
+import PixelX from "@/components/icons/PixelX";
 
 const statusColor: Record<string, string> = {
   open: "text-success",
@@ -105,12 +110,13 @@ const QuestDetail = () => {
   }
 
   const handleSubmitBid = async () => {
+    const toastStyle = { fontFamily: '"TA_8bit"', fontSize: '16px' };
     if (!user) {
-      toast.error("You must be logged in to submit a bid.");
+      toast.error(t("questDetail.toast.mustLogin"), { style: toastStyle });
       return;
     }
     if (!waitDuration || bidAmount <= 0) {
-      toast.error("Please fill in all required bid fields.");
+      toast.error(t("questDetail.toast.fillFields"), { style: toastStyle });
       return;
     }
     try {
@@ -123,10 +129,10 @@ const QuestDetail = () => {
           note,
         },
       });
-      toast.success("⚔ Bid submitted successfully!");
+      toast.success(t("questDetail.toast.bidSubmitted"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
       setShowBidForm(false);
     } catch (e) {
-      toast.error(getErrorMessage(e));
+      toast.error(getErrorMessage(e), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
     }
   };
 
@@ -146,9 +152,9 @@ const QuestDetail = () => {
         },
       });
 
-      toast.success("Bid accepted! Quest is now In Progress.");
+      toast.success(t("questDetail.toast.bidAccepted"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
     } catch (e) {
-      toast.error(getErrorMessage(e));
+      toast.error(getErrorMessage(e), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
     }
   };
 
@@ -165,7 +171,7 @@ const QuestDetail = () => {
   const handleUpdateBid = async () => {
     if (!user || !myBid) return;
     if (!editWaitDuration || editBidAmount <= 0) {
-      toast.error("Please fill in all required bid fields.");
+      toast.error(t("questDetail.toast.fillFields"), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
       return;
     }
     try {
@@ -179,11 +185,11 @@ const QuestDetail = () => {
           note: editNote,
         },
       });
-      toast.success(t("questDetail.editbid.SuccessMsg"));
+      toast.success(t("questDetail.editbid.SuccessMsg"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
       setEditMode(false);
     } catch (e: unknown) {
       const err = e as { response?: { data?: { error?: string } } };
-      toast.error(err?.response?.data?.error || t("questDetail.editbid.FailMsg"));
+      toast.error(err?.response?.data?.error || t("questDetail.editbid.FailMsg"), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
     }
   };
 
@@ -225,8 +231,8 @@ const QuestDetail = () => {
             <div className={`flex items-center gap-4 mb-6 ${fontClass}`}>
               <Coins size={14} className="inline mr-1 text-gold" /> {quest.rewardPoints} {t("questDetail.GP")}
               <DifficultyStars level={quest.difficulty} />
-              <span className={`font-pixel text-muted-foreground ${fontClass}`}>
-                ⏳ {quest.estimatedTime}
+              <span className={`font-pixel text-muted-foreground flex items-center gap-1 ${fontClass}`}>
+                <PixelHourglass size={14} color="currentColor" className="text-gold" /> {quest.estimatedTime}
               </span>
             </div>
 
@@ -290,8 +296,8 @@ const QuestDetail = () => {
           {/* OWNER VIEW: see all bids with details */}
           {isOwner && quest.status === "open" && (
             <PixelFrame>
-              <h2 className={`font-pixel text-foreground pixel-text-shadow mb-4 ${fontClass}`}>
-                📋 {t("questDetail.OwnerQuest.aventurerbids")}
+              <h2 className={`font-pixel text-foreground pixel-text-shadow mb-4 flex items-center gap-2 ${fontClass}`}>
+                <PixelScroll size={16} color="currentColor" className="text-gold" /> {t("questDetail.OwnerQuest.aventurerbids")}
                 {bidsLoading ? (
                   <span className={`text-muted-foreground ml-2 ${fontClass}`}>{t("questBoard.loading")}</span>
                 ) : (
@@ -310,10 +316,10 @@ const QuestDetail = () => {
                     >
                       <div className="flex-1">
                         <p className={`font-pixel text-foreground mb-1 break-words ${fontClass}`}>
-                          ⚔ {bid.username}
+                          {bid.username}
                         </p>
-                        <p className={`text-muted-foreground ${fontClass}`}>
-                          📜 {bid.questsCompleted} {t("questDetail.OwnerQuest.quest")} · ★ {bid.rating.toFixed(1)}
+                        <p className={`text-muted-foreground flex items-center gap-1 ${fontClass}`}>
+                          <PixelScroll size={12} color="currentColor" className="text-gold" /> {bid.questsCompleted} {t("questDetail.OwnerQuest.quest")} · ★ {bid.rating.toFixed(1)}
                         </p>
                         {bid.note && (
                           <p className={`text-foreground/70 mt-1 italic break-words overflow-hidden ${fontClass}`}>
@@ -322,9 +328,9 @@ const QuestDetail = () => {
                         )}
                       </div>
                       <div className="text-right">
-                        <Coins size={12} className="inline mr-1" /> {bid.bidAmount} {t("questDetail.OwnerQuest.GP")}
-                        <p className={`text-muted-foreground mb-3 ${fontClass}`}>
-                          ⏳ {bid.waitDuration}
+                        <Coins size={12} className="inline mr-1 text-gold" /> {bid.bidAmount} {t("questDetail.OwnerQuest.GP")}
+                        <p className={`text-muted-foreground mb-3 flex items-center gap-1 justify-end ${fontClass}`}>
+                          <PixelHourglass size={12} color="currentColor" className="text-gold" /> {bid.waitDuration}
                         </p>
                         {bid.status === "PENDING" && (
                           <PixelButton
@@ -334,14 +340,14 @@ const QuestDetail = () => {
                             onClick={() => handleAcceptBid(bid.id)}
                             disabled={acceptBid.isPending}
                           >
-                            <span className={fontClass}>✅ {t("questDetail.acceptbid")}</span>
+                            <span className={`flex items-center gap-1 ${fontClass}`}><PixelCheck size={14} color="#4ade80" /> {t("questDetail.acceptbid")}</span>
                           </PixelButton>
                         )}
                         {bid.status === "ACCEPTED" && (
-                          <span className={`font-pixel text-success ${fontClass}`}>✅ {t("questDetail.accept")}</span>
+                          <span className={`font-pixel text-success flex items-center gap-1 ${fontClass}`}><PixelCheck size={14} color="#4ade80" /> {t("questDetail.accept")}</span>
                         )}
                         {bid.status === "REJECTED" && (
-                          <span className={`font-pixel text-muted-foreground ${fontClass}`}>✗ {t("questDetail.reject")}</span>
+                          <span className={`font-pixel text-muted-foreground flex items-center gap-1 ${fontClass}`}><PixelX size={12} color="currentColor" /> {t("questDetail.reject")}</span>
                         )}
                       </div>
                     </div>
@@ -354,8 +360,8 @@ const QuestDetail = () => {
           {/* REGULAR USER VIEW: see only count + submit bid */}
           {!isOwner && quest.status === "open" && (
             <PixelFrame>
-              <h2 className={`font-pixel text-foreground pixel-text-shadow mb-2 ${fontClass}`}>
-                👥 {bids.length} {t("questDetail.ownerbids")}
+              <h2 className={`font-pixel text-foreground pixel-text-shadow mb-2 flex items-center gap-2 ${fontClass}`}>
+                <PixelUsers size={20} color="currentColor" className="text-gold"/> {bids.length} {t("questDetail.ownerbids")}
               </h2>
               <p className={`text-muted-foreground mb-4 ${fontClass}`}>
                 {t("questDetail.bidsdetail")}
@@ -419,7 +425,7 @@ const QuestDetail = () => {
                     /* ── VIEW MODE ── */
                     <>
                       <div className="flex justify-between items-start">
-                        <p className={`font-pixel text-success mb-1 ${fontClass}`}>⚔ {t("questDetail.viewmode.yourbidsub")}</p>
+                        <p className={`font-pixel text-success mb-1 flex items-center gap-1 ${fontClass}`}><PixelCheck size={18} color="#4ade80" /> {t("questDetail.viewmode.yourbidsub")}</p>
                       </div>
                       <p className={`text-foreground ${fontClass}`}>{t("questDetail.viewmode.amount")} : <span className="text-accent">{myBid.bidAmount} {t("questDetail.viewmode.GP")}</span></p>
                       <p className={`text-muted-foreground ${fontClass}`}>{t("questDetail.viewmode.duration")}: {myBid.waitDuration}</p>
@@ -489,7 +495,7 @@ const QuestDetail = () => {
                       onClick={handleSubmitBid}
                       disabled={submitBid.isPending}
                     >
-                      <span className={fontClass}>{submitBid.isPending ? t("questDetail.Submitting") : "⚔ " + t("questDetail.btnbids")}</span>
+                      <span className={fontClass}>{submitBid.isPending ? t("questDetail.Submitting") : t("questDetail.btnbids")}</span>
                     </PixelButton>
                     <PixelButton
                       variant="ghost"
@@ -512,7 +518,7 @@ const QuestDetail = () => {
                     setShowBidForm(true);
                   }}
                 >
-                  <span className={fontClass}>⚔ {t("questDetail.btnbids")}</span>
+                  <span className={fontClass}> {t("questDetail.btnbids")}</span>
                 </PixelButton>
               )}
             </PixelFrame>

@@ -13,7 +13,7 @@ interface NewBidPayload {
   note: string;
 }
 
-export function useBidSocket(taskId: string | undefined, isOwner: boolean) {
+export function useBidSocket(taskId: string | undefined, isOwner: boolean, title: string) {
   const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
@@ -38,7 +38,7 @@ export function useBidSocket(taskId: string | undefined, isOwner: boolean) {
 
         // แสดง toast เฉพาะฝั่งเจ้าของ quest เท่านั้น (ไม่ใช่คนที่เพิ่งกด bid เอง)
         if (isOwner && data.userId !== user?.id) {
-          toast.info(`⚔️ New bid arrived! ${data.bidAmount} GP`);
+          toast.info(`New bid arrived! ${data.bidAmount} GP`);
         }
     });
 
