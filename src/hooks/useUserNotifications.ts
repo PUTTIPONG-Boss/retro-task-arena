@@ -64,7 +64,7 @@ export function useUserNotifications() {
       if (data.type === 'bid_accepted') {
         const title = data.taskTitle ?? '';
         const msg = t('notifications.bidAccepted', { title });
-        addNotification(msg, 'bid', 'notifications.bidAccepted', { title });
+        addNotification(msg, 'bid', 'notifications.bidAccepted', { title }, data.taskId);
         toast.success(msg, {
           icon: React.createElement(PixelCheck, { size: 18, color: '#22c55e' }),
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
@@ -78,7 +78,7 @@ export function useUserNotifications() {
       } else if (data.type === 'work_submitted') {
         const title = data.taskTitle ?? '';
         const msg = t('notifications.workSubmitted', { title });
-        addNotification(msg, 'general', 'notifications.workSubmitted', { title });
+        addNotification(msg, 'general', 'notifications.workSubmitted', { title }, data.taskId);
         toast.info(msg, {
           icon: React.createElement(PixelInbox, { size: 18, color: '#60a5fa' }),
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
@@ -90,7 +90,7 @@ export function useUserNotifications() {
         const title = data.taskTitle ?? '';
         const points = (data as any).pointsAwarded ? ` (+${(data as any).pointsAwarded} GP)` : '';
         const msg = t('notifications.workApproved', { title, points });
-        addNotification(msg, 'general', 'notifications.workApproved', { title, points });
+        addNotification(msg, 'general', 'notifications.workApproved', { title, points }, data.taskId);
         toast.success(msg, {
           icon: React.createElement(PixelCheck, { size: 18, color: '#22c55e' }),
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
@@ -104,7 +104,7 @@ export function useUserNotifications() {
         const title = data.taskTitle ?? '';
         const comment = data.comment ? `: ${data.comment}` : '';
         const msg = t('notifications.changesRequested', { title, comment });
-        addNotification(msg, 'general', 'notifications.changesRequested', { title, comment });
+        addNotification(msg, 'general', 'notifications.changesRequested', { title, comment }, data.taskId);
         toast.warning(msg, {
           icon: React.createElement(PixelX, { size: 18, color: '#ef4444' }),
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },

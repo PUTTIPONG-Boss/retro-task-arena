@@ -117,7 +117,7 @@ const Navbar = () => {
                     </button>
                   )}
                 </div>
-                <div className="overflow-y-auto flex-1">
+                <div className="overflow-y-auto flex-1 [scrollbar-width:thin] [scrollbar-color:rgba(245,158,11,0.3)_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.3)] [&::-webkit-scrollbar-thumb]:rounded-none hover:[&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.6)]">
                   {notifications.length === 0 ? (
                     <div className="px-3 py-6 text-center font-pixel text-[14px] text-slate-500 uppercase">
                       {t('navbar.noNotifications', 'No notifications')}
@@ -126,9 +126,12 @@ const Navbar = () => {
                     notifications.map((n) => (
                       <div
                         key={n.id}
+                        onClick={() => {
+                          if (n.questId) navigate(`/quest/${n.questId}`);
+                        }}
                         className={`px-3 py-2.5 border-b border-slate-800 flex flex-col gap-0.5 ${
                           !n.read ? 'bg-[#F59E0B]/5' : ''
-                        }`}
+                        } ${n.questId ? 'cursor-pointer hover:bg-[#F59E0B]/10 transition-colors' : ''}`}
                       >
                         <span className="font-pixel text-[14px] text-foreground leading-snug">
                           {n.i18nKey ? t(n.i18nKey, n.i18nParams) : n.message}

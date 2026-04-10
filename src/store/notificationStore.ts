@@ -9,12 +9,13 @@ export interface AppNotification {
   timestamp: Date;
   read: boolean;
   type: 'bid' | 'general';
+  questId?: string;
 }
 
 interface NotificationState {
   notifications: AppNotification[];
   unreadCount: number;
-  addNotification: (message: string, type?: AppNotification['type'], i18nKey?: string, i18nParams?: Record<string, string>) => void;
+  addNotification: (message: string, type?: AppNotification['type'], i18nKey?: string, i18nParams?: Record<string, string>, questId?: string) => void;
   markAllRead: () => void;
   clearAll: () => void;
 }
@@ -25,7 +26,7 @@ export const useNotificationStore = create<NotificationState>()(
       notifications: [],
       unreadCount: 0,
 
-      addNotification: (message, type = 'general', i18nKey, i18nParams) => {
+      addNotification: (message, type = 'general', i18nKey, i18nParams, questId) => {
         const newNotif: AppNotification = {
           id: crypto.randomUUID(),
           message,
@@ -34,6 +35,7 @@ export const useNotificationStore = create<NotificationState>()(
           timestamp: new Date(),
           read: false,
           type,
+          questId,
         };
         set((state) => ({
           notifications: [newNotif, ...state.notifications].slice(0, 50),

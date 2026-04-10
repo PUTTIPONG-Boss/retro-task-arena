@@ -389,12 +389,23 @@
     },
     "stock": "Stock",
     "buy": "Buy",
+    "outOfStock": "Out of Stock",
     "needMore": "Need More Points",
     "empty": "No items found in this price range...",
     "toastSuccess": "You acquired: {{name}}!",
-    "toastError": "Not enough point! Complete more quests.",
+    "toastError": "Not enough points! Complete more quests.",
     "loaditem": "Failed to load items from the shop.",
-    "running": "Make sure the backend is running and try again."
+    "running": "Make sure the backend is running and try again.",
+    "dialog": {
+      "title": "Purchase Item",
+      "unit": "unit",
+      "qty": "Quantity",
+      "total": "Total",
+      "notEnough": "You don't have enough points for this purchase.",
+      "cancel": "Cancel",
+      "confirm": "Confirm Purchase",
+      "processing": "Processing..."
+    }
   },
 
   "createProduct": {

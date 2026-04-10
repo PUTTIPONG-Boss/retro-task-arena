@@ -8,10 +8,22 @@ import { useState } from "react";
 import RewardBanner from "../components/RewardBanner";
 import { useGetProducts } from "../services/product.service";
 import { useCreateOrder } from "../services/order.service";
-import { useGetProfile } from "@/features/users/services/user.service";
 import { useTranslation } from "react-i18next";
 import PixelCoin from "@/components/icons/PixelCoin";
 import PixelStore from "@/components/icons/PixelStore";
+import PixelPlus from "@/components/icons/PixelPlus";
+import PixelMinus from "@/components/icons/PixelMinus";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Product } from "../types";
 
 // Map product.id to a pixel icon for visual variety
 const getProductIcon = (id: string): string => {
@@ -25,6 +37,8 @@ const RewardShop = () => {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [buyTarget, setBuyTarget] = useState<Product | null>(null);
+  const [buyQty, setBuyQty] = useState<number>(1);
 
   const { data: products = [], isLoading, isError } = useGetProducts();
   const { mutate: createOrder, isPending: isRedeeming } = useCreateOrder();
@@ -44,56 +58,56 @@ const RewardShop = () => {
 
   if (!user) return null;
 
-  const handleBuy = (productId: string, name: string, price: number) => {
-    // Defensive check for points
+  const handleOpenBuyDialog = (item: Product) => {
+    setBuyTarget(item);
+    setBuyQty(1);
+  };
+
+  const handleConfirmBuy = () => {
+    if (!buyTarget) return;
+    const totalCost = buyTarget.price * buyQty;
     const currentPoints = user.points ?? 0;
 
-    if (currentPoints < price) {
+    if (currentPoints < totalCost) {
       toast.error(t("rewardShop.toastError"), {
-        style: {
-          fontFamily:
-            i18n.language === "th" ? "text-[16px]" : "text-[16px]",
-          fontSize: "10px",
-        },
+        style: { fontFamily: '"TA_8bit"', fontSize: "16px" },
+        position: "bottom-right",
       });
+      setBuyTarget(null);
       return;
     }
 
     createOrder(
       {
-        orderItems: [{ productId, quantity: 1, pricePerUnit: price }],
+        orderItems: [{ productId: buyTarget.id, quantity: buyQty, pricePerUnit: buyTarget.price }],
         paymentMethod: "POINTS",
         shippingAddress: "Digital Reward / Point Exchange",
       },
       {
         onSuccess: () => {
-          toast.success(t("rewardShop.toastSuccess", { name }), {
-            style: {
-              fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
-              fontSize: "10px",
-            },
+          toast.success(t("rewardShop.toastSuccess", { name: buyTarget.name }), {
+            style: { fontFamily: '"TA_8bit"', fontSize: "16px" },
+            position: "bottom-right",
           });
+          setBuyTarget(null);
         },
         onError: (error: any) => {
           const rawError = error.response?.data?.error;
           let message = "Failed to redeem reward.";
-
-          if (typeof rawError === 'string') {
+          if (typeof rawError === "string") {
             message = rawError;
           } else if (Array.isArray(rawError)) {
             message = rawError[0]?.message || "Validation Error";
-          } else if (rawError && typeof rawError === 'object' && rawError.message) {
+          } else if (rawError && typeof rawError === "object" && rawError.message) {
             message = rawError.message;
           } else if (rawError) {
             message = JSON.stringify(rawError);
           }
-
           toast.error(message, {
-            style: {
-              fontFamily: i18n.language === "th" ? "text-[16px]" : "text-[16px]",
-              fontSize: "10px",
-            },
+            style: { fontFamily: '"TA_8bit"', fontSize: "16px" },
+            position: "bottom-right",
           });
+          setBuyTarget(null);
         },
       }
     );
@@ -247,16 +261,14 @@ const RewardShop = () => {
                         }
                         size="sm"
                         className={`w-full ${fontClass}`}
-                        onClick={() => handleBuy(item.id, item.name, item.price)}
+                        onClick={() => handleOpenBuyDialog(item)}
                         disabled={item.stock === 0 || isRedeeming}
                       >
                         {item.stock === 0
-                          ? "Out of Stock"
-                          : isRedeeming
-                            ? "Processing..."
-                            : (user.points ?? 0) >= item.price
-                              ? t("rewardShop.buy")
-                              : t("rewardShop.needMore")}
+                          ? t("rewardShop.outOfStock")
+                          : (user.points ?? 0) >= item.price
+                            ? t("rewardShop.buy")
+                            : t("rewardShop.needMore")}
                       </PixelButton>
                     </PixelFrame>
                   </motion.div>
@@ -277,6 +289,98 @@ const RewardShop = () => {
           </>
         )}
       </div>
+      {/* Buy Dialog */}
+      <AlertDialog open={!!buyTarget} onOpenChange={(open) => !open && setBuyTarget(null)}>
+        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel sm:max-w-[520px] w-full">
+          <AlertDialogHeader>
+            <AlertDialogTitle className={`text-accent pixel-text-shadow text-[24px] font-pixel ${fontClass}`}>
+              {t("rewardShop.dialog.title")}
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-5 mt-3">
+                {/* Product info */}
+                <div className="flex items-center gap-4 p-3 bg-white/5 border border-[#333]">
+                  {buyTarget?.imageUrl ? (
+                    <img src={buyTarget.imageUrl} alt={buyTarget?.name} className="w-20 h-20 object-contain rounded" />
+                  ) : (
+                    <span className="text-5xl w-20 h-20 flex items-center justify-center">{buyTarget ? getProductIcon(buyTarget.id) : "📦"}</span>
+                  )}
+                  <div className="space-y-1">
+                    <p className={`text-foreground font-bold text-lg ${fontClass}`}>{buyTarget?.name}</p>
+                    <p className={`text-muted-foreground ${fontClass} flex items-center gap-1`}>
+                      <PixelCoin size={14} className="inline text-yellow-400" />
+                      {(buyTarget?.price ?? 0).toLocaleString()} {t("rewardShop.currency")} / {t("rewardShop.dialog.unit")}
+                    </p>
+                    <p className={`text-muted-foreground ${fontClass}`}>
+                      {t("rewardShop.stock")}: <span className="text-foreground">{buyTarget?.stock}</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quantity selector */}
+                <div className="flex items-center gap-4">
+                  <span className={`text-muted-foreground ${fontClass}`}>{t("rewardShop.dialog.qty")}:</span>
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => setBuyQty((q) => Math.max(1, q - 1))}
+                      className="w-10 h-10 border border-[#444] bg-[#1a1c1e] hover:bg-yellow-600 hover:border-yellow-500 hover:text-black text-foreground transition-colors flex items-center justify-center select-none"
+                    >
+                      <PixelMinus size={12} />
+                    </button>
+                    <input
+                      type="number"
+                      min={1}
+                      max={buyTarget?.stock ?? 1}
+                      value={buyQty}
+                      onChange={(e) => {
+                        const v = Math.max(1, Math.min(buyTarget?.stock ?? 1, Number(e.target.value)));
+                        setBuyQty(v);
+                      }}
+                      className={`w-20 h-10 text-center bg-[#1a1c1e] border-y border-[#444] text-foreground font-pixel focus:outline-none focus:border-yellow-400 ${fontClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                    />
+                    <button
+                      onClick={() => setBuyQty((q) => Math.min(buyTarget?.stock ?? 1, q + 1))}
+                      className="w-10 h-10 border border-[#444] bg-[#1a1c1e] hover:bg-yellow-600 hover:border-yellow-500 hover:text-black text-foreground transition-colors flex items-center justify-center select-none"
+                    >
+                      <PixelPlus size={12} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Total cost */}
+                <div className={`flex items-center justify-between border-t border-[#333] pt-4 ${fontClass}`}>
+                  <span className="text-muted-foreground text-lg">{t("rewardShop.dialog.total")}:</span>
+                  <span className="text-yellow-400 font-bold text-xl flex items-center gap-2">
+                    <PixelCoin size={16} className="text-yellow-400" />
+                    {((buyTarget?.price ?? 0) * buyQty).toLocaleString()} {t("rewardShop.currency")}
+                  </span>
+                </div>
+
+                {/* Insufficient points warning */}
+                {(user.points ?? 0) < (buyTarget?.price ?? 0) * buyQty && (
+                  <p className={`text-red-400 ${fontClass}`}>
+                    ⚠ {t("rewardShop.dialog.notEnough")}
+                  </p>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-2 gap-2">
+            <AlertDialogCancel
+              className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}
+            >
+              {t("rewardShop.dialog.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmBuy}
+              disabled={isRedeeming || (user.points ?? 0) < (buyTarget?.price ?? 0) * buyQty}
+              className={`bg-yellow-600 hover:bg-yellow-500 text-black border border-yellow-500 font-pixel disabled:opacity-50 disabled:cursor-not-allowed ${fontClass}`}
+            >
+              {isRedeeming ? t("rewardShop.dialog.processing") : t("rewardShop.dialog.confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

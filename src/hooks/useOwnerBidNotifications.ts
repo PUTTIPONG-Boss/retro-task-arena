@@ -53,7 +53,7 @@ export function useOwnerBidNotifications() {
         const t = tRef.current;
         queryClient.invalidateQueries({ queryKey: ['bids', quest.id] });
         const msg = t('notifications.newBid', { title: quest.title, amount: data.bidAmount });
-        addNotification(msg, 'bid', 'notifications.newBid', { title: quest.title, amount: String(data.bidAmount) });
+        addNotification(msg, 'bid', 'notifications.newBid', { title: quest.title, amount: String(data.bidAmount) }, quest.id);
         toast.info(msg, {
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
           duration: 6000,
