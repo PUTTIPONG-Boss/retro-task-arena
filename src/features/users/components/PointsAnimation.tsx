@@ -32,7 +32,7 @@ const PointsAnimation = () => {
       {/* Points text */}
       <div className="animate-points-pop">
         <span className="font-pixel text-[28px] text-accent pixel-text-shadow terminal-glow">
-          +{pointsAnimation.amount} GP
+          +{pointsAnimation.amount} P
         </span>
       </div>
     </div>

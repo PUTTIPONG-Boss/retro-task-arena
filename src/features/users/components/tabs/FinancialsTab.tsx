@@ -1,8 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Banknote, ShoppingBag, Filter, LayoutGrid } from "lucide-react";
 import PixelFrame from "@/components/PixelFrame";
 import PixelCoin from "@/components/icons/PixelCoin";
+import PixelBag from "@/components/icons/PixelBag";
+import PixelHourglass from "@/components/icons/PixelHourglass";
 import PixelButton from "@/components/PixelButton";
 import { Transaction } from "@/features/finance/services/finance.service";
 
@@ -19,6 +21,27 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
   const { t, i18n } = useTranslation();
   const [sortBy, setSortBy] = useState<SortOrder>("date-desc");
   const [displayLimit, setDisplayLimit] = useState<DisplayLimit>(5);
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const sortOptions: { value: SortOrder; icon: React.ReactNode; label: string }[] = [
+    { value: "date-desc", icon: <PixelHourglass size={14} />, label: t("userProfile.activity.sortNewest") },
+    { value: "date-asc",  icon: <PixelHourglass size={14} />, label: t("userProfile.activity.sortOldest") },
+    { value: "price-desc", icon: <PixelBag size={14} />, label: t("userProfile.financials.priceHigh") },
+    { value: "price-asc",  icon: <PixelBag size={14} />, label: t("userProfile.financials.priceLow") },
+  ];
+
+  const selectedSort = sortOptions.find((o) => o.value === sortBy)!;
 
   const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
@@ -63,7 +86,7 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
                 {t("userProfile.financials.currentBalance")}
               </p>
               <p className={`font-pixel text-white mt-1 ${fontClass}`}>
-                <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {userPoints.toLocaleString()} GP
+                <PixelCoin size={16} className="inline mr-1 text-yellow-400" /> {userPoints.toLocaleString()} P
               </p>
             </div>
           </div>
@@ -89,7 +112,7 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
                   </div>
                   <p className={`font-pixel text-[9px] ${tx.amount > 0 ? "text-success" : "text-destructive"} ${fontClass}`}>
                     {tx.amount > 0 ? "+" : ""}
-                    {tx.amount} GP
+                    {tx.amount} P
                   </p>
                 </div>
               ))
@@ -105,24 +128,46 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
           </h2>
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Sort Controls */}
+            {/* Sort Controls — custom dropdown so PixelBag SVG renders */}
             <div className="flex items-center gap-2">
-              <span className={`text-[16px] text-muted-foreground ${fontClass}`}>{t("userProfile.financials.sortBy")}</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOrder)}
-                className="bg-[#1a1a1b] border-2 border-[#4a3e2a] text-[#e3b86a] font-pixel text-[16px] px-2 py-1 outline-none focus:border-[#e3b86a]"
-              >
-                <option value="date-desc">🕒 {t("userProfile.activity.sortNewest")}</option>
-                <option value="date-asc">🕒 {t("userProfile.activity.sortOldest")}</option>
-                <option value="price-desc">💰 {t("userProfile.financials.priceHigh")}</option>
-                <option value="price-asc">💰 {t("userProfile.financials.priceLow")}</option>
-              </select>
+              <span className={`text-[14px] text-muted-foreground ${fontClass}`}>{t("userProfile.financials.sortBy")}</span>
+              <div ref={sortRef} className="relative">
+                {/* Trigger */}
+                <button
+                  onClick={() => setSortOpen((v) => !v)}
+                  className="flex items-center gap-2 bg-[#1a1a1b] border-2 border-[#4a3e2a] text-[#e3b86a] font-pixel text-[14px] px-2 py-1 outline-none hover:border-[#e3b86a] transition-colors min-w-[140px] justify-between"
+                >
+                  <span className="flex items-center gap-1">
+                    {selectedSort.icon}
+                    {selectedSort.label}
+                  </span>
+                  <span className="ml-1 text-[10px]">{sortOpen ? "▲" : "▼"}</span>
+                </button>
+                {/* Dropdown list */}
+                {sortOpen && (
+                  <div className="absolute z-50 top-full left-0 mt-1 w-full bg-[#1a1a1b] border-2 border-[#4a3e2a] shadow-lg">
+                    {sortOptions.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => { setSortBy(opt.value); setSortOpen(false); }}
+                        className={`w-full flex items-center gap-2 px-2 py-1 font-pixel text-[14px] text-left transition-colors ${
+                          sortBy === opt.value
+                            ? "bg-[#4a3e2a] text-[#e3b86a]"
+                            : "text-[#e3b86a] hover:bg-[#2a2018]"
+                        }`}
+                      >
+                        {opt.icon}
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Display Limit Controls */}
             <div className="flex items-center gap-2">
-              <span className={`text-[16px] text-muted-foreground font-pixel ${fontClass}`}>
+              <span className={`text-[14px] text-muted-foreground font-pixel ${fontClass}`}>
                 {t("userProfile.financials.displayLimit")}
               </span>
               <div className="flex gap-1">
@@ -130,7 +175,7 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
                   <button
                     key={limit}
                     onClick={() => setDisplayLimit(limit as DisplayLimit)}
-                    className={`font-pixel text-[16px] px-2 py-1 border-2 transition-all ${
+                    className={`font-pixel text-[14px] px-2 py-1 border-2 transition-all ${
                       displayLimit === limit
                         ? "bg-[#e3b86a] border-[#e3b86a] text-[#1a1a1b]"
                         : "bg-[#1a1a1b] border-[#4a3e2a] text-[#8a8a8a] hover:border-[#8a8a8a]"

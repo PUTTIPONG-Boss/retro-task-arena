@@ -167,7 +167,7 @@ const QuestsTab: React.FC<QuestsTabProps> = ({ user, quests }) => {
                       i18n.language === "th" ? "text-[14px]" : "text-[12px]"
                     )}>
                       <PixelCoin size={14} />
-                      <span>{q.rewardPoints} GP</span>
+                      <span>{q.rewardPoints} P</span>
                     </div>
                   </div>
                 </div>

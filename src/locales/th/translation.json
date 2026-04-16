@@ -241,6 +241,8 @@
     "noSkills": "ยังไม่มีทักษะที่ระบุ",
     "btn": {
       "quests": "เควสต์",
+      "activeQuests": "เควสต์ที่รับอยู่",
+      "postedQuests": "เควสต์ที่สร้าง",
       "financials": "การเงิน",
       "activity": "กิจกรรม"
     },

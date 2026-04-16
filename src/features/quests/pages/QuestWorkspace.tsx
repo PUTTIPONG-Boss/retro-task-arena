@@ -309,7 +309,7 @@ const QuestWorkspace = () => {
           <PixelFrame>
             <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>{t("questWorkspace.sidebar.statusReport")}</h3>
             <div className="space-y-4">
-              <span className={`font-pixel text-accent ${fontClass}`}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} GP</span>
+              <span className={`font-pixel text-accent ${fontClass}`}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} P</span>
               <div className="flex justify-between items-center">
                 <span className={`text-muted-foreground uppercase ${fontClass}`}>{t("questWorkspace.sidebar.estimated")}</span>
                 <span className={`text-foreground ${fontClass}`}>{quest.estimatedTime}</span>

@@ -239,6 +239,8 @@
     "noSkills": "No skills added yet",
     "btn": {
       "quests": "QUESTS",
+      "activeQuests": "ACTIVE QUESTS",
+      "postedQuests": "POSTED QUESTS",
       "financials": "FINANCIALS",
       "activity": "ACTIVITY"
     },
@@ -253,7 +255,7 @@
       "all": "ALL",
       "priceHigh": "HIGH -> LOW",
       "priceLow": "LOW -> HIGH",
-      "total" : "TOTAL"
+      "total": "TOTAL"
     },
     "activity": {
       "title": "Your Activity Feed",
@@ -407,7 +409,6 @@
       "processing": "Processing..."
     }
   },
-
   "createProduct": {
     "back": "BACK",
     "title": "Add New Product",
@@ -473,7 +474,6 @@
     "marquee": "✦ Legendary valuable items ✦ Rare merchandise ✦ Limited Edition Items ✦ Exclusive Rewards ✦",
     "description": "Trade your hard-earned points for items."
   },
-
   "admin": {
     "juniorpage": {
       "manage": "Manage Juniors",

@@ -63,12 +63,12 @@ const SubmitBid = () => {
           Quest: {quest.title}
         </p>
         <p className="font-pixel text-[9px] text-accent pixel-text-shadow mb-6">
-          Base Reward: <Coins size={14} className="inline mr-1 text-yellow-400" /> {quest.rewardPoints} GP
+          Base Reward: <Coins size={14} className="inline mr-1 text-yellow-400" /> {quest.rewardPoints} P
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="font-pixel text-[9px] text-foreground block mb-2">Requested Reward (GP)</label>
+            <label className="font-pixel text-[9px] text-foreground block mb-2">Requested Reward (P)</label>
             <PixelInput type="number" placeholder={String(quest.rewardPoints)} value={points} onChange={(e) => setPoints(e.target.value)} required />
           </div>
 
