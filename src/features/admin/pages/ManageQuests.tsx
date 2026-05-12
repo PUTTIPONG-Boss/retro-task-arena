@@ -277,12 +277,17 @@ const ManageQuest = () => {
               </tr>
             ) : (
               filteredQuests.map((quest: any) => (
-                <tr key={quest.id} className="border-b border-[#333]/30 hover:bg-white/5 transition-colors">
+                <tr 
+                  key={quest.id} 
+                  className="border-b border-[#333]/30 hover:bg-white/5 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/quest/${quest.id}`)}
+                >
                   <td className="p-3 text-center">
                     <input
                       type="checkbox"
                       checked={selectedIds.has(quest.id)}
                       onChange={() => handleSelectOne(quest.id)}
+                      onClick={(e) => e.stopPropagation()}
                       className="w-4 h-4 cursor-pointer accent-yellow-400"
                     />
                   </td>
@@ -323,7 +328,10 @@ const ManageQuest = () => {
                   <td className="p-3">
                     <div className="flex items-center justify-center gap-1">
                       <PixelButton
-                        onClick={() => navigate(`/quest/${quest.id}/edit`)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/quest/${quest.id}/edit`);
+                        }}
                         variant="gold"
                         size="sm"
                         className={`${fontClass}`}
@@ -331,7 +339,10 @@ const ManageQuest = () => {
                         {t("admin.questspage.edit")}
                       </PixelButton>
                       <PixelButton
-                        onClick={() => handleDelete(quest.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(quest.id);
+                        }}
                         variant="danger"
                         size="sm"
                         className={`text-white-400 hover:text-white-300 ${fontClass}`}

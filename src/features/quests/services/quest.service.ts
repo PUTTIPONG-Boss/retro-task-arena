@@ -15,6 +15,12 @@ interface BackendBid {
   waitDuration: string;
   note: string;
   status: string;
+  teamMembers?: {
+    userId: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+  }[];
   createdAt: string;
 }
 
@@ -30,6 +36,7 @@ const mapBackendBid = (b: BackendBid): Bid => ({
   waitDuration: b.waitDuration,
   note: b.note,
   status: b.status as Bid['status'],
+  teamMembers: b.teamMembers,
   createdAt: b.createdAt,
   githubUrl: '',
   requestedPoints: 0,
@@ -152,9 +159,9 @@ export const useUpdateQuestStatus = () => {
       // Map frontend status to backend enum (uppercase snake_case)
       const backendStatus = status === "review" ? "IN_REVIEW" : status.toUpperCase().replace("-", "_");
 
-      const response = await apiClient.patch(`/tasks/${id}/status`, { 
+      const response = await apiClient.patch(`/tasks/${id}/status`, {
         status: backendStatus,
-        comment: comment 
+        comment: comment
       });
       return response.data;
     },
@@ -223,7 +230,7 @@ export const useUpdateBid = () => {
     }: {
       taskId: string;
       bidId: string;
-      payload: { user_id: string; bid_amount: number; wait_duration: string; note?: string };
+      payload: SubmitBidPayload;
     }) => {
       const response = await apiClient.patch(`/tasks/${taskId}/bids/${bidId}`, payload);
       return response.data;
@@ -269,5 +276,17 @@ export const useGetTaskLogs = (taskId: string | undefined) => {
       return response.data?.data || [];
     },
     enabled: !!taskId,
+  });
+};
+
+export const useGetMyTasks = () => {
+  return useQuery({
+    queryKey: ['my-tasks'],
+    queryFn: async (): Promise<Quest[]> => {
+      const response = await apiClient.get('/user/tasks');
+      const raw = response.data;
+      const tasks: BackendTask[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
+      return tasks.map(mapTaskToQuest);
+    },
   });
 };

@@ -20,7 +20,7 @@ const ActiveQuestsTab: React.FC<ActiveQuestsTabProps> = ({ user, quests }) => {
 
   const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
-  const myQuests = quests.filter((q) => q.assignedTo === user.id);
+  const myQuests = quests;
   const filteredMyQuests = myQuests
     .filter((q) => {
       if (activeFilter === "in-progress") return q.status === "in-progress";
@@ -36,7 +36,7 @@ const ActiveQuestsTab: React.FC<ActiveQuestsTabProps> = ({ user, quests }) => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "review": return <Hourglass size={14} className="text-yellow-400" />;
+      case "review": return <Hourglass size={14} className="text-purple-400" />;
       case "completed": return <CheckCircle2 size={14} className="text-success" />;
       default: return <Clock size={14} className="text-accent" />;
     }
@@ -112,7 +112,7 @@ const ActiveQuestsTab: React.FC<ActiveQuestsTabProps> = ({ user, quests }) => {
                         <span className={cn(
                           "font-pixel uppercase",
                           i18n.language === "th" ? "text-[14px]" : "text-[14px]",
-                          q.status === 'review' ? "text-yellow-400" :
+                          q.status === 'review' ? "text-purple-400" :
                             q.status === 'completed' ? "text-success" : "text-accent"
                         )}>
                           {getStatusLabel(q.status)}

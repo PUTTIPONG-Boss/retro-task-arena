@@ -1,5 +1,12 @@
 export type QuestStatus = "open" | "bidding" | "in-progress" | "review" | "completed";
 
+export interface TeamMember {
+  userId: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+}
+
 export interface Bid {
   id: string;
   taskId: string;
@@ -17,6 +24,7 @@ export interface Bid {
   waitDuration?: string;
   note?: string;
   status?: "PENDING" | "ACCEPTED" | "REJECTED" | string;
+  teamMembers?: TeamMember[];
   createdAt?: string;
 }
 

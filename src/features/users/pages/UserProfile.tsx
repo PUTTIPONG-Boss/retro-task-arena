@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useUserStore } from "@/features/users/store/userStore";
-import { useGetQuests } from "@/features/quests/services/quest.service";
+import { useGetQuests, useGetMyTasks } from "@/features/quests/services/quest.service";
 import { getTransactions, Transaction } from "@/features/finance/services/finance.service";
 import { getMyBids, MyBid } from "@/features/finance/services/application.service";
 import { useGetMyOrders } from "@/features/rewards/services/order.service";
@@ -31,6 +31,7 @@ const isSeniorOrAdmin = (role: string) => {
 const UserProfile = () => {
   const user = useUserStore((state) => state.user);
   const { data: quests = [] } = useGetQuests();
+  const { data: myTasks = [] } = useGetMyTasks();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [bids, setBids] = useState<MyBid[]>([]);
 
@@ -96,7 +97,7 @@ const UserProfile = () => {
       )}
 
       {activeTab === "activeQuests" && (
-        <ActiveQuestsTab user={user} quests={quests} />
+        <ActiveQuestsTab user={user} quests={myTasks} />
       )}
 
       {activeTab === "postedQuests" && (

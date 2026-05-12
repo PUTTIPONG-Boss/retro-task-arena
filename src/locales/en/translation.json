@@ -76,6 +76,7 @@
     },
     "viewmode": {
       "yourbidsub": "Your bid has been submitted!",
+      "teambidsub": "Your team's bid has been submitted!",
       "amount": "Amount",
       "GP": "Points",
       "duration": "Duration",
@@ -100,7 +101,8 @@
       "fillFields": "Please fill in all required bid fields.",
       "bidSubmitted": "Bid submitted successfully!",
       "bidAccepted": "Bid accepted! Quest is now In Progress.",
-      "limitReached": "Maximum 10 team members reached"
+      "limitReached": "Maximum 10 team members reached",
+      "teamRequired": "Please select at least 1 team member for team quests."
     },
     "editbid": {
       "editbids": "Edit Your Bid",
@@ -134,7 +136,12 @@
       "rating": "Satisfaction Rating",
       "comment": "Feedback",
       "noReview": "No review available for this quest."
-    }
+    },
+    "teamMembers": "Team Members",
+    "teamMember": "Team Member",
+    "member": "Member",
+    "members": "Members",
+    "teamLeader": "Team Leader"
   },
   "questWorkspace": {
     "loading": "Entering Workspace...",
