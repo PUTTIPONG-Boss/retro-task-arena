@@ -49,7 +49,7 @@ const ActiveQuestsTab: React.FC<ActiveQuestsTabProps> = ({ user, quests }) => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8">
       <PixelFrame className="relative overflow-visible">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-pixel-shadow/10 pb-4">
           <h2 className={`text-foreground pixel-text-shadow font-pixel ${fontClass} flex items-center gap-2`}>

@@ -56,6 +56,7 @@ interface BackendTask {
   createdAt: string;
   updatedAt: string;
   ownerName: string;
+  workType: string;
 }
 
 interface FetchTasksResponse {
@@ -93,6 +94,7 @@ const mapTaskToQuest = (task: BackendTask): Quest => {
     bids: [], // TODO: Bids not yet supported by backend API
     assignedTo: task.assigneeId || undefined,
     skills: task.skills || "General",
+    workType: task.workType,
     createdAt: task.createdAt,
   };
 };

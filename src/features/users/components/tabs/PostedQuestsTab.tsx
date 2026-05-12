@@ -37,7 +37,7 @@ const PostedQuestsTab: React.FC<PostedQuestsTabProps> = ({ user, quests }) => {
     });
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8">
       <PixelFrame className="border-muted-foreground/20">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-pixel-shadow/10 pb-4">
           <h2 className={`font-pixel text-foreground pixel-text-shadow ${fontClass} flex items-center gap-2`}>

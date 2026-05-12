@@ -131,10 +131,10 @@ const QuestWorkspace = () => {
         revieweeId: quest.assignedTo,
         rating: rating,
         comment: feedback,
-        qualityScore: rating, // Simple mapping for now
-        timelinessScore: rating,
-        behaviorScore: rating,
         pointsAwarded: quest.rewardPoints,
+        qualityScore: rating,
+        timelinessScore: rating,
+        behaviorScore: rating
       });
 
       toast.success(t("questWorkspace.toasts.approved"), {

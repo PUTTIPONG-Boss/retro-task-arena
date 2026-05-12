@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
@@ -14,6 +14,8 @@ import {
   useGetQuestById,
   useUpdateQuest,
 } from "../services/quest.service";
+import { useGetAllUsers } from "@/features/users/services/user.service";
+import { UserProfile } from "@/features/users/types";
 import { toast } from "sonner";
 import { Coins } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -76,6 +78,48 @@ const QuestDetail = () => {
   const [editNote, setEditNote] = useState("");
   const updateBid = useUpdateBid();
 
+  // --- Team recruitment state ---
+  const [selectedTeam, setSelectedTeam] = useState<UserProfile[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  const { data: searchResults = [] } = useGetAllUsers(debouncedQuery);
+
+  const filteredUsers = searchQuery.trim()
+    ? searchResults.filter(u => {
+      const query = searchQuery.toLowerCase();
+      const nameTh = `${u.firstNameTh || ""} ${u.lastNameTh || ""}`.toLowerCase();
+      const nameEn = `${u.firstNameEn || ""} ${u.lastNameEn || ""}`.toLowerCase();
+      const username = (u.username || "").toLowerCase();
+
+      return (nameTh.includes(query) || nameEn.includes(query) || username.includes(query)) &&
+        !selectedTeam.some(m => m.id === u.id) &&
+        u.id !== user?.id;
+    })
+    : [];
+
+  const handleAddMember = (u: UserProfile) => {
+    if (selectedTeam.length >= 10) {
+      toast.error(t("questDetail.toast.limitReached") || "Maximum 10 team members reached", { 
+        style: { fontFamily: '"TA_8bit"', fontSize: '14px' } 
+      });
+      return;
+    }
+    setSelectedTeam([...selectedTeam, u]);
+    setSearchQuery("");
+  };
+
+  const handleRemoveMember = (userId: string) => {
+    setSelectedTeam(selectedTeam.filter(m => m.id !== userId));
+  };
+
   const isSeniorOrAdminUser = isSeniorOrAdmin(user?.role || "");
 
   const isOwner = user?.id === quest?.providerId;
@@ -119,6 +163,11 @@ const QuestDetail = () => {
       toast.error(t("questDetail.toast.fillFields"), { style: toastStyle });
       return;
     }
+
+    if (quest.workType === "TEAM" && selectedTeam.length === 0) {
+      toast.error(t("questDetail.toast.teamRequired") || "Please select at least one team member for this team quest", { style: toastStyle });
+      return;
+    }
     try {
       await submitBid.mutateAsync({
         taskId: quest.id,
@@ -127,6 +176,8 @@ const QuestDetail = () => {
           bid_amount: bidAmount,
           wait_duration: waitDuration,
           note,
+          type: selectedTeam.length > 0 ? "TEAM" : "INDIVIDUAL",
+          team_members: selectedTeam.map(m => m.id),
         },
       });
       toast.success(t("questDetail.toast.bidSubmitted"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
@@ -216,9 +267,16 @@ const QuestDetail = () => {
         <div className="lg:col-span-2 space-y-6">
           <PixelFrame>
             <div className="flex items-center justify-between mb-3">
-              <span className={`font-pixel uppercase tracking-widest text-muted-foreground ${fontClass}`}>
-                {quest.category}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className={`font-pixel uppercase tracking-widest text-muted-foreground ${fontClass}`}>
+                  {quest.category}
+                </span>
+                {quest.workType && (
+                  <span className={`font-pixel uppercase text-accent ${fontClass}`}>
+                    [{t(`createQuest.workTypes.${quest.workType.toUpperCase()}`)}]
+                  </span>
+                )}
+              </div>
               <span className={`font-pixel uppercase ${statusColor[quest.status] || "text-success"} ${fontClass}`}>
                 ● {t(`questDetail.status.${getStatusKey(quest.status)}`)}
               </span>
@@ -265,7 +323,7 @@ const QuestDetail = () => {
               <h2 className={`font-pixel text-accent pixel-text-shadow mb-4 flex items-center gap-2 ${fontClass}`}>
                 🏆 {t("questDetail.finalReview.title")}
               </h2>
-              
+
               {reviewsLoading ? (
                 <p className={`font-pixel text-muted-foreground animate-pulse ${fontClass}`}>{t("questBoard.loading")}</p>
               ) : reviews.length > 0 ? (
@@ -360,8 +418,105 @@ const QuestDetail = () => {
           {/* REGULAR USER VIEW: see only count + submit bid */}
           {!isOwner && quest.status === "open" && (
             <PixelFrame>
+              {/* Recruitment Section */}
+              {(quest.workType === "TEAM" || quest.workType === "BOTH") && (
+                <div className="mb-6 border-b-2 border-border pb-6">
+                  <h3 className={`font-pixel text-accent mb-1 flex items-center gap-2 ${fontClass}`}>
+                    <PixelUsers size={20} className="text-gold" /> Recruit Team Members ({selectedTeam.length}/10)
+                  </h3>
+                  <p className={`text-[12px] text-muted-foreground font-pixel mb-4 ${fontClass}`}>
+                    {t("questDetail.recruitmentNote") || "* คนที่ยื่นบิดจะเป็นหัวหน้าทีม"}
+                  </p>
+
+                  <div className="relative mb-4 flex items-center">
+                    <input
+                      type="text"
+                      placeholder="Search teammates by name (Thai/English)..."
+                      className={`w-full bg-background border-2 border-border px-3 py-2 pr-10 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-3 text-red-500 hover:text-red-400 transition-colors"
+                        title="Clear search"
+                      >
+                        <PixelX size={14} color="currentColor" />
+                      </button>
+                    )}
+
+                    {searchQuery && filteredUsers.length > 0 && (
+                      <div className="absolute z-50 w-full bg-secondary border-2 border-border mt-1 top-full max-h-60 overflow-y-auto shadow-xl">
+                        {filteredUsers.map((u) => (
+                          <div
+                            key={u.id}
+                            className="p-3 hover:bg-muted cursor-pointer border-b border-border last:border-0 group"
+                            onClick={() => handleAddMember(u)}
+                          >
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <p className="font-pixel text-foreground group-hover:text-gold transition-colors">
+                                  {u.username}
+                                </p>
+                                <p className="text-[14px] text-muted-foreground font-pixel">
+                                  {u.firstNameTh} {u.lastNameTh} {u.firstNameEn && u.lastNameEn && `(${u.firstNameEn} ${u.lastNameEn})`}
+                                </p>
+                              </div>
+                              <div className="text-right text-[14px] font-pixel text-muted-foreground">
+                                <p>Lvl {u.level}</p>
+                                <p>★ {u.rating.toFixed(1)}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {selectedTeam.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                      {selectedTeam.map((u) => (
+                        <div
+                          key={u.id}
+                          className="relative pixel-border border-accent bg-secondary/50 p-4 animate-pixel-fade-in"
+                        >
+                          <button
+                            onClick={() => handleRemoveMember(u.id)}
+                            className="absolute -top-2 -right-2 bg-background border-2 border-border p-1 text-muted-foreground hover:text-red-400 transition-colors z-10"
+                            title="Remove member"
+                          >
+                            <PixelX size={12} />
+                          </button>
+
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                              <p className="font-pixel text-accent text-[14px]">
+                                {u.username}
+                              </p>
+                              <div className="text-[12px] font-pixel text-foreground/90">
+                                <p>{u.firstNameTh} {u.lastNameTh}</p>
+                                {u.firstNameEn && u.lastNameEn && (
+                                  <p className="text-muted-foreground text-[10px]">
+                                    {u.firstNameEn} {u.lastNameEn}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right text-[12px] font-pixel text-muted-foreground">
+                              <p className="text-gold">Lvl {u.level}</p>
+                              <p className="text-yellow-400">★ {u.rating.toFixed(1)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <h2 className={`font-pixel text-foreground pixel-text-shadow mb-2 flex items-center gap-2 ${fontClass}`}>
-                <PixelUsers size={20} color="currentColor" className="text-gold"/> {bids.length} {t("questDetail.ownerbids")}
+                <PixelUsers size={20} color="currentColor" className="text-gold" /> {bids.length} {t("questDetail.ownerbids")}
               </h2>
               <p className={`text-muted-foreground mb-4 ${fontClass}`}>
                 {t("questDetail.bidsdetail")}

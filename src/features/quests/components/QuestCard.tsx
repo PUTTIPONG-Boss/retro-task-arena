@@ -125,16 +125,21 @@ const QuestCard = ({ quest }: QuestCardProps) => {
             {/* Header: หมวดหมู่ และ สถานะ */}
             <div className="flex items-center justify-between border-b border-[#332d26] pb-2">
               <span className={cn(
-                "uppercase tracking-widest",
-                i18n.language === "th" ? "text-[12px]" : "text-[10px]"
+                "uppercase tracking-widest flex items-center gap-1",
+                i18n.language === "th" ? "text-[14px]" : "text-[14px]"
               )} style={{ color: theme.muted }}>
-                [{quest.category}]
+                <span>[{quest.category}]</span>
+                {quest.workType && (
+                  <span style={{ color: theme.accent }}>
+                    [{t(`createQuest.workTypes.${quest.workType.toUpperCase()}`)}]
+                  </span>
+                )}
               </span>
 
               <motion.span
                 className={cn(
                   "uppercase flex items-center gap-1",
-                  i18n.language === "th" ? "text-[10px]" : "text-[12px]"
+                  i18n.language === "th" ? "text-[14px]" : "text-[14px]"
                 )}
                 style={{ color: status.color, textShadow: "1px 1px 0px #000" }}
                 animate={status.animate ? { opacity: [0.7, 1, 0.7] } : {}}

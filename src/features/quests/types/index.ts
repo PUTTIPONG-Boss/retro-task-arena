@@ -35,6 +35,8 @@ export interface SubmitBidPayload {
   bid_amount: number;
   wait_duration: string;
   note?: string;
+  type: string;
+  team_members?: string[];
 }
 
 export interface Quest {
@@ -59,6 +61,7 @@ export interface Quest {
   bids: Bid[];
   assignedTo?: string;
   skills?: string;
+  workType?: string;
   createdAt: string;
 }
 
@@ -70,6 +73,7 @@ export interface CreateQuestPayload {
   type: string;
   skills: string;
   difficulty: string;
+  work_type: string;
   git_repo_url?: string;
   req_branch_name?: string;
 }

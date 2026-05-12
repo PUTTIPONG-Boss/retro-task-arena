@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import { getErrorMessage } from "@/lib/errorUtils";
+import { cn } from "@/lib/utils";
 
 const difficulties: { label: string; value: number }[] = [
   { label: "Easy", value: 1 },
@@ -47,6 +48,7 @@ const CreateQuest = () => {
   const [category, setCategory] = useState("Frontend");
   const [repoUrl, setRepoUrl] = useState("");
   const [branchName, setBranchName] = useState("");
+  const [workType, setWorkType] = useState("INDIVIDUAL");
 
   const [selectedSkills, setSelectedSkills] = useState<string[]>(["General"]);
   const [customSkill, setCustomSkill] = useState("");
@@ -101,6 +103,7 @@ const CreateQuest = () => {
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
+      work_type: workType,
       git_repo_url: repoUrl || undefined,
       req_branch_name: branchName || undefined,
     };
@@ -272,6 +275,24 @@ const CreateQuest = () => {
                 ))}
               </div>
             </div>
+          </div>
+
+          <div>
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createQuest.labels.workType")}
+            </label>
+            <select
+              value={workType}
+              onChange={(e) => setWorkType(e.target.value)}
+              className={cn(
+                "w-full bg-background text-foreground font-pixel-body text-lg px-3 py-2 pixel-inset focus:border-primary outline-none",
+                fontClass
+              )}
+            >
+              <option value="INDIVIDUAL" className="bg-background text-foreground">{t("createQuest.workTypes.INDIVIDUAL")}</option>
+              <option value="TEAM" className="bg-background text-foreground">{t("createQuest.workTypes.TEAM")}</option>
+              <option value="BOTH" className="bg-background text-foreground">{t("createQuest.workTypes.BOTH")}</option>
+            </select>
           </div>
 
           {/* Skill Selection Section */}
