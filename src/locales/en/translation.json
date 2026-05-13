@@ -39,7 +39,18 @@
       "FEATURE": "FEATURE"
     },
     "category": "Category",
-    "queststatus": "Status",
+    "sort": "Sort By",
+    "sorts": {
+      "newest": "Newest",
+      "oldest": "Oldest"
+    },
+    "difficulties": {
+      "all": "ALL",
+      "easy": "EASY",
+      "medium": "MEDIUM",
+      "hard": "HARD"
+    },
+    "difficulty": "Difficulty",
     "filter": "Filter"
   },
   "questCard": {
@@ -56,6 +67,7 @@
     "back": "Back to Board",
     "edit": "EDIT QUEST",
     "questdetailboard": "Quest Details",
+    "recruitmentNote": "* The person who submits the bid will be the team leader",
     "OwnerQuest": {
       "aventurerbids": "Adventurer Bids",
       "nobid": "No bids yet. Share this quest with adventurers!",
@@ -64,6 +76,7 @@
     },
     "viewmode": {
       "yourbidsub": "Your bid has been submitted!",
+      "teambidsub": "Your team's bid has been submitted!",
       "amount": "Amount",
       "GP": "Points",
       "duration": "Duration",
@@ -87,7 +100,9 @@
       "mustLogin": "You must be logged in to submit a bid.",
       "fillFields": "Please fill in all required bid fields.",
       "bidSubmitted": "Bid submitted successfully!",
-      "bidAccepted": "Bid accepted! Quest is now In Progress."
+      "bidAccepted": "Bid accepted! Quest is now In Progress.",
+      "limitReached": "Maximum 10 team members reached",
+      "teamRequired": "Please select at least 1 team member for team quests."
     },
     "editbid": {
       "editbids": "Edit Your Bid",
@@ -121,7 +136,12 @@
       "rating": "Satisfaction Rating",
       "comment": "Feedback",
       "noReview": "No review available for this quest."
-    }
+    },
+    "teamMembers": "Team Members",
+    "teamMember": "Team Member",
+    "member": "Member",
+    "members": "Members",
+    "teamLeader": "Team Leader"
   },
   "questWorkspace": {
     "loading": "Entering Workspace...",
@@ -313,7 +333,13 @@
       "repoUrlPlaceholder": "https://github.com/org/repo",
       "branchName": "Required Branch Name",
       "branchNamePlaceholder": "e.g. feature/quest-42",
-      "requiredSkills": "Required Skills"
+      "requiredSkills": "Required Skills",
+      "workType": "Work Type"
+    },
+    "workTypes": {
+      "INDIVIDUAL": "Individual",
+      "TEAM": "Team",
+      "BOTH": "Both"
     },
     "placeholders": {
       "questTitle": "e.g. Slay the Authentication Dragon",

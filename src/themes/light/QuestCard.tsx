@@ -142,10 +142,13 @@ const QuestCardLight = ({ quest }: QuestCardProps) => {
             {/* Header */}
             <div className="flex items-center justify-between pb-2" style={{ borderBottom: `1px solid ${theme.divider}` }}>
               <span
-                className={cn("uppercase tracking-widest", i18n.language === "th" ? "text-[16px]" : "text-[16px]")}
+                className={cn("uppercase tracking-widest flex items-center gap-1", i18n.language === "th" ? "text-[16px]" : "text-[16px]")}
                 style={{ color: theme.muted }}
               >
                 [{quest.category}]
+                {quest.workType && (
+                  <span style={{ color: theme.accent }}>[{t(`createQuest.workTypes.${quest.workType.toUpperCase()}`)}]</span>
+                )}
               </span>
               <motion.span
                 className={cn("uppercase flex items-center gap-1", i18n.language === "th" ? "text-[18px]" : "text-[18px]")}

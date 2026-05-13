@@ -17,19 +17,40 @@ import { useThemeStore } from "@/store/themeStore";
 const QuestBoard = () => {
   const user = useAuthStore((s) => s.user);
 
-  const { data: quests = [], isLoading, isError } = useGetQuests();
+  const { data: quests = [], isLoading } = useGetQuests();
   const { t, i18n } = useTranslation();
 
-  // States
+  // Pending States (what the user sees in the UI)
   const [filter, setFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("open");
+  const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
+  const [sortFilter, setSortFilter] = useState<string>("newest");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Applied States (what is actually used to filter the list)
+  const [appliedFilters, setAppliedFilters] = useState({
+    category: "all",
+    difficulty: "all",
+    sort: "newest",
+    search: "",
+  });
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
   const { theme: appTheme } = useThemeStore();
   const isLight = appTheme === "light";
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[14px]";
+
+  // Handle applying filters
+  const handleApplyFilters = () => {
+    setAppliedFilters({
+      category: filter,
+      difficulty: difficultyFilter,
+      sort: sortFilter,
+      search: searchQuery,
+    });
+    setIsFilterOpen(false);
+  };
 
   // ปิด popup เมื่อคลิกข้างนอก
   useEffect(() => {
@@ -38,11 +59,7 @@ const QuestBoard = () => {
         filterRef.current &&
         !filterRef.current.contains(event.target as Node)
       ) {
-        setIsFilterOpen((prev) => {
-          if (prev) {
-          }
-          return false;
-        });
+        setIsFilterOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -50,23 +67,54 @@ const QuestBoard = () => {
   }, []);
 
   const categories = ["all", "frontend", "backend", "BUG FIX", "FEATURE"];
-  const statuses = ["open", "in_progress", "completed", "all"];
+  const sorts = ["newest", "oldest"];
+  const difficulties = ["all", "easy", "medium", "hard"];
+  const difficultyMap: Record<string, number> = {
+    easy: 1,
+    medium: 3,
+    hard: 5,
+  };
+
   const isSeniorOrAdminUser = isSeniorOrAdmin(user?.role || "");
 
-  const filtered = quests.filter((q) => {
-    const catMatch =
-      filter === "all" || q.category?.toLowerCase() === filter.toLowerCase();
-    const statusMatch =
-      statusFilter === "all"
-        ? true
-        : statusFilter === "open"
-          ? (q.status === "open" || q.status === "bidding" || q.status === "in-progress" || q.status === "review")
-          : q.status === (statusFilter === "in_progress" ? "in-progress" : statusFilter);
-    const searchMatch =
-      searchQuery.trim() === "" ||
-      q.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return catMatch && statusMatch && searchMatch;
-  });
+  const filtered = quests
+    .filter((q) => {
+      // Hide completed quests
+      if (q.status === "completed") return false;
+
+      const catMatch =
+        appliedFilters.category === "all" ||
+        q.category?.toLowerCase() === appliedFilters.category.toLowerCase();
+
+      const diffMatch =
+        appliedFilters.difficulty === "all" ||
+        q.difficulty === difficultyMap[appliedFilters.difficulty];
+
+      const searchMatch =
+        appliedFilters.search.trim() === "" ||
+        q.title.toLowerCase().includes(appliedFilters.search.toLowerCase());
+
+      return catMatch && diffMatch && searchMatch;
+    })
+    .sort((a, b) => {
+      // 1. Status Priority: In Review and In Progress come first
+      const getStatusPriority = (status: string) => {
+        if (status === "review" || status === "in-progress") return 0;
+        return 1;
+      };
+
+      const priorityA = getStatusPriority(a.status);
+      const priorityB = getStatusPriority(b.status);
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // 2. Date Sort (within same priority)
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return appliedFilters.sort === "newest" ? dateB - dateA : dateA - dateB;
+    });
 
   return (
     <div className="min-h-screen">
@@ -81,14 +129,20 @@ const QuestBoard = () => {
                 ? "bg-[#E8CFA0]/90 border-[#8B5A20] group-focus-within:border-[#5C3010]"
                 : "bg-background/50 border-amber-400 group-focus-within:border-amber-300"
             )}></div>
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm z-10">
+            <button
+              onClick={handleApplyFilters}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-sm z-20 cursor-pointer hover:scale-110 transition-transform active:scale-95"
+            >
               <PixelSearch size={20} className={cn("inline mr-1", isLight ? "text-[#6B3810]" : "text-yellow-400")} />
-            </span>
+            </button>
             <PixelInput
               type="text"
               placeholder={t("questBoard.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleApplyFilters();
+              }}
               className={cn(
                 `w-full pl-10 pr-4 py-3 bg-transparent border-2 focus:ring-0 font-pixel ${fontClass}`,
                 isLight
@@ -106,7 +160,11 @@ const QuestBoard = () => {
               }}
               className="font-pixel flex items-center gap-2 h-full"
             >
-              {isFilterOpen ? <X size={18} strokeWidth={2.5} /> : <ListFilter size={18} />}
+              {isFilterOpen ? (
+                <X size={18} strokeWidth={2.5} />
+              ) : (
+                <ListFilter size={18} />
+              )}
               <span className={`hidden sm:inline ${fontClass}`}>
                 {t("questBoard.filter")}
               </span>
@@ -118,37 +176,77 @@ const QuestBoard = () => {
                 isLight ? "bg-[#E8CFA0]" : "bg-[#1a1a1a]"
               )}>
                 <div className="space-y-6">
+                  {/* Sorting */}
                   <div>
                     <p className={cn(
                       "font-pixel mb-3 uppercase pb-1",
                       isLight ? "text-[#3D1C08] border-b border-[#8B5A20]/40" : "text-accent border-b border-white/10",
                       i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                     )}>
-                      {t("questBoard.queststatus")}
+                      {t("questBoard.sort")}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {statuses.map((s) => (
+                      {sorts.map((s) => (
                         <button
                           key={s}
-                          onClick={() => setStatusFilter(s)}
+                          onClick={() => setSortFilter(s)}
                           className={cn(
                             "font-pixel px-2 py-1 border-2 transition-colors",
                             isLight
-                              ? statusFilter === s
+                              ? sortFilter === s
                                 ? "border-[#6B3010] text-[#6B3010] bg-[#C89A50]"
                                 : "border-[#B8903A] text-[#8B5A30] hover:border-[#6B3010]"
-                              : statusFilter === s
+                              : sortFilter === s
                                 ? "border-gold text-gold bg-gold/10"
                                 : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
                             i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                           )}
                         >
-                          {t(`questBoard.queststatuses.${s}`)}
+                          {t(`questBoard.sorts.${s}`)}
                         </button>
                       ))}
                     </div>
                   </div>
 
+                  {/* Difficulty */}
+                  <div>
+                    <p
+                      className={cn(
+                        "font-pixel mb-3 uppercase pb-1",
+                        isLight ? "text-[#3D1C08] border-b border-[#8B5A20]/40" : "text-accent border-b border-white/10",
+                        i18n.language === "th" ? "text-[16px]" : "text-[16px]"
+                      )}
+                    >
+                      {t("questBoard.difficulty")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {difficulties.map((d) => (
+                        <button
+                          key={d}
+                          onClick={() => {
+                            setDifficultyFilter(d);
+                          }}
+                          className={cn(
+                            "font-pixel px-2 py-1 border-2 transition-colors",
+                            isLight
+                              ? difficultyFilter === d
+                                ? "border-[#6B3010] text-[#6B3010] bg-[#C89A50]"
+                                : "border-[#B8903A] text-[#8B5A30] hover:border-[#6B3010]"
+                              : difficultyFilter === d
+                                ? "border-gold text-gold bg-gold/10"
+                                : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                            i18n.language === "th"
+                              ? "text-[16px]"
+                              : "text-[16px]"
+                          )}
+                        >
+                          {t(`questBoard.difficulties.${d}`)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Category */}
                   <div>
                     <p className={cn(
                       "font-pixel mb-3 uppercase pb-1",
@@ -185,7 +283,7 @@ const QuestBoard = () => {
                     <PixelButton
                       variant="gold"
                       className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 ${fontClass}`}
-                      onClick={() => setIsFilterOpen(false)}
+                      onClick={handleApplyFilters}
                     >
                       <PixelSearch size={20} /> {t("questBoard.searchPlaceholder")}
                     </PixelButton>
@@ -195,8 +293,15 @@ const QuestBoard = () => {
                       className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 ${fontClass}`}
                       onClick={() => {
                         setFilter("all");
-                        setStatusFilter("open");
+                        setDifficultyFilter("all");
+                        setSortFilter("newest");
                         setSearchQuery("");
+                        setAppliedFilters({
+                          category: "all",
+                          difficulty: "all",
+                          sort: "newest",
+                          search: "",
+                        });
                         setIsFilterOpen(false);
                       }}
                     >

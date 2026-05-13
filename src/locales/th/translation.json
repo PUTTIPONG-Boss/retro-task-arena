@@ -40,7 +40,18 @@
       "FEATURE": "FEATURE"
     },
     "category": "หมวดหมู่",
-    "queststatus": "สถานะเควสต์",
+    "sort": "เรียงตาม",
+    "sorts": {
+      "newest": "ใหม่ล่าสุด",
+      "oldest": "เก่าสุด"
+    },
+    "difficulties": {
+      "all": "ทั้งหมด",
+      "easy": "ง่าย",
+      "medium": "ปานกลาง",
+      "hard": "ยาก"
+    },
+    "difficulty": "ความยาก",
     "reward": "แลกรางวัล",
     "order": "รายการสั่งซื้อ",
     "filter": "ฟิลเตอร์"
@@ -60,6 +71,7 @@
     "back": "กลับสู่กระดาน",
     "edit": "แก้ไขเควสต์",
     "questdetailboard": "รายละเอียดเควสต์",
+    "recruitmentNote": "* คนที่ยื่นบิดจะเป็นหัวหน้าทีม",
     "OwnerQuest": {
       "aventurerbids": "การยื่นข้อเสนอของนักผจญภัย",
       "nobid": "ยังไม่มีข้อเสนอ แบ่งปันเควสต์นี้ให้กับนักผจญภัย!",
@@ -68,6 +80,7 @@
     },
     "viewmode": {
       "yourbidsub": "ส่งข้อเสนอรับเควสเรียบร้อย!",
+      "teambidsub": "ส่งข้อเสนอรับเควสของทีมเรียบร้อย!",
       "amount": "จำนวนข้อเสนอ",
       "GP": "แต้ม",
       "duration": "ระยะเวลาที่ใช้",
@@ -88,7 +101,9 @@
       "mustLogin": "คุณต้องเข้าสู่ระบบก่อนยื่นข้อเสนอ",
       "fillFields": "กรุณากรอกข้อมูลการยื่นข้อเสนอให้ครบถ้วน",
       "bidSubmitted": "ยื่นข้อเสนอสำเร็จ!",
-      "bidAccepted": "ยอมรับข้อเสนอแล้ว! เควสต์เริ่มต้นแล้ว"
+      "bidAccepted": "ยอมรับข้อเสนอแล้ว! เควสต์เริ่มต้นแล้ว",
+      "teamRequired": "กรุณาเลือกสมาชิกทีมอย่างน้อย 1 คนสำหรับเควสต์ประเภททีม",
+      "limitReached": "จำกัดจำนวนสมาชิกทีมไม่เกิน 10 คน"
     },
     "editbid": {
       "editbids": "แก้ไขข้อเสนอ",
@@ -123,7 +138,12 @@
       "rating": "คะแนนความพึงพอใจ",
       "comment": "ความคิดเห็น",
       "noReview": "ยังไม่มีการรีวิวกิจกรรมนี้"
-    }
+    },
+    "teamMembers": "สมาชิกในทีม",
+    "teamMember": "สมาชิกในทีม",
+    "member": "คน",
+    "members": "คน",
+    "teamLeader": "หัวหน้าทีม"
   },
   "questWorkspace": {
     "loading": "กำลังเข้าสู่พื้นที่ทำงาน...",
@@ -317,7 +337,13 @@
       "repoUrl": "URL ของ Git Repository",
       "branchName": "ชื่อ Branch ที่กำหนด",
       "branchNamePlaceholder": "เช่น feature/quest-42",
-      "requiredSkills": "สกิลที่ต้องการ"
+      "requiredSkills": "สกิลที่ต้องการ",
+      "workType": "รูปแบบการทำเควสต์"
+    },
+    "workTypes": {
+      "INDIVIDUAL": "เดี่ยว",
+      "TEAM": "ทีม",
+      "BOTH": "ทั้งคู่"
     },
     "placeholders": {
       "questTitle": "เช่น ปราบมังกร Authentication",
