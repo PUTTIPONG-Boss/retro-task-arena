@@ -1,7 +1,7 @@
 import React from 'react';
 
 // สร้าง Component ชื่อ PixelSword
-const PixelSword = ({ size = 24, bladeColor = "#EAEAEA", hiltColor = "#8B4513", guardColor = "#CD7F32" }) => {
+const PixelSword = ({ size = 24, bladeColor = "#EAEAEA", hiltColor = "#8B4513", guardColor = "#CD7F32", className = "" }: { size?: number; bladeColor?: string; hiltColor?: string; guardColor?: string; className?: string }) => {
   return (
     <svg 
       width={size} 
@@ -9,6 +9,7 @@ const PixelSword = ({ size = 24, bladeColor = "#EAEAEA", hiltColor = "#8B4513", 
       viewBox="0 0 16 16" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
+      className={className}
       style={{ imageRendering: 'pixelated' }} // สำคัญ: บังคับให้ขอบคมชัดแบบพิกเซล
     >
       {/* ใบดาบ (Blade) */}

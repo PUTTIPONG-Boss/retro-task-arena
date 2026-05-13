@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { Quest, QuestStatus, CreateQuestPayload, Bid, SubmitBidPayload } from '../types';
+import { Quest, QuestStatus, CreateQuestPayload, Bid, SubmitBidPayload, DistributePointsPayload } from '../types';
 
 // The Backend Response Types
 interface BackendBid {
@@ -287,6 +287,22 @@ export const useGetMyTasks = () => {
       const raw = response.data;
       const tasks: BackendTask[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
       return tasks.map(mapTaskToQuest);
+    },
+  });
+};
+
+export const useDistributePoints = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ taskId, payload }: { taskId: string; payload: DistributePointsPayload }) => {
+      const response = await apiClient.post(`/tasks/${taskId}/distribute-points`, payload);
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['quest', variables.taskId] });
+      queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['bids', variables.taskId] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
   });
 };

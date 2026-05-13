@@ -28,7 +28,10 @@ const Navbar = () => {
   const user = useUserStore((state) => state.user);
   const logout = useAuthStore((s) => s.logout);
   const { t, i18n } = useTranslation();
-  const { notifications, unreadCount, markAllRead, clearAll } = useNotificationStore();
+  const { notifications, markAllRead, clearAll } = useNotificationStore();
+
+  const userNotifications = notifications.filter(n => !n.userId || (user && n.userId === user.id));
+  const unreadCount = userNotifications.filter(n => !n.read).length;
 
   if (!user) return null;
 
@@ -48,6 +51,7 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
+    { to: "/ranking", label: "Ranking", icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
     ...(isAdmin ? [{
       to: "/admin/managequest",
       label: t("navbar.admin"),
@@ -108,7 +112,7 @@ const Navbar = () => {
               >
                 <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
                   <span className="font-pixel text-[14px] uppercase tracking-wider text-[#F59E0B]">{t('navbar.notifications', 'Notifications')}</span>
-                  {notifications.length > 0 && (
+                  {userNotifications.length > 0 && (
                     <button
                       onClick={clearAll}
                       className="font-pixel text-[14px] uppercase tracking-wider text-slate-400 hover:text-red-400 transition-colors"
@@ -118,12 +122,12 @@ const Navbar = () => {
                   )}
                 </div>
                 <div className="overflow-y-auto flex-1 [scrollbar-width:thin] [scrollbar-color:rgba(245,158,11,0.3)_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.3)] [&::-webkit-scrollbar-thumb]:rounded-none hover:[&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.6)]">
-                  {notifications.length === 0 ? (
+                  {userNotifications.length === 0 ? (
                     <div className="px-3 py-6 text-center font-pixel text-[14px] text-slate-500 uppercase">
                       {t('navbar.noNotifications', 'No notifications')}
                     </div>
                   ) : (
-                    notifications.map((n) => (
+                    userNotifications.map((n) => (
                       <div
                         key={n.id}
                         onClick={() => {

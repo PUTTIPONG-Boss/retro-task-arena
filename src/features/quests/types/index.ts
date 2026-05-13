@@ -73,6 +73,11 @@ export interface Quest {
   createdAt: string;
 }
 
+export interface DistributePointsPayload {
+  mode: "AUTO" | "MANUAL";
+  allocations?: { user_id: string; point: number }[];
+}
+
 export interface CreateQuestPayload {
   title: string;
   description: string;

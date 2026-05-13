@@ -13,6 +13,7 @@ import {
   useUpdateBid,
   useGetQuestById,
   useUpdateQuest,
+  useDistributePoints,
 } from "../services/quest.service";
 import { useGetAllUsers } from "@/features/users/services/user.service";
 import { UserProfile } from "@/features/users/types";
@@ -77,6 +78,12 @@ const QuestDetail = () => {
   const [editWaitDuration, setEditWaitDuration] = useState("");
   const [editNote, setEditNote] = useState("");
   const updateBid = useUpdateBid();
+  const distributePoints = useDistributePoints();
+
+  // --- Point distribution state ---
+  const [distMode, setDistMode] = useState<"AUTO" | "MANUAL">("AUTO");
+  const [manualAllocations, setManualAllocations] = useState<Record<string, number>>({});
+  const [pointsDistributed, setPointsDistributed] = useState(false);
 
   // --- Team recruitment state ---
   const [selectedTeam, setSelectedTeam] = useState<UserProfile[]>([]);
@@ -237,8 +244,8 @@ const QuestDetail = () => {
         username: m.username,
         firstNameTh: m.firstName,
         lastNameTh: m.lastName,
-        level: m.level ?? 0,
-        rating: m.rating ?? 0,
+        level: (m as { level?: number }).level ?? 0,
+        rating: (m as { rating?: number }).rating ?? 0,
         questsCompleted: 0,
         title: "",
         totalExp: 0,
@@ -289,11 +296,14 @@ const QuestDetail = () => {
     <div className={`max-w-[1280px] mx-auto px-4 py-8 ${fontClass}`}>
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-6">
-        <Link to="/">
-          <PixelButton variant="danger" size="sm" className={fontClass}>
-            ← {t("questDetail.back")}
-          </PixelButton>
-        </Link>
+        <PixelButton
+          variant="danger"
+          size="sm"
+          className={fontClass}
+          onClick={() => navigate(-1)}
+        >
+          ← {t("questDetail.back")}
+        </PixelButton>
         {isOwner && (
           <Link to={`/quest/${quest.id}/edit`}>
             <button className={`pixel-border bg-secondary hover:bg-muted px-4 py-2 font-pixel text-accent transition-colors ${fontClass}`}>
@@ -391,6 +401,191 @@ const QuestDetail = () => {
             </PixelFrame>
           )}
 
+          {/* ===== POINT DISTRIBUTION SECTION (Team Leader Only) ===== */}
+          {quest.status === "completed" && (quest.workType === "TEAM" || quest.workType === "BOTH") && isBidder && myBid?.status === "ACCEPTED" && myBid.teamMembers && myBid.teamMembers.length > 0 && !pointsDistributed && (() => {
+            const allMembers = [
+              { userId: myBid.userId, username: myBid.username, firstName: "", lastName: "", isLeader: true },
+              ...myBid.teamMembers.map(m => ({ ...m, isLeader: false })),
+            ];
+            const totalPoints = quest.rewardPoints;
+            const totalAllocated = Object.values(manualAllocations).reduce((sum, v) => sum + (v || 0), 0);
+            const remaining = totalPoints - totalAllocated;
+
+            return (
+              <PixelFrame className="border-gold bg-gold/5">
+                <h2 className={`font-pixel text-gold pixel-text-shadow mb-4 flex items-center gap-2 ${fontClass}`}>
+                  <Coins size={18} className="text-gold" /> แบ่ง Point ให้ทีม
+                </h2>
+                <p className={`text-muted-foreground mb-4 ${fontClass}`}>
+                  Point รวมของงานนี้: <span className="text-gold font-semibold">{totalPoints} GP</span>
+                </p>
+
+                {/* Mode Selection */}
+                <div className="flex gap-3 mb-6">
+                  <button
+                    className={`pixel-border px-4 py-2 font-pixel transition-colors ${fontClass} ${distMode === "AUTO"
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-secondary text-muted-foreground hover:bg-muted"
+                      }`}
+                    onClick={() => setDistMode("AUTO")}
+                  >
+                    ⚖ แบ่งเฉลี่ย
+                  </button>
+                  <button
+                    className={`pixel-border px-4 py-2 font-pixel transition-colors ${fontClass} ${distMode === "MANUAL"
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-secondary text-muted-foreground hover:bg-muted"
+                      }`}
+                    onClick={() => {
+                      setDistMode("MANUAL");
+                      // Initialize allocations if empty
+                      if (Object.keys(manualAllocations).length === 0) {
+                        const init: Record<string, number> = {};
+                        allMembers.forEach(m => { init[m.userId] = 0; });
+                        setManualAllocations(init);
+                      }
+                    }}
+                  >
+                    ✏ แบ่งสัดส่วน
+                  </button>
+                </div>
+
+                {distMode === "AUTO" ? (
+                  <div className="space-y-3">
+                    <div className="pixel-inset bg-background/50 p-4">
+                      <p className={`font-pixel text-foreground mb-2 ${fontClass}`}>
+                        แต่ละคนจะได้รับ: <span className="text-gold font-semibold">{Math.floor(totalPoints / allMembers.length)} GP</span>
+                        {totalPoints % allMembers.length > 0 && (
+                          <span className="text-muted-foreground text-[12px] ml-2">(เศษ {totalPoints % allMembers.length} GP จะถูกปัดรวม)</span>
+                        )}
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                        {allMembers.map(m => (
+                          <div key={m.userId} className="pixel-border border-border/50 bg-secondary/50 p-3 flex justify-between items-center">
+                            <div>
+                              <p className={`font-pixel text-accent text-[14px] ${fontClass}`}>
+                                {m.username} {m.isLeader && <span className="text-gold text-[10px]">★ Leader</span>}
+                              </p>
+                            </div>
+                            <span className="font-pixel text-gold">{Math.floor(totalPoints / allMembers.length)} GP</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <PixelButton
+                      variant="gold"
+                      size="md"
+                      className={`w-full ${fontClass}`}
+                      onClick={async () => {
+                        try {
+                          await distributePoints.mutateAsync({
+                            taskId: quest.id,
+                            payload: { mode: "AUTO" },
+                          });
+                          toast.success("แบ่ง Point เรียบร้อยแล้ว!", { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          setPointsDistributed(true);
+                        } catch (e) {
+                          toast.error(getErrorMessage(e), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                        }
+                      }}
+                      disabled={distributePoints.isPending}
+                    >
+                      <span className={fontClass}>{distributePoints.isPending ? "กำลังแบ่ง..." : "⚖ ยืนยันแบ่งเฉลี่ย"}</span>
+                    </PixelButton>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="pixel-inset bg-background/50 p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <p className={`font-pixel text-foreground ${fontClass}`}>กรอก Point ให้แต่ละคน:</p>
+                        <p className={`font-pixel ${remaining < 0 ? 'text-red-400' : remaining === 0 ? 'text-success' : 'text-gold'} ${fontClass}`}>
+                          เหลือ: {remaining} / {totalPoints} GP
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        {allMembers.map(m => (
+                          <div key={m.userId} className="pixel-border border-border/50 bg-secondary/50 p-3 flex justify-between items-center gap-3">
+                            <div className="flex-1">
+                              <p className={`font-pixel text-accent text-[14px] ${fontClass}`}>
+                                {m.username} {m.isLeader && <span className="text-gold text-[10px]">★ Leader</span>}
+                              </p>
+                              {!m.isLeader && m.firstName && (
+                                <p className="text-[12px] text-muted-foreground font-pixel">{m.firstName} {m.lastName}</p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min={0}
+                                max={totalPoints}
+                                value={manualAllocations[m.userId] || ""}
+                                onChange={(e) => {
+                                  const raw = e.target.value;
+                                  if (raw === "") {
+                                    setManualAllocations(prev => ({ ...prev, [m.userId]: 0 }));
+                                    return;
+                                  }
+                                  const val = Math.max(0, Math.min(totalPoints, Number(raw)));
+                                  setManualAllocations(prev => ({ ...prev, [m.userId]: val }));
+                                }}
+                                placeholder="0"
+                                className={`w-[80px] bg-background border-2 border-border px-2 py-1 text-foreground font-pixel text-center focus:outline-none focus:border-accent ${fontClass}`}
+                              />
+                              <span className="font-pixel text-muted-foreground text-[12px]">GP</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {remaining < 0 && (
+                      <p className={`font-pixel text-red-400 text-[12px] ${fontClass}`}>
+                        ⚠ Point ที่ใส่รวมกันเกินจำนวน Point ของงาน ({totalPoints} GP)
+                      </p>
+                    )}
+
+                    <PixelButton
+                      variant="gold"
+                      size="md"
+                      className={`w-full ${fontClass}`}
+                      onClick={async () => {
+                        if (remaining < 0) {
+                          toast.error("Point ที่ใส่รวมกันเกินจำนวน Point ของงาน", { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          return;
+                        }
+                        if (totalAllocated === 0) {
+                          toast.error("กรุณาใส่ Point อย่างน้อย 1 คน", { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          return;
+                        }
+                        try {
+                          await distributePoints.mutateAsync({
+                            taskId: quest.id,
+                            payload: {
+                              mode: "MANUAL",
+                              allocations: allMembers
+                                .filter(m => (manualAllocations[m.userId] || 0) > 0)
+                                .map(m => ({
+                                  user_id: m.userId,
+                                  point: manualAllocations[m.userId] || 0,
+                                })),
+                            },
+                          });
+                          toast.success("แบ่ง Point เรียบร้อยแล้ว!", { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          setPointsDistributed(true);
+                        } catch (e) {
+                          toast.error(getErrorMessage(e), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                        }
+                      }}
+                      disabled={distributePoints.isPending || remaining < 0}
+                    >
+                      <span className={fontClass}>{distributePoints.isPending ? "กำลังแบ่ง..." : "✏ ยืนยันแบ่งสัดส่วน"}</span>
+                    </PixelButton>
+                  </div>
+                )}
+              </PixelFrame>
+            );
+          })()}
+
           {/* ===== BID SECTION ===== */}
           {/* OWNER VIEW: see all bids with details */}
           {isOwner && quest.status === "open" && (
@@ -438,10 +633,10 @@ const QuestDetail = () => {
                                       <p className="text-[14px] font-pixel text-accent">{m.username}</p>
                                       <p className="text-[14px] font-pixel text-foreground/80">{m.firstName} {m.lastName}</p>
                                     </div>
-                                    {(quest?.status === "in-progress" || quest?.status === "review" || quest?.status === "in_review") && bid.status === "ACCEPTED" && (
+                                    {((quest?.status as string) === "in-progress" || (quest?.status as string) === "review" || (quest?.status as string) === "in_review") && bid.status === "ACCEPTED" && (
                                       <PixelButton
                                         variant="gold"
-                                        size="xs"
+                                        size="sm"
                                         className="opacity-0 group-hover:opacity-100 transition-opacity"
                                         onClick={() => navigate(`/quest/${quest.id}/workspace`)}
                                       >
@@ -695,7 +890,7 @@ const QuestDetail = () => {
                                   {(quest.status === "in-progress" || quest.status === "review") && myBid.status === "ACCEPTED" && (
                                     <PixelButton
                                       variant="gold"
-                                      size="xs"
+                                      size="sm"
                                       className="opacity-0 group-hover:opacity-100 transition-opacity"
                                       onClick={() => navigate(`/quest/${quest.id}/workspace`)}
                                     >

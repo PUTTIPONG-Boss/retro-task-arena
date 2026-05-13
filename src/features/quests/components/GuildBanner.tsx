@@ -166,9 +166,11 @@ const EnhancedGuildBanner = () => {
           <rect x="1564" y="864" width="16" height="16" fill="#F1C40F"/>
         </svg>
 
+        {/* เส้นขอบบน-ล่าง แบบเดียวกับ RankingBanner */}
+        <div className="pixel-border-top"></div>
+        <div className="pixel-border-bottom"></div>
+
         <div className="banner-content flex flex-col items-center justify-center gap-4">
-          <div className="pixel-border-top"></div>
-          <div className="pixel-border-bottom"></div>
           <div className="pixel-corner top-2 left-3">┌─</div>
           <div className="pixel-corner top-2 right-3">─┐</div>
           <div className="pixel-corner bottom-2 left-3">└─</div>
@@ -202,12 +204,6 @@ const EnhancedGuildBanner = () => {
               ●
             </motion.span>
           ))}
-
-          <div className="flex items-center gap-3">
-            <span className="deco-line">━━━</span>
-            <span className="deco-icon">⚜</span>
-            <span className="deco-line">━━━</span>
-          </div>
 
           <div className="flex items-center gap-6">
             <motion.span
@@ -256,12 +252,6 @@ const EnhancedGuildBanner = () => {
                 ✦
               </motion.span>
             ))}
-          </div>
-
-          <div className="flex items-center gap-3 border-t-0">
-            <span className="deco-line">━━━</span>
-            <span className="deco-icon">⚜</span>
-            <span className="deco-line">━━━</span>
           </div>
         </div>
       </div>

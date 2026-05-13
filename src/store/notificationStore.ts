@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 export interface AppNotification {
   id: string;
+  userId?: string;
   message: string;
   i18nKey?: string;
   i18nParams?: Record<string, string>;
@@ -14,7 +16,6 @@ export interface AppNotification {
 
 interface NotificationState {
   notifications: AppNotification[];
-  unreadCount: number;
   addNotification: (message: string, type?: AppNotification['type'], i18nKey?: string, i18nParams?: Record<string, string>, questId?: string) => void;
   markAllRead: () => void;
   clearAll: () => void;
@@ -24,11 +25,14 @@ export const useNotificationStore = create<NotificationState>()(
   persist(
     (set) => ({
       notifications: [],
-      unreadCount: 0,
 
       addNotification: (message, type = 'general', i18nKey, i18nParams, questId) => {
+        const userId = useAuthStore.getState().user?.id;
+        if (!userId) return;
+
         const newNotif: AppNotification = {
           id: crypto.randomUUID(),
+          userId,
           message,
           i18nKey,
           i18nParams,
@@ -38,24 +42,30 @@ export const useNotificationStore = create<NotificationState>()(
           questId,
         };
         set((state) => ({
-          notifications: [newNotif, ...state.notifications].slice(0, 50),
-          unreadCount: state.unreadCount + 1,
+          notifications: [newNotif, ...state.notifications].slice(0, 100),
         }));
       },
 
-      markAllRead: () =>
+      markAllRead: () => {
+        const userId = useAuthStore.getState().user?.id;
         set((state) => ({
-          notifications: state.notifications.map((n) => ({ ...n, read: true })),
-          unreadCount: 0,
-        })),
+          notifications: state.notifications.map((n) => 
+            (!n.userId || n.userId === userId) ? { ...n, read: true, userId: n.userId || userId } : n
+          ),
+        }));
+      },
 
-      clearAll: () => set({ notifications: [], unreadCount: 0 }),
+      clearAll: () => {
+        const userId = useAuthStore.getState().user?.id;
+        set((state) => ({ 
+          notifications: state.notifications.filter(n => n.userId && n.userId !== userId) 
+        }));
+      },
     }),
     {
       name: 'notification-storage-v2',
       partialize: (state) => ({
         notifications: state.notifications,
-        unreadCount: state.unreadCount,
       }),
       // timestamp ถูก serialize เป็น string ใน JSON ต้อง deserialize กลับเป็น Date
       merge: (persisted, current) => {

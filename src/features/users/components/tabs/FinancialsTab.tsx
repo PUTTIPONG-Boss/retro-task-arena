@@ -216,6 +216,8 @@ const FinancialsTab: React.FC<FinancialsTabProps> = ({ userPoints, transactions,
                           ? "bg-green-900/40 text-green-400 border-green-500/50"
                           : order.status === "CANCELLED"
                           ? "bg-red-900/40 text-red-400 border-red-500/50"
+                          : order.status === "SHIPPED"
+                          ? "bg-purple-900/40 text-purple-400 border-purple-500/50"
                           : "bg-blue-900/40 text-blue-400 border-blue-500/50"
                       } ${fontClass}`}
                     >
