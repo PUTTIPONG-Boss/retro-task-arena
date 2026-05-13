@@ -19,6 +19,7 @@ import { Coins } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isSeniorOrAdmin } from "@/features/users/utils/roleUtils";
 import { getErrorMessage } from "@/lib/errorUtils";
+import { useThemeStore } from "@/store/themeStore";
 import { useBidSocket } from "@/hooks/useBidSocket";
 import PixelCheck from "@/components/icons/PixelCheck";
 import PixelUsers from "@/components/icons/PixelUsers";
@@ -33,6 +34,15 @@ const statusColor: Record<string, string> = {
   review: "text-yellow-400",
   in_review: "text-yellow-400",
   completed: "text-success",
+};
+
+const lightStatusColor: Record<string, string> = {
+  open: "#2A6E35",
+  bidding: "#8B5E10",
+  "in-progress": "#8B5E10",
+  review: "#6B3A8B",
+  in_review: "#6B3A8B",
+  completed: "#2A6E35",
 };
 
 const getStatusKey = (status: string) => {
@@ -76,6 +86,8 @@ const QuestDetail = () => {
   const [editNote, setEditNote] = useState("");
   const updateBid = useUpdateBid();
 
+  const { theme: appTheme } = useThemeStore();
+  const isLight = appTheme === "light";
   const isSeniorOrAdminUser = isSeniorOrAdmin(user?.role || "");
 
   const isOwner = user?.id === quest?.providerId;
@@ -219,12 +231,18 @@ const QuestDetail = () => {
               <span className={`font-pixel uppercase tracking-widest text-muted-foreground ${fontClass}`}>
                 {quest.category}
               </span>
-              <span className={`font-pixel uppercase ${statusColor[quest.status] || "text-success"} ${fontClass}`}>
+              <span
+                className={`font-pixel uppercase ${!isLight ? (statusColor[quest.status] || "text-success") : ""} ${fontClass}`}
+                style={isLight ? { color: lightStatusColor[quest.status] || "#2A6E35" } : undefined}
+              >
                 ● {t(`questDetail.status.${getStatusKey(quest.status)}`)}
               </span>
             </div>
 
-            <h1 className={`font-pixel text-gold pixel-text-shadow leading-relaxed mb-4 break-words overflow-hidden ${fontClass}`}>
+            <h1
+              className={`font-pixel pixel-text-shadow leading-relaxed mb-4 break-words overflow-hidden ${!isLight ? "text-gold" : ""} ${fontClass}`}
+              style={isLight ? { color: "#3D1C08" } : undefined}
+            >
               {quest.title}
             </h1>
 
@@ -241,7 +259,11 @@ const QuestDetail = () => {
                 {quest.skills.split(",").map((skill, index) => (
                   <span
                     key={index}
-                    className={`pixel-text bg-secondary border border-border px-3 py-1 text-accent uppercase ${fontClass}`}
+                    className={`pixel-text px-3 py-1 uppercase ${fontClass}`}
+                    style={isLight
+                      ? { backgroundColor: "#C89A50", border: "1px solid #8B5A20", color: "#3D1C08" }
+                      : { backgroundColor: "hsl(var(--secondary))", border: "1px solid hsl(var(--border))", color: "hsl(var(--accent))" }
+                    }
                   >
                     {skill.trim()}
                   </span>
@@ -558,10 +580,10 @@ const QuestDetail = () => {
               <h3 className={`font-pixel text-foreground pixel-text-shadow mb-3 ${fontClass}`}>
                 {t("questDetail.sidebar.repoTitle")}
               </h3>
-              <p className={`text-accent break-all ${fontClass}`}>{quest.repoUrl}</p>
+              <p className={`${!isLight ? "text-accent" : ""} break-all ${fontClass}`} style={isLight ? { color: "#7A3A08" } : undefined}>{quest.repoUrl}</p>
               {quest.branchName && (
                 <p className={`text-muted-foreground mt-2 break-words ${fontClass}`}>
-                  {t("questDetail.sidebar.branch")} <span className="text-accent">{quest.branchName}</span>
+                  {t("questDetail.sidebar.branch")} <span className={!isLight ? "text-accent" : ""} style={isLight ? { color: "#7A3A08" } : undefined}>{quest.branchName}</span>
                 </p>
               )}
             </PixelFrame>

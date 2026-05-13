@@ -19,6 +19,7 @@ import { Layout, Terminal, FileText, FolderTree, CheckCircle2, Coins } from "luc
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { getErrorMessage } from "@/lib/errorUtils";
+import { useThemeStore } from "@/store/themeStore";
 import PixelCheck from "@/components/icons/PixelCheck";
 import PixelRecycle from "@/components/icons/PixelRecycle";
 import PixelInbox from "@/components/icons/PixelInbox";
@@ -37,6 +38,20 @@ const QuestWorkspace = () => {
 
   const { t, i18n } = useTranslation();
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+
+  const { theme: appTheme } = useThemeStore();
+  const isLight = appTheme === "light";
+
+  // Light mode colors (readable on parchment bg-card #E2CDA0)
+  const lt = {
+    accent: "#6B3010",      // dark wood — for step numbers, tab active
+    code: "#1A4A1A",        // terminal green — for code commands
+    contractId: "#7A3A08",  // dark amber — for IDs/links
+    points: "#7A3A08",      // dark amber — for reward points
+    statusReview: "#6B3A8B",
+    statusProgress: "#8B5E10",
+    statusCompleted: "#2A6E35",
+  };
 
   const updateStatus = useUpdateQuestStatus();
   const createReview = useCreateReview();
@@ -193,11 +208,17 @@ const QuestWorkspace = () => {
         <div className="flex-1 space-y-6">
           <PixelFrame className="relative overflow-hidden">
             <div className={`absolute top-0 right-0 p-4 ${fontClass}`}>
-              <span className={cn(
-                `font-pixel px-2 py-1 bg-background/50 border border-pixel-shadow/20 ${fontClass}`,
-                quest.status === "review" ? "text-yellow-400" :
-                  quest.status === "completed" ? "text-success" : "text-accent"
-              )}>
+              <span
+                className={cn(
+                  `font-pixel px-2 py-1 bg-background/50 border border-pixel-shadow/20 ${fontClass}`,
+                  !isLight && (quest.status === "review" ? "text-yellow-400" : quest.status === "completed" ? "text-success" : "text-accent")
+                )}
+                style={isLight ? {
+                  color: quest.status === "review" ? lt.statusReview
+                    : quest.status === "completed" ? lt.statusCompleted
+                    : lt.statusProgress
+                } : undefined}
+              >
                 ● {t(`questDetail.status.${getStatusKey(quest.status)}`)}
               </span>
             </div>
@@ -219,9 +240,10 @@ const QuestWorkspace = () => {
                   className={cn(
                     `px-6 py-3 font-pixel flex items-center gap-2 transition-all ${fontClass}`,
                     activeTab === tab.id
-                      ? "bg-secondary text-accent border-t-2 border-l-2 border-r-2 border-pixel-shadow"
+                      ? cn("bg-secondary border-t-2 border-l-2 border-r-2 border-pixel-shadow", !isLight && "text-accent")
                       : "text-muted-foreground hover:bg-muted/30"
                   )}
+                  style={isLight && activeTab === tab.id ? { color: lt.accent } : undefined}
                 >
                   <tab.icon size={14} />
                   <span className={fontClass}>{tab.label}</span>
@@ -236,13 +258,13 @@ const QuestWorkspace = () => {
                   {workflowSteps.map((step, i) => (
                     <div key={i} className={`pixel-border bg-secondary/50 p-4 group ${fontClass}`}>
                       <div className={`flex items-center gap-3 mb-2 ${fontClass}`}>
-                        <span className={`font-pixel text-accent w-8 ${fontClass}`}>{i + 1}.</span>
-                        <span className={`font-pixel text-foreground group-hover:text-accent transition-colors ${fontClass}`}>{step.label}</span>
+                        <span className={`font-pixel w-8 ${!isLight ? "text-accent" : ""} ${fontClass}`} style={isLight ? { color: lt.accent } : undefined}>{i + 1}.</span>
+                        <span className={`font-pixel text-foreground transition-colors ${fontClass}`}>{step.label}</span>
                       </div>
                       <p className={`text-muted-foreground ml-11 mb-2 ${fontClass}`}>{step.desc}</p>
                       {step.cmd && (
                         <div className={`pixel-inset bg-background px-3 py-2 ml-11 relative ${fontClass}`}>
-                          <code className={`text-accent font-pixel-body whitespace-pre-wrap break-all ${fontClass}`}>{step.cmd}</code>
+                          <code className={`font-pixel-body whitespace-pre-wrap break-all ${!isLight ? "text-accent" : ""} ${fontClass}`} style={isLight ? { color: lt.code } : undefined}>{step.cmd}</code>
                           <button
                             className={`absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity font-pixel text-muted-foreground hover:text-accent ${fontClass}`}
                             onClick={() => {
@@ -301,7 +323,7 @@ const QuestWorkspace = () => {
               </div>
               <div>
                 <p className={`text-muted-foreground uppercase mb-1 ${fontClass}`}>{t("questWorkspace.sidebar.contractId")}</p>
-                <code className={`font-pixel text-accent bg-background/50 p-1 block truncate ${fontClass}`}>#{quest.id.slice(0, 8)}</code>
+                <code className={`font-pixel bg-background/50 p-1 block truncate ${!isLight ? "text-accent" : ""} ${fontClass}`} style={isLight ? { color: lt.contractId } : undefined}>#{quest.id.slice(0, 8)}</code>
               </div>
             </div>
           </PixelFrame>
@@ -309,7 +331,7 @@ const QuestWorkspace = () => {
           <PixelFrame>
             <h3 className={`font-pixel text-foreground pixel-text-shadow mb-4 uppercase tracking-wider underline ${fontClass}`}>{t("questWorkspace.sidebar.statusReport")}</h3>
             <div className="space-y-4">
-              <span className={`font-pixel text-accent ${fontClass}`}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} P</span>
+              <span className={`font-pixel ${!isLight ? "text-accent" : ""} ${fontClass}`} style={isLight ? { color: lt.points } : undefined}><Coins size={14} className="inline mr-1" /> {quest.rewardPoints} P</span>
               <div className="flex justify-between items-center">
                 <span className={`text-muted-foreground uppercase ${fontClass}`}>{t("questWorkspace.sidebar.estimated")}</span>
                 <span className={`text-foreground ${fontClass}`}>{quest.estimatedTime}</span>

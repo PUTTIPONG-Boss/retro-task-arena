@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNotificationStore } from "@/store/notificationStore";
+import { useThemeStore } from "@/store/themeStore";
 
 const Navbar = () => {
   const location = useLocation();
@@ -29,6 +30,7 @@ const Navbar = () => {
   const logout = useAuthStore((s) => s.logout);
   const { t, i18n } = useTranslation();
   const { notifications, unreadCount, markAllRead, clearAll } = useNotificationStore();
+  const { theme, toggleTheme } = useThemeStore();
 
   if (!user) return null;
 
@@ -104,14 +106,14 @@ const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="bg-[#1a1c1e] pixel-border border-[#F59E0B]/60 w-[300px] p-0 max-h-[380px] flex flex-col"
+                className="bg-card pixel-border border-accent/60 w-[300px] p-0 max-h-[380px] flex flex-col"
               >
-                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
-                  <span className="font-pixel text-[14px] uppercase tracking-wider text-[#F59E0B]">{t('navbar.notifications', 'Notifications')}</span>
+                <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+                  <span className="font-pixel text-[14px] uppercase tracking-wider text-accent">{t('navbar.notifications', 'Notifications')}</span>
                   {notifications.length > 0 && (
                     <button
                       onClick={clearAll}
-                      className="font-pixel text-[14px] uppercase tracking-wider text-slate-400 hover:text-red-400 transition-colors"
+                      className="font-pixel text-[14px] uppercase tracking-wider text-muted-foreground hover:text-red-400 transition-colors"
                     >
                       {t('navbar.clearAll', 'Clear all')}
                     </button>
@@ -119,7 +121,7 @@ const Navbar = () => {
                 </div>
                 <div className="overflow-y-auto flex-1 [scrollbar-width:thin] [scrollbar-color:rgba(245,158,11,0.3)_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.3)] [&::-webkit-scrollbar-thumb]:rounded-none hover:[&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.6)]">
                   {notifications.length === 0 ? (
-                    <div className="px-3 py-6 text-center font-pixel text-[14px] text-slate-500 uppercase">
+                    <div className="px-3 py-6 text-center font-pixel text-[14px] text-muted-foreground uppercase">
                       {t('navbar.noNotifications', 'No notifications')}
                     </div>
                   ) : (
@@ -129,14 +131,14 @@ const Navbar = () => {
                         onClick={() => {
                           if (n.questId) navigate(`/quest/${n.questId}`);
                         }}
-                        className={`px-3 py-2.5 border-b border-slate-800 flex flex-col gap-0.5 ${
-                          !n.read ? 'bg-[#F59E0B]/5' : ''
-                        } ${n.questId ? 'cursor-pointer hover:bg-[#F59E0B]/10 transition-colors' : ''}`}
+                        className={`px-3 py-2.5 border-b border-border/60 flex flex-col gap-0.5 ${
+                          !n.read ? 'bg-accent/5' : ''
+                        } ${n.questId ? 'cursor-pointer hover:bg-accent/10 transition-colors' : ''}`}
                       >
                         <span className="font-pixel text-[14px] text-foreground leading-snug">
                           {n.i18nKey ? t(n.i18nKey, n.i18nParams) : n.message}
                         </span>
-                        <span className="font-pixel text-[12px] text-slate-500">
+                        <span className="font-pixel text-[12px] text-muted-foreground">
                           {n.timestamp.toLocaleTimeString()}
                         </span>
                       </div>
@@ -149,13 +151,13 @@ const Navbar = () => {
             {/* User HUD Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="pixel-border bg-[#1a1c1e] flex flex-col min-w-[200px] overflow-hidden cursor-pointer hover:border-[#F59E0B] transition-colors duration-300 focus:outline-none">
+                <div className="pixel-border bg-card flex flex-col min-w-[200px] overflow-hidden cursor-pointer hover:border-accent transition-colors duration-300 focus:outline-none">
                   {/* Header: Name */}
-                  <div className="flex items-center justify-between px-2.5 py-1 bg-[#141517] border-b border-slate-800">
-                    <span className="font-pixel text-[10px] text-[#9ca3af] truncate max-w-[160px] tracking-tight uppercase">
+                  <div className="flex items-center justify-between px-2.5 py-1 bg-muted border-b border-border">
+                    <span className="font-pixel text-[10px] text-muted-foreground truncate max-w-[160px] tracking-tight uppercase">
                       {i18n.language === "th" ? (user.nameTh || user.username) : (user.nameEn || user.username)}
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-[#F59E0B]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-accent">
                       <polyline points="6 9 12 15 18 9" />
                     </svg>
                   </div>
@@ -164,8 +166,8 @@ const Navbar = () => {
                   <div className="flex items-center justify-between px-2.5 py-1.5">
                     <div className="flex items-center gap-1.5">
                       <div className="flex flex-col items-center leading-none">
-                        <span className="font-pixel text-[8px] text-[#6b7280] -mb-0.5 uppercase">LV</span>
-                        <span className="font-pixel text-[16px] text-white leading-none">
+                        <span className="font-pixel text-[8px] text-muted-foreground -mb-0.5 uppercase">LV</span>
+                        <span className="font-pixel text-[16px] text-foreground leading-none">
                           {user.level}
                         </span>
                       </div>
@@ -177,15 +179,15 @@ const Navbar = () => {
                       />
                     </div>
 
-                    <div className="flex items-center gap-1.5 bg-[#141517]/50 px-2 py-1 rounded-sm border border-slate-800/50">
-                      <PixelCoin size={14} className="text-[#fbbf24] drop-shadow-[0_0_2px_rgba(251,191,36,0.4)]" />
+                    <div className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-sm border border-border/40">
+                      <PixelCoin size={14} className="text-accent drop-shadow-[0_0_2px_rgba(251,191,36,0.4)]" />
                       <AnimatePresence mode="popLayout">
                         <motion.span
                           key={user.points}
                           initial={{ y: 5, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ type: "spring", stiffness: 500, damping: 20 }}
-                          className="font-pixel text-[#f59e0b] text-[14px] leading-none tracking-wider"
+                          className="font-pixel text-accent text-[14px] leading-none tracking-wider"
                         >
                           {user.points.toLocaleString()}
                         </motion.span>
@@ -197,20 +199,20 @@ const Navbar = () => {
 
               <DropdownMenuContent
                 align="end"
-                className="bg-[#1a1c1e] pixel-border border-[#F59E0B]/60 min-w-[180px] p-1"
+                className="bg-card pixel-border border-accent/60 min-w-[180px] p-1"
               >
-                <DropdownMenuItem asChild className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-[#F59E0B]/10 focus:bg-[#F59E0B]/10 text-foreground hover:text-accent focus:text-accent gap-2 px-3 py-2">
+                <DropdownMenuItem asChild className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-accent/10 focus:bg-accent/10 text-foreground hover:text-accent focus:text-accent gap-2 px-3 py-2">
                   <Link to="/profile">
                     <PixelUser className="text-yellow-400" size={16} />
                     {t("navbar.profile", "Profile")}
                   </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-slate-700 my-1" />
+                <DropdownMenuSeparator className="bg-border my-1" />
 
                 <DropdownMenuItem
                   onClick={toggleLanguage}
-                  className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-[#F59E0B]/10 focus:bg-[#F59E0B]/10 text-foreground hover:text-accent focus:text-accent gap-2 px-3 py-2"
+                  className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-accent/10 focus:bg-accent/10 text-foreground hover:text-accent focus:text-accent gap-2 px-3 py-2"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-yellow-400">
                     <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -218,7 +220,23 @@ const Navbar = () => {
                   {i18n.language === "th" ? "English" : "ภาษาไทย"}
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-slate-700 my-1" />
+                <DropdownMenuItem
+                  onClick={toggleTheme}
+                  className="font-pixel text-[16px] uppercase tracking-wider cursor-pointer hover:bg-accent/10 focus:bg-accent/10 text-foreground hover:text-accent focus:text-accent gap-2 px-3 py-2"
+                >
+                  {theme === "dark" ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-yellow-400">
+                      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className="text-yellow-400">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                  )}
+                  {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator className="bg-border my-1" />
 
                 <DropdownMenuItem
                   onClick={handleLogout}

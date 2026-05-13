@@ -7,12 +7,12 @@ import { MyBid } from "@/features/finance/services/application.service";
 import { Quest } from "@/features/quests/types";
 import { UserProfile } from "../../types";
 import { cn } from "@/lib/utils";
-import { 
-  FileText, 
-  Sword, 
-  Trophy, 
-  CheckCircle, 
-  Clock, 
+import {
+  FileText,
+  Sword,
+  Trophy,
+  CheckCircle,
+  Clock,
   MessageSquare,
   ArrowRight
 } from "lucide-react";
@@ -42,7 +42,7 @@ interface ActivityEvent {
 const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
   const { t, i18n } = useTranslation();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
+  const fontClass = i18n.language === "th" ? "text-[25px]" : "text-[25px]";
 
   const activities = useMemo(() => {
     const events: ActivityEvent[] = [];
@@ -67,7 +67,7 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
         type: "BID_SUBMITTED",
         title: b.taskTitle,
         timestamp: b.createdAt,
-        metadata: { 
+        metadata: {
           taskId: b.taskId,
           points: b.bidAmount,
           status: b.status
@@ -76,19 +76,19 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
 
       // 2.1 Changes Requested (Junior) - check if currently in-progress but has a latestComment
       if (b.status === "ACCEPTED" && b.latestComment) {
-         const q = quests.find(q => q.id === b.taskId);
-         if (q && q.status === "in-progress") {
-            events.push({
-              id: `changes-${b.id}`,
-              type: "CHANGES_REQUESTED",
-              title: b.taskTitle,
-              timestamp: q.createdAt, 
-              metadata: { 
-                taskId: b.taskId,
-                reason: b.latestComment
-              }
-            });
-         }
+        const q = quests.find(q => q.id === b.taskId);
+        if (q && q.status === "in-progress") {
+          events.push({
+            id: `changes-${b.id}`,
+            type: "CHANGES_REQUESTED",
+            title: b.taskTitle,
+            timestamp: q.createdAt,
+            metadata: {
+              taskId: b.taskId,
+              reason: b.latestComment
+            }
+          });
+        }
       }
     });
 
@@ -96,13 +96,13 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
     quests.forEach(q => {
       // Bid Accepted (Senior)
       if (q.providerId === user.id && q.status !== "open" && q.status !== "bidding") {
-          events.push({
-            id: `accepted-${q.id}`,
-            type: "BID_ACCEPTED",
-            title: q.title,
-            timestamp: q.createdAt, 
-            metadata: { taskId: q.id }
-          });
+        events.push({
+          id: `accepted-${q.id}`,
+          type: "BID_ACCEPTED",
+          title: q.title,
+          timestamp: q.createdAt,
+          metadata: { taskId: q.id }
+        });
       }
 
       if (q.status === "completed") {
@@ -111,8 +111,8 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
             id: `completed-${q.id}`,
             type: "QUEST_COMPLETED",
             title: q.title,
-            timestamp: q.createdAt, 
-            metadata: { 
+            timestamp: q.createdAt,
+            metadata: {
               taskId: q.id,
               points: q.rewardPoints
             }
@@ -124,7 +124,7 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
           id: `submitted-${q.id}`,
           type: "WORK_SUBMITTED",
           title: q.title,
-          timestamp: q.createdAt, 
+          timestamp: q.createdAt,
           metadata: { taskId: q.id }
         });
       }
@@ -168,15 +168,15 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
         <h2 className={`font-pixel text-[20px] text-foreground pixel-text-shadow flex items-center gap-2 ${fontClass}`}>
           <PixelHeart size={20} className="text-yellow-400" /> {t("userProfile.activity.title")}
         </h2>
-        
-        <button 
+
+        <button
           onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
           className={`pixel-border bg-secondary hover:bg-muted px-2 py-1 font-pixel text-[16px] text-accent`}
         >
           {sortOrder === "desc" ? "↓ " + t("userProfile.activity.sortNewest") : "↑ " + t("userProfile.activity.sortOldest")}
         </button>
       </div>
-      
+
       <div className="space-y-4">
         {activities.length === 0 ? (
           <div className="py-12 text-center opacity-50">
@@ -186,29 +186,29 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
           </div>
         ) : (
           activities.map((event) => (
-            <div 
-              key={event.id} 
+            <div
+              key={event.id}
               className={cn(
                 "pixel-border bg-secondary/30 p-4 transition-all hover:bg-muted/40 group",
-                event.type === "QUEST_COMPLETED" ? "border-gold/30 bg-gold/5" : 
-                event.type === "CHANGES_REQUESTED" ? "border-danger/30 bg-danger/5" : "border-pixel-shadow/20"
+                event.type === "QUEST_COMPLETED" ? "border-gold/30 bg-gold/5" :
+                  event.type === "CHANGES_REQUESTED" ? "border-danger/30 bg-danger/5" : "border-pixel-shadow/20"
               )}
             >
               <div className="flex gap-4 items-start">
                 <div className={cn(
                   "pixel-border p-2 bg-background/50",
-                  event.type === "QUEST_COMPLETED" ? "text-gold" : 
-                  event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-muted-foreground"
+                  event.type === "QUEST_COMPLETED" ? "text-gold" :
+                    event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-muted-foreground"
                 )}>
                   {renderIcon(event.type)}
                 </div>
-                
+
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-1">
                     <p className={cn(
                       "font-pixel leading-tight",
-                      event.type === "QUEST_COMPLETED" ? "text-gold pixel-text-shadow-gold" : 
-                      event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-foreground",
+                      event.type === "QUEST_COMPLETED" ? "text-gold pixel-text-shadow-gold" :
+                        event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-foreground",
                       i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                     )}>
                       {getEventText(event)}
@@ -219,7 +219,7 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
                   </div>
 
                   {(event.type === "QUEST_POSTED" || event.type === "BID_SUBMITTED" || event.type === "WORK_SUBMITTED" || event.type === "CHANGES_REQUESTED") && (
-                    <Link 
+                    <Link
                       to={`/quest/${event.metadata.taskId}`}
                       className="inline-flex items-center gap-1 text-[16px] text-accent hover:underline font-pixel mt-2"
                     >
@@ -229,7 +229,7 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
 
                   {event.type === "QUEST_COMPLETED" && (
                     <div className="mt-3 flex gap-4">
-                       <Link 
+                      <Link
                         to={`/quest/${event.metadata.taskId}`}
                         className="pixel-border px-3 py-1 bg-gold/10 text-gold font-pixel text-[16px] hover:bg-gold/20 transition-all"
                       >

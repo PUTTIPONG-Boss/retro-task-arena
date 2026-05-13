@@ -129,7 +129,7 @@ export const FileViewer = ({ repoUrl, path, branch = 'main' }: FileViewerProps) 
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto custom-scrollbar p-6">
+      <div className="flex-1 overflow-auto overscroll-contain custom-scrollbar p-6">
         {isMarkdown ? (
           <article className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-headings:font-pixel prose-headings:text-accent prose-headings:pixel-text-shadow">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>

@@ -72,6 +72,74 @@
   }
 }
 
+/* ═══════════════════════════════════════════
+   LIGHT THEME — Outdoor Guild Parchment
+   Concept: wooden quest board + warm parchment paper
+   + Windrise daylight. Nothing is pure white/black.
+   Everything has warmth and wood-grain character.
+   ═══════════════════════════════════════════ */
+.light {
+  /* ── Page surface: sun-warmed parchment ── */
+  --background:            42 28% 90%;   /* #EDE4CF  warm cream */
+  --foreground:            24 65% 10%;   /* #2D1205  dark ink   */
+
+  /* ── Cards: aged quest paper on the board ── */
+  --card:                  38 40% 84%;   /* #E2CDA0  parchment  */
+  --card-foreground:       24 62% 11%;   /* #321406  dark ink   */
+
+  --popover:               40 38% 87%;   /* #EAD9B4  lighter    */
+  --popover-foreground:    24 62% 11%;
+
+  /* ── Primary: dark wood action ── */
+  --primary:               25 52% 28%;   /* #6B3010  wood brown */
+  --primary-foreground:    40 55% 88%;   /* #F2E2C0  cream      */
+
+  /* ── Secondary: lighter parchment panel ── */
+  --secondary:             36 35% 78%;   /* #D4B888  tan        */
+  --secondary-foreground:  24 50% 18%;   /* #4A2810  dark       */
+
+  /* ── Muted: faded ink / worn paper ── */
+  --muted:                 36 26% 82%;   /* #DCCFAA  faded      */
+  --muted-foreground:      26 28% 42%;   /* #78573C  warm gray  */
+
+  /* ── Accent: bright quest-board gold (matches dark mode) ── */
+  --accent:                45 82% 55%;   /* #e8bb50  bright gold */
+  --accent-foreground:     24 80% 6%;    /* #1C0802  dark        */
+
+  --destructive:            2 62% 40%;   /* #B01E1E  crimson    */
+  --destructive-foreground: 40 65% 92%;  /* #F5E8D0  cream      */
+
+  --success:               128 45% 30%;  /* #2B7840  forest     */
+  --success-foreground:     40 65% 92%;
+
+  /* ── Chrome ── */
+  --border:                25 42% 38%;   /* #78401A  wood edge  */
+  --input:                 40 36% 88%;   /* #ECDAB2  parchment  */
+  --ring:                  42 90% 42%;
+
+  --radius: 0px;
+
+  /* ── Pixel-art 3-D border system ── */
+  /* shadow color determines border base line */
+  --parchment:             40 48% 80%;   /* #DECA92  rich parchment */
+  --parchment-foreground:  24 62% 11%;
+  --pixel-shadow:          24 60% 11%;   /* #311204  deepest shadow */
+  --border-3d-light:       40 55% 92%;   /* #F4EBCA  bright face    */
+  --border-3d-dark:        25 50% 20%;   /* #4F260C  dark face      */
+  --gold:                  45 82% 55%;
+  --gold-foreground:       24 80% 6%;
+
+  /* ── Sidebar / Admin panel: dark wood ── */
+  --sidebar-background:    25 50% 14%;   /* #401C08  dark plank */
+  --sidebar-foreground:    40 55% 82%;   /* #E8D2A0  cream      */
+  --sidebar-primary:       42 90% 42%;
+  --sidebar-primary-foreground: 24 80% 6%;
+  --sidebar-accent:        25 44% 20%;   /* #562A10  mid plank  */
+  --sidebar-accent-foreground: 40 55% 82%;
+  --sidebar-border:        25 42% 22%;   /* #4F2812             */
+  --sidebar-ring:          42 90% 42%;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -357,6 +425,12 @@
   overflow: hidden;
   pointer-events: none;
   background-color: #090b09;
+}
+
+/* Light theme background base */
+.light .pixel-bg,
+.lt-pixel-bg {
+  background-color: #5BADD4;
 }
 
 .pixel-bg-svg {

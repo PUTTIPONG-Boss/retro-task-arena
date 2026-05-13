@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import AdminLayout from "@/features/admin/components/AdminLayout";
 import AdminSidebar from "@/features/admin/components/AdminSidebar";
 import PixelBackground from "@/components/PixelBackground";
+import ThemeProvider from "@/providers/ThemeProvider";
 
 // Auth
 import LoginPage from "@/features/auth/pages/LoginPage";
@@ -35,6 +36,23 @@ import NotFound from "./pages/NotFound";
 import AuthSyncProvider from "@/features/auth/components/AuthSyncProvider";
 import { useOwnerBidNotifications } from "@/hooks/useOwnerBidNotifications";
 import { useUserNotifications } from "@/hooks/useUserNotifications"; //accept notifications
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useThemeStore } from "@/store/themeStore";
+
+// Applies theme class to <html> — always dark on /login, user theme elsewhere
+const ThemeApplier = () => {
+  const theme = useThemeStore((s) => s.theme);
+  const location = useLocation();
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove("dark", "light");
+    root.classList.add(location.pathname === "/login" ? "dark" : theme);
+  }, [theme, location.pathname]);
+
+  return null;
+};
 
 const queryClient = new QueryClient();
 
@@ -62,9 +80,11 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
     <TooltipProvider>
       <Sonner />
       <BrowserRouter>
+        <ThemeApplier />
         <PixelBackground />
         <AuthSyncProvider />
         <Routes>
@@ -108,6 +128,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

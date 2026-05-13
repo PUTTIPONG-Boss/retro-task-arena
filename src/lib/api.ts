@@ -7,7 +7,7 @@ import { getCookie } from './utils';
 
 
 export const apiClient = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
+  baseURL: "http://localhost:5001/api/v1",
   // baseURL: "http://127.0.0.1:5001/api/v1",
   withCredentials: true,
 });

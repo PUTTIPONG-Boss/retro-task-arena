@@ -43,7 +43,7 @@ const RewardShop = () => {
   const { data: products = [], isLoading, isError } = useGetProducts();
   const { mutate: createOrder, isPending: isRedeeming } = useCreateOrder();
   const { t, i18n } = useTranslation();
-  const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+  const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
   const priceFilters = [
     { id: "all", labelKey: "all", min: 0, max: Infinity },
@@ -229,7 +229,7 @@ const RewardShop = () => {
                           <span className="text-5xl">{getProductIcon(item.id)}</span>
                         )}
                       </div>
-                      
+
                       {/* Name */}
                       <h3
                         className={`text-foreground pixel-text-shadow text-center mb-2 ${fontClass}`}

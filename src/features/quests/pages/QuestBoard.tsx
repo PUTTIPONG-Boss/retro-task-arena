@@ -12,6 +12,7 @@ import { ListFilter, X } from "lucide-react";
 import PixelSearch from "@/components/icons/PixelSearch";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import { cn } from "@/lib/utils";
+import { useThemeStore } from "@/store/themeStore";
 
 const QuestBoard = () => {
   const user = useAuthStore((s) => s.user);
@@ -26,6 +27,8 @@ const QuestBoard = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
+  const { theme: appTheme } = useThemeStore();
+  const isLight = appTheme === "light";
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[14px]";
 
   // ปิด popup เมื่อคลิกข้างนอก
@@ -72,16 +75,26 @@ const QuestBoard = () => {
       <div className="max-w-[1280px] mx-auto px-4 mt-6">
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="relative w-full max-w-md group">
-            <div className="absolute inset-0 bg-background/50 border-2 border-amber-400 pointer-events-none group-focus-within:border-amber-300"></div>
+            <div className={cn(
+              "absolute inset-0 pointer-events-none border-2",
+              isLight
+                ? "bg-[#E8CFA0]/90 border-[#8B5A20] group-focus-within:border-[#5C3010]"
+                : "bg-background/50 border-amber-400 group-focus-within:border-amber-300"
+            )}></div>
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm z-10">
-              <PixelSearch size={20} className="inline mr-1 text-yellow-400" />
+              <PixelSearch size={20} className={cn("inline mr-1", isLight ? "text-[#6B3810]" : "text-yellow-400")} />
             </span>
             <PixelInput
               type="text"
               placeholder={t("questBoard.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 bg-transparent border-2 border-amber-400 focus:border-amber-300 focus:ring-0 text-amber-400 placeholder:text-amber-400/70 font-pixel ${fontClass}`}
+              className={cn(
+                `w-full pl-10 pr-4 py-3 bg-transparent border-2 focus:ring-0 font-pixel ${fontClass}`,
+                isLight
+                  ? "border-[#8B5A20] text-[#3D1C08] placeholder:text-[#8B5A30]"
+                  : "border-amber-400 focus:border-amber-300 text-amber-400 placeholder:text-amber-400/70"
+              )}
             />
           </div>
 
@@ -100,29 +113,33 @@ const QuestBoard = () => {
             </PixelButton>
 
             {isFilterOpen && (
-              <div className="absolute right-0 mt-3 w-[280px] bg-[#1a1a1a] pixel-border z-50 p-5 shadow-2xl">
+              <div className={cn(
+                "absolute right-0 mt-3 w-[280px] z-50 p-5 shadow-2xl pixel-border",
+                isLight ? "bg-[#E8CFA0]" : "bg-[#1a1a1a]"
+              )}>
                 <div className="space-y-6">
                   <div>
-                    <p
-                      className={cn(
-                        "font-pixel text-accent mb-3 uppercase border-b border-white/10 pb-1",
-                        i18n.language === "th" ? "text-[16px]" : "text-[16px]"
-                      )}
-                    >
+                    <p className={cn(
+                      "font-pixel mb-3 uppercase pb-1",
+                      isLight ? "text-[#3D1C08] border-b border-[#8B5A20]/40" : "text-accent border-b border-white/10",
+                      i18n.language === "th" ? "text-[16px]" : "text-[16px]"
+                    )}>
                       {t("questBoard.queststatus")}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {statuses.map((s) => (
                         <button
                           key={s}
-                          onClick={() => {
-                            setStatusFilter(s);
-                          }}
+                          onClick={() => setStatusFilter(s)}
                           className={cn(
                             "font-pixel px-2 py-1 border-2 transition-colors",
-                            statusFilter === s
-                              ? "border-gold text-gold bg-gold/10"
-                              : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                            isLight
+                              ? statusFilter === s
+                                ? "border-[#6B3010] text-[#6B3010] bg-[#C89A50]"
+                                : "border-[#B8903A] text-[#8B5A30] hover:border-[#6B3010]"
+                              : statusFilter === s
+                                ? "border-gold text-gold bg-gold/10"
+                                : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
                             i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                           )}
                         >
@@ -133,26 +150,27 @@ const QuestBoard = () => {
                   </div>
 
                   <div>
-                    <p
-                      className={cn(
-                        "font-pixel text-accent mb-3 uppercase border-b border-white/10 pb-1",
-                        i18n.language === "th" ? "text-[16px]" : "text-[16px]"
-                      )}
-                    >
+                    <p className={cn(
+                      "font-pixel mb-3 uppercase pb-1",
+                      isLight ? "text-[#3D1C08] border-b border-[#8B5A20]/40" : "text-accent border-b border-white/10",
+                      i18n.language === "th" ? "text-[16px]" : "text-[16px]"
+                    )}>
                       {t("questBoard.category")}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {categories.map((cat) => (
                         <button
                           key={cat}
-                          onClick={() => {
-                            setFilter(cat);
-                          }}
+                          onClick={() => setFilter(cat)}
                           className={cn(
                             "font-pixel px-2 py-1 border-2 transition-colors",
-                            filter === cat
-                              ? "border-gold text-gold bg-gold/10"
-                              : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                            isLight
+                              ? filter === cat
+                                ? "border-[#6B3010] text-[#6B3010] bg-[#C89A50]"
+                                : "border-[#B8903A] text-[#8B5A30] hover:border-[#6B3010]"
+                              : filter === cat
+                                ? "border-gold text-gold bg-gold/10"
+                                : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
                             i18n.language === "th" ? "text-[16px]" : "text-[16px]"
                           )}
                         >
@@ -166,17 +184,15 @@ const QuestBoard = () => {
                   <div className="flex items-center gap-2">
                     <PixelButton
                       variant="gold"
-                      className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 text-black ${fontClass}`}
-                      onClick={() => {
-                        setIsFilterOpen(false);
-                      }}
+                      className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 ${fontClass}`}
+                      onClick={() => setIsFilterOpen(false)}
                     >
-                      <PixelSearch size={20} className="text-black" /> {t("questBoard.searchPlaceholder")}
+                      <PixelSearch size={20} /> {t("questBoard.searchPlaceholder")}
                     </PixelButton>
                     <PixelButton
                       variant="ghost"
                       size="sm"
-                      className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 text-white ${fontClass}`}
+                      className={`font-pixel flex-1 flex items-center justify-center gap-1 h-10 ${fontClass}`}
                       onClick={() => {
                         setFilter("all");
                         setStatusFilter("open");
