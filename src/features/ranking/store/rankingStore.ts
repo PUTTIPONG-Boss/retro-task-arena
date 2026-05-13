@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { RankingTab } from "../types";
 
-export type SortOption = "exp" | "quests";
+export type SortOption = "exp" | "quests" | "points";
 
 interface RankingState {
   activeTab: RankingTab;

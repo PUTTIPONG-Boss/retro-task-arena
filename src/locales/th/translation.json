@@ -1,6 +1,7 @@
 {
   "navbar": {
     "quest_board": "กระดานเควสต์",
+    "ranking": "กระดานอันดับ",
     "post_quest": "สร้างเควสต์ใหม่",
     "reward_shop": "ร้านค้ารางวัล",
     "profile": "โปรไฟล์",
@@ -659,5 +660,41 @@
     "changesRequested": "[{{title}}] มีการขอให้แก้ไขงาน{{comment}}",
     "statusChanged": "[{{title}}] สถานะเปลี่ยนเป็น {{status}}",
     "newBid": "[{{title}}] มีข้อเสนอใหม่! {{amount}} แต้ม"
+  },
+  "ranking": {
+    "banner": {
+      "marquee": "✦ อันดับนักผจญภัยยอดเยี่ยม ✦ พัฒนาฝีมือ ✦ พิชิตเควสต์ ✦ ก้าวสู่ระดับตำนาน ✦",
+      "title": "กระดานอันดับ",
+      "subtitle": "จัดอันดับเหล่านักผจญภัยผู้กล้าหาญที่พิชิตเควสต์และสะสม EXP ได้สูงสุดในอาณาจักร"
+    },
+    "stats": {
+      "totalPlayers": "ผู้เล่นทั้งหมด",
+      "totalPlayersSub": "นักผจญภัยที่ลงทะเบียน",
+      "highestQuests": "เควสต์สำเร็จสูงสุด",
+      "highestExp": "EXP สูงสุด",
+      "totalExp": "EXP รวมทั้งหมด",
+      "totalExpSub": "รวม EXP ทุกคน",
+      "by": "โดย",
+      "questsUnit": "เควสต์"
+    },
+    "filter": {
+      "sortBy": "เรียงตาม:",
+      "exp": "EXP สูงสุด",
+      "quests": "เควสต์สำเร็จ",
+      "points": "แต้มสูงสุด"
+    },
+    "table": {
+      "rank": "อันดับ",
+      "adventurer": "นักผจญภัย",
+      "quests": "เควสต์",
+      "rating": "เรตติ้ง",
+      "exp": "EXP",
+      "points": "แต้มสูงสุด"
+    },
+    "podium": {
+      "title": "สุดยอดนักผจญภัย"
+    },
+    "error": "⚠ ไม่สามารถโหลดข้อมูล Ranking ได้",
+    "loading": "กำลังโหลดข้อมูล Ranking..."
   }
 }

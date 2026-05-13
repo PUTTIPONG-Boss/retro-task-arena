@@ -1,21 +1,26 @@
 import { motion } from "framer-motion";
 import { useRankingStore, SortOption } from "../store/rankingStore";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 import { Sword } from "lucide-react";
 import PixelTrophy from "@/components/icons/PixelTrophy";
 
+import PixelCoin from "@/components/icons/PixelCoin";
+
 const RankingFilter = () => {
+  const { t } = useTranslation();
   const { sortBy, setSortBy } = useRankingStore();
 
   const options: { id: SortOption; label: string; icon: React.ReactNode }[] = [
-    { id: "exp", label: "EXP สูงสุด", icon: <PixelTrophy size={14} /> },
-    { id: "quests", label: "เควสต์สำเร็จ", icon: <Sword size={14} /> },
+    { id: "exp", label: t("ranking.filter.exp"), icon: <PixelTrophy size={14} /> },
+    { id: "quests", label: t("ranking.filter.quests"), icon: <Sword size={14} /> },
+    { id: "points", label: t("ranking.filter.points"), icon: <PixelCoin size={14} /> },
   ];
 
   return (
     <div className="flex items-center gap-2 mb-6">
       <span className="font-pixel text-[14px] text-muted-foreground uppercase tracking-widest mr-2">
-        เรียงตาม:
+        {t("ranking.filter.sortBy")}
       </span>
       <div className="flex gap-1 bg-black/40 p-1 border border-border/50 pixel-border-sm">
         {options.map((option) => (
@@ -23,7 +28,7 @@ const RankingFilter = () => {
             key={option.id}
             onClick={() => setSortBy(option.id)}
             className={cn(
-              "font-pixel text-[10px] px-4 py-2 flex items-center gap-2 transition-all relative",
+              "font-pixel text-[14px] px-4 py-2 flex items-center gap-2 transition-all relative",
               sortBy === option.id
                 ? "text-accent bg-accent/10 shadow-[inset_0_0_10px_rgba(241,196,15,0.2)]"
                 : "text-muted-foreground hover:text-foreground hover:bg-white/5"

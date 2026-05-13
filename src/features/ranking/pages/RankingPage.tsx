@@ -7,6 +7,8 @@ import PodiumTop3 from "../components/PodiumTop3";
 import LeaderboardTable from "../components/LeaderboardTable";
 import RankingFilter from "../components/RankingFilter";
 
+import { useTranslation } from "react-i18next";
+
 // ─── Loading skeleton ─────────────────────────────────────────────────────────
 const LoadingSkeleton = () => (
   <div className="max-w-[1280px] mx-auto px-4 py-8 space-y-4">
@@ -17,16 +19,20 @@ const LoadingSkeleton = () => (
 );
 
 // ─── Error state ──────────────────────────────────────────────────────────────
-const ErrorState = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <p className="font-pixel text-[10px] text-destructive uppercase tracking-widest">
-      ⚠ ไม่สามารถโหลดข้อมูล Ranking ได้
-    </p>
-  </div>
-);
+const ErrorState = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <p className="font-pixel text-[10px] text-destructive uppercase tracking-widest">
+        {t("ranking.error")}
+      </p>
+    </div>
+  );
+};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 const RankingPage = () => {
+  const { t } = useTranslation();
   const { activeTab, sortBy } = useRankingStore();
 
   const {
@@ -42,6 +48,9 @@ const RankingPage = () => {
   const sortedEntries = [...entries].sort((a, b) => {
     if (sortBy === "quests") {
       return b.questsCompleted - a.questsCompleted;
+    }
+    if (sortBy === "points") {
+      return (b.totalPointsEarned || 0) - (a.totalPointsEarned || 0);
     }
     return b.totalExp - a.totalExp;
   }).map((e, index) => ({

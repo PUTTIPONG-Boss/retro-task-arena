@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { LeaderboardEntry } from "../types";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
-import { Star } from "lucide-react";
+import PixelCoin from "@/components/icons/PixelCoin";
+import { useRankingStore } from "../store/rankingStore";
 
 interface Props {
     entries: LeaderboardEntry[]; // Top 3 entries only
@@ -21,12 +23,23 @@ interface PodiumCardProps {
 }
 
 const PodiumCard = ({ entry, order }: PodiumCardProps) => {
+    const { t } = useTranslation();
+    const { sortBy } = useRankingStore();
     const rank = entry.rank as 1 | 2 | 3;
     const medal = MEDAL[rank];
     const displayName = entry.nameEn || entry.nameTh || entry.username;
 
     // ตัวอักษรแรกของชื่อ สำหรับ avatar placeholder
     const avatarInitial = displayName.charAt(0).toUpperCase();
+
+    // ดึงค่าสถิติหลักตาม sortBy
+    const getPrimaryValue = () => {
+        if (sortBy === "quests") return { value: entry.questsCompleted, label: t("ranking.table.quests") };
+        if (sortBy === "points") return { value: entry.totalPointsEarned || 0, label: t("ranking.table.points") };
+        return { value: entry.totalExp, label: t("ranking.table.exp") };
+    };
+
+    const primary = getPrimaryValue();
 
     return (
         <motion.div
@@ -112,25 +125,53 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
                     {/* Score */}
                     <div className="flex flex-col items-center gap-0.5 mt-0.5">
                         <p
-                            className="font-pixel text-[14px]"
+                            className="font-pixel text-[14px] text-center"
                             style={{ color: medal.color, textShadow: `0 0 10px ${medal.color}44` }}
                         >
-                            {entry.totalExp.toLocaleString()} EXP
+                            {primary.value.toLocaleString()} 
+                        </p>
+                        <p className="font-pixel text-[8px] uppercase tracking-tighter opacity-70" style={{ color: medal.color }}>
+                            {primary.label}
                         </p>
 
                         {/* Stats Row */}
                         <div className="flex items-center justify-center gap-4 mt-1 opacity-80">
+                            {/* Slot 1: Primary Alternative Stat */}
                             <div className="flex items-center gap-1">
-                                <PixelClipboardList size={14} className="text-yellow-400" />
-                                <span className="font-pixel text-[14px]" style={{ color: medal.color }}>
-                                    {entry.questsCompleted}
-                                </span>
+                                {sortBy === "exp" ? (
+                                    <>
+                                        <PixelClipboardList size={14} className="text-yellow-400" />
+                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                            {entry.questsCompleted}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="font-pixel text-[10px] text-accent">EXP</span>
+                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                            {entry.totalExp.toLocaleString()}
+                                        </span>
+                                    </>
+                                )}
                             </div>
+
+                            {/* Slot 2: Secondary Alternative Stat */}
                             <div className="flex items-center gap-1">
-                                <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                                <span className="font-pixel text-[14px]" style={{ color: medal.color }}>
-                                    {entry.rating.toFixed(1)}
-                                </span>
+                                {sortBy === "points" ? (
+                                    <>
+                                        <PixelClipboardList size={14} className="text-yellow-400" />
+                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                            {entry.questsCompleted}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <PixelCoin size={14} className="text-yellow-400" />
+                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                            {(entry.totalPointsEarned || 0).toLocaleString()}
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -147,6 +188,7 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const PodiumTop3 = ({ entries }: Props) => {
+    const { t } = useTranslation();
     if (entries.length < 3) return null;
 
     // Flexbox order: rank2=1, rank1=2 (กลาง), rank3=3
@@ -155,7 +197,7 @@ const PodiumTop3 = ({ entries }: Props) => {
     return (
         <div>
             <h2 className="font-pixel text-[20px] text-accent uppercase tracking-widest mb-12 flex items-center gap-3">
-                🥇 TOP ADVENTURERS
+                🥇 {t("ranking.podium.title")}
                 <span className="flex-1 h-0.5 bg-gradient-to-r from-accent to-transparent" />
             </h2>
 

@@ -51,7 +51,7 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
-    { to: "/ranking", label: "Ranking", icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
+    { to: "/ranking", label: t("navbar.ranking", "Ranking"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
     ...(isAdmin ? [{
       to: "/admin/managequest",
       label: t("navbar.admin"),

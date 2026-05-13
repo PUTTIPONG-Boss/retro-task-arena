@@ -1,6 +1,7 @@
 {
   "navbar": {
     "quest_board": "Quest Board",
+    "ranking": "Ranking",
     "post_quest": "Post Quest",
     "reward_shop": "Reward Shop",
     "profile": "Profile",
@@ -662,6 +663,42 @@
     "workApproved": "[{{title}}] Your work has been approved!{{points}}",
     "changesRequested": "[{{title}}] Changes requested{{comment}}",
     "statusChanged": "[{{title}}] Status changed to {{status}}",
-    "newBid": "[{{title}}] New bid arrived! {{amount}} GP"
+    "newBid": "[{{title}}] New bid received! {{amount}} points"
+  },
+  "ranking": {
+    "banner": {
+      "marquee": "✦ TOP ADVENTURERS ✦ IMPROVE SKILLS ✦ CONQUER QUESTS ✦ BECOME LEGENDARY ✦",
+      "title": "Ranking Board",
+      "subtitle": "Ranking the brave adventurers who conquered quests and accumulated the highest EXP in the realm"
+    },
+    "stats": {
+      "totalPlayers": "Total Players",
+      "totalPlayersSub": "Registered Adventurers",
+      "highestQuests": "Highest Quests",
+      "highestExp": "Highest EXP",
+      "totalExp": "Total Realm EXP",
+      "totalExpSub": "Sum of all EXP",
+      "by": "by",
+      "questsUnit": "Quests"
+    },
+    "filter": {
+      "sortBy": "Sort by:",
+      "exp": "Highest EXP",
+      "quests": "Quests Completed",
+      "points": "Total Points"
+    },
+    "table": {
+      "rank": "Rank",
+      "adventurer": "Adventurer",
+      "quests": "Quests",
+      "rating": "Rating",
+      "exp": "EXP",
+      "points": "Total Points"
+    },
+    "podium": {
+      "title": "TOP ADVENTURERS"
+    },
+    "error": "⚠ Unable to load Ranking data",
+    "loading": "Loading Ranking data..."
   }
 }

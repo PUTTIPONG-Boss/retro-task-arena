@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { LeaderboardEntry } from "../types";
 import { Sword } from "lucide-react";
 import PixelBuilding from "@/components/icons/PixelBuilding";
@@ -32,6 +33,7 @@ const StatCard = ({ label, value, subLabel, icon }: StatCardProps) => (
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const StatsStrip = ({ entries }: Props) => {
+    const { t } = useTranslation();
     // ดึงข้อมูล Leaderboard ของเควสต์โดยเฉพาะเพื่อหาคนเก่งสุด
     const { data: questEntries } = useGetLeaderboard("quests");
     // ดึงข้อมูล Leaderboard ของ EXP โดยเฉพาะเพื่อหาคนเก่งสุด
@@ -54,10 +56,10 @@ const StatsStrip = ({ entries }: Props) => {
     const totalExp = entries.reduce((sum, e) => sum + e.totalExp, 0);
 
     const stats: StatCardProps[] = [
-        { label: "ผู้เล่นทั้งหมด", value: totalPlayers.toLocaleString(), subLabel: "นักผจญภัยที่ลงทะเบียน", icon: <PixelBuilding size={28} /> },
-        { label: "เควสต์สำเร็จสูงสุด", value: `${topQuestCount}`, subLabel: `โดย ${topQuestName}`, icon: <Sword size={28} /> },
-        { label: "EXP สูงสุด", value: topExpScore, subLabel: `โดย ${topExpName}`, icon: <PixelTrophy size={28} /> },
-        { label: "EXP รวมทั้งหมด", value: totalExp.toLocaleString(), subLabel: "รวม EXP ทุกคน", icon: <PixelCoin size={28} /> },
+        { label: t("ranking.stats.totalPlayers"), value: totalPlayers.toLocaleString(), subLabel: t("ranking.stats.totalPlayersSub"), icon: <PixelBuilding size={28} /> },
+        { label: t("ranking.stats.highestQuests"), value: `${topQuestCount}`, subLabel: `${t("ranking.stats.by")} ${topQuestName}`, icon: <Sword size={28} /> },
+        { label: t("ranking.stats.highestExp"), value: topExpScore, subLabel: `${t("ranking.stats.by")} ${topExpName}`, icon: <PixelTrophy size={28} /> },
+        { label: t("ranking.stats.totalExp"), value: totalExp.toLocaleString(), subLabel: t("ranking.stats.totalExpSub"), icon: <PixelCoin size={28} /> },
     ];
 
     return (

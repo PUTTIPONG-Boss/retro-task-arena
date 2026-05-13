@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { LeaderboardEntry } from "../types";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     entries: LeaderboardEntry[]; // Rank 4+ only
@@ -19,7 +20,7 @@ const TableRow = ({ entry, index }: TableRowProps) => {
     return (
         <motion.div
             className={cn(
-                "grid grid-cols-[56px_1fr_120px_100px_80px] items-center px-5 py-3",
+                "grid grid-cols-[56px_1fr_120px_120px_100px] items-center px-5 py-3",
                 "border-b border-border relative overflow-hidden",
                 "hover:bg-white/5 transition-none group"
             )}
@@ -64,7 +65,7 @@ const TableRow = ({ entry, index }: TableRowProps) => {
                             {displayName}
                         </span>
                     </div>
-                    <span className="text-[12 px] text-muted-foreground truncate">{entry.username}</span>
+                    <span className="text-[12px] text-muted-foreground truncate">{entry.username}</span>
                     <div className="flex items-center gap-2">
                         <span className="font-pixel text-[12px] text-accent border border-border bg-white/5 px-1 py-0.5">
                             LV {entry.level}
@@ -80,46 +81,58 @@ const TableRow = ({ entry, index }: TableRowProps) => {
                 </span>
             </div>
 
-            {/* Col 4 — Quests completed */}
+            {/* Col 4 — Points */}
             <div className="text-center">
-                <span className="font-pixel text-[12px] text-foreground">{entry.questsCompleted}</span>
+                <span className="font-pixel text-[12px] text-yellow-500">
+                    {(entry.totalPointsEarned || 0).toLocaleString()}
+                </span>
             </div>
 
-            {/* Col 5 — Rating */}
+            {/* Col 5 — Quests completed */}
             <div className="text-center">
-                <span className="font-pixel text-[12px] text-accent">
-                    ★ {entry.rating.toFixed(1)}
-                </span>
+                <span className="font-pixel text-[12px] text-foreground">{entry.questsCompleted}</span>
             </div>
         </motion.div>
     );
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
-const LeaderboardTable = ({ entries }: Props) => (
-    <div>
-        <div className="bg-card pixel-border overflow-hidden">
-            {/* Header row */}
-            <div className="grid grid-cols-[56px_1fr_120px_100px_80px] px-5 py-3 bg-muted border-b border-border items-center">
-                {["#", "ผู้เล่น", "EXP", "เควสต์สำเร็จ", "Rating"].map((col, idx) => (
-                    <span
-                        key={col}
-                        className={cn(
-                            "font-pixel text-[12px] text-muted-foreground uppercase tracking-widest",
-                            idx !== 1 && "text-center" // จัดกลางทุกคอลัมน์ ยกเว้นคอลัมน์ชื่อผู้เล่น (idx 1)
-                        )}
-                    >
-                        {col}
-                    </span>
+const LeaderboardTable = ({ entries }: Props) => {
+    const { t } = useTranslation();
+    
+    const headers = [
+        t("ranking.table.rank"),
+        t("ranking.table.adventurer"),
+        t("ranking.table.exp"),
+        t("ranking.table.points"),
+        t("ranking.table.quests")
+    ];
+
+    return (
+        <div>
+            <div className="bg-card pixel-border overflow-hidden">
+                {/* Header row */}
+                <div className="grid grid-cols-[56px_1fr_120px_120px_100px] px-5 py-3 bg-muted border-b border-border items-center">
+                    {headers.map((col, idx) => (
+                        <span
+                            key={idx}
+                            className={cn(
+                                "font-pixel text-[12px] text-muted-foreground uppercase tracking-widest",
+                                idx !== 1 && "text-center" // จัดกลางทุกคอลัมน์ ยกเว้นคอลัมน์ชื่อผู้เล่น (idx 1)
+                            )}
+                        >
+                            {col}
+                        </span>
+                    ))}
+                </div>
+
+                {/* Data rows */}
+                {entries.map((entry, i) => (
+                    <TableRow key={entry.userId} entry={entry} index={i} />
                 ))}
             </div>
-
-            {/* Data rows */}
-            {entries.map((entry, i) => (
-                <TableRow key={entry.userId} entry={entry} index={i} />
-            ))}
         </div>
-    </div>
-);
+    );
+};
 
 export default LeaderboardTable;
