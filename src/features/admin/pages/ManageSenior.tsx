@@ -17,7 +17,7 @@ const SkeletonRows = () => (
   <>
     {Array.from({ length: 6 }).map((_, i) => (
       <tr key={i} className="border-b border-[#333]/30">
-        {Array.from({ length: 5 }).map((__, j) => (
+        {Array.from({ length: 8 }).map((__, j) => (
           <td key={j} className="p-3">
             <div
               className="h-4 rounded bg-white/10 animate-pulse"
@@ -43,7 +43,7 @@ const ManageSenior = () => {
 
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
 
-  const filteredSeniors = (seniors as any[]).filter((s) => {
+  const filteredSeniors = seniors.filter((s) => {
     const q = search.toLowerCase();
     return (
       s.id?.toLowerCase().includes(q) ||
@@ -75,7 +75,10 @@ const ManageSenior = () => {
               <th className="p-3">{t("admin.seniorpage.id")}</th>
               <th className="p-3">{t("admin.seniorpage.username")}</th>
               <th className="p-3">{t("admin.seniorpage.email")}</th>
-              <th className="p-3 text-center">{t("admin.seniorpage.quests")}</th>
+              <th className="p-3 text-center">{t("admin.seniorpage.level")}</th>
+              <th className="p-3 text-center">{t("admin.seniorpage.totalExp")}</th>
+              <th className="p-3 text-center">{t("admin.seniorpage.questsCompleted")}</th>
+              <th className="p-3 text-center">{t("admin.seniorpage.postedTasks")}</th>
               <th className="p-3 text-center">{t("admin.seniorpage.role")}</th>
             </tr>
           </thead>
@@ -84,7 +87,7 @@ const ManageSenior = () => {
               <SkeletonRows />
             ) : seniors.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                <td colSpan={8} className="p-6 text-center text-muted-foreground">
                   {t("admin.seniorpage.notfoundsenior")}
                 </td>
               </tr>
@@ -98,7 +101,10 @@ const ManageSenior = () => {
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{senior.id.substring(0, 8)}...</td>
                   <td className={`p-3 text-foreground ${fontClass}`}>{senior.username}</td>
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{senior.email}</td>
+                  <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.level}</td>
+                  <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.totalExp}</td>
                   <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.questsCompleted}</td>
+                  <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.postedTasks?.length || 0}</td>
                   <td className="p-3 text-center">
                     <span className={`px-2 py-1 uppercase tracking-wider bg-purple-900/50 text-purple-400 border border-purple-800 ${fontClass}`}>
                       {senior.role}
@@ -112,66 +118,95 @@ const ManageSenior = () => {
       </PixelFrame>
 
       <Dialog open={!!selectedSenior} onOpenChange={(open) => !open && setSelectedSenior(null)}>
-        <DialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel max-w-lg">
-          <DialogHeader>
-            <DialogTitle className={`text-accent pixel-text-shadow ${fontClass}`}>
-              {t("admin.seniorpage.dialog.title")}
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel max-w-2xl max-h-[90vh] overflow-y-auto">
+
           {selectedSenior && (
-            <div className={`space-y-3 ${fontClass}`}>
-              <div className="grid grid-cols-[140px_1fr] gap-x-3 gap-y-2">
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.fullId")}</span>
-                <span className="text-foreground break-all">{selectedSenior.id}</span>
+            <div className={`space-y-6 ${fontClass}`}>
+              {/* Senior Profile Section */}
+              <div className="space-y-4">
+                <h3 className="text-accent font-bold border-b border-dashed border-[#333] pb-2">
+                  {t("admin.seniorpage.dialog.title")}
+                </h3>
+                <div className="grid grid-cols-[160px_1fr] gap-x-3 gap-y-2">
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.fullId")}</span>
+                  <span className="text-foreground break-all">{selectedSenior.id}</span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.username")}</span>
-                <span className="text-foreground">{selectedSenior.username}</span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.username")}</span>
+                  <span className="text-foreground">{selectedSenior.username}</span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.email")}</span>
-                <span className="text-foreground">{selectedSenior.email || t("admin.seniorpage.dialog.notSpecified")}</span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.email")}</span>
+                  <span className="text-foreground">{selectedSenior.email || t("admin.seniorpage.dialog.notSpecified")}</span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.nameTh")}</span>
-                <span className="text-foreground">
-                  {selectedSenior.firstNameTh || selectedSenior.lastNameTh
-                    ? `${selectedSenior.firstNameTh ?? ""} ${selectedSenior.lastNameTh ?? ""}`.trim()
-                    : t("admin.seniorpage.dialog.notSpecified")}
-                </span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.nameTh")}</span>
+                  <span className="text-foreground">
+                    {selectedSenior.firstNameTh || selectedSenior.lastNameTh
+                      ? `${selectedSenior.firstNameTh ?? ""} ${selectedSenior.lastNameTh ?? ""}`.trim()
+                      : t("admin.seniorpage.dialog.notSpecified")}
+                  </span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.nameEn")}</span>
-                <span className="text-foreground">
-                  {selectedSenior.firstNameEn || selectedSenior.lastNameEn
-                    ? `${selectedSenior.firstNameEn ?? ""} ${selectedSenior.lastNameEn ?? ""}`.trim()
-                    : t("admin.seniorpage.dialog.notSpecified")}
-                </span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.nameEn")}</span>
+                  <span className="text-foreground">
+                    {selectedSenior.firstNameEn || selectedSenior.lastNameEn
+                      ? `${selectedSenior.firstNameEn ?? ""} ${selectedSenior.lastNameEn ?? ""}`.trim()
+                      : t("admin.seniorpage.dialog.notSpecified")}
+                  </span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.role")}</span>
-                <span className="text-purple-400 uppercase">{selectedSenior.role}</span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.github")}</span>
+                  <span className="text-foreground">
+                    {selectedSenior.github
+                      ? <a href={selectedSenior.github} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedSenior.github}</a>
+                      : t("admin.seniorpage.dialog.notSpecified")}
+                  </span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.points")}</span>
-                <span className="text-accent">{selectedSenior.points ?? 0}</span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.linkedin")}</span>
+                  <span className="text-foreground">
+                    {selectedSenior.linkin
+                      ? <a href={selectedSenior.linkin} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedSenior.linkin}</a>
+                      : t("admin.seniorpage.dialog.notSpecified")}
+                  </span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.rating")}</span>
-                <span className="text-yellow-400">{selectedSenior.rating ?? 0}</span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.role")}</span>
+                  <span className="text-purple-400 uppercase">{selectedSenior.role}</span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.postedQuests")}</span>
-                <span className="text-accent">{selectedSenior.questsCompleted ?? 0}</span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.level")}</span>
+                  <span className="text-accent">{selectedSenior.level ?? 0}</span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.github")}</span>
-                <span className="text-foreground">
-                  {selectedSenior.github
-                    ? <a href={selectedSenior.github} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedSenior.github}</a>
-                    : t("admin.seniorpage.dialog.notSpecified")}
-                </span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.totalExp")}</span>
+                  <span className="text-accent">{selectedSenior.totalExp ?? 0}</span>
 
-                <span className="text-muted-foreground">{t("admin.seniorpage.dialog.linkedin")}</span>
-                <span className="text-foreground">
-                  {selectedSenior.linkin
-                    ? <a href={selectedSenior.linkin} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedSenior.linkin}</a>
-                    : t("admin.seniorpage.dialog.notSpecified")}
-                </span>
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.rating")}</span>
+                  <span className="text-yellow-400">{selectedSenior.rating ?? 0}</span>
+                </div>
               </div>
 
-              <div className="pt-2">
+              {/* Quest Profile Section */}
+              <div className="space-y-4">
+                <h3 className="text-accent font-bold border-b border-dashed border-[#333] pb-2">
+                  {t("admin.seniorpage.dialog.questProfile")}
+                </h3>
+                <div className="grid grid-cols-[160px_1fr] gap-x-3 gap-y-2">
+                  <span className="text-muted-foreground">{t("admin.seniorpage.questsCompleted")}</span>
+                  <span className="text-accent">{selectedSenior.questsCompleted ?? 0}</span>
+
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.openTasksCount")}</span>
+                  <span className="text-accent">{selectedSenior.openTasksCount ?? 0}</span>
+
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.inProgressTasksCount")}</span>
+                  <span className="text-accent">{selectedSenior.inProgressTasksCount ?? 0}</span>
+
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.finishedTasksCount")}</span>
+                  <span className="text-accent">{selectedSenior.finishedTasksCount ?? 0}</span>
+
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.reviewCount")}</span>
+                  <span className="text-accent">{selectedSenior.reviewCount ?? 0}</span>
+
+                  <span className="text-muted-foreground">{t("admin.seniorpage.dialog.postedTasksCount")}</span>
+                  <span className="text-accent">{selectedSenior.postedTasks?.length ?? 0}</span>
+                </div>
+              </div>
+
+              {/* Skills Section */}
+              <div className="pt-2 border-t border-dashed border-[#333]">
                 <span className="text-muted-foreground">{t("admin.seniorpage.dialog.skills")}</span>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {selectedSenior.skills && selectedSenior.skills.length > 0

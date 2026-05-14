@@ -75,8 +75,8 @@ const ManageJunior = () => {
               <th className="p-3">{t("admin.juniorpage.id")}</th>
               <th className="p-3">{t("admin.juniorpage.username")}</th>
               <th className="p-3">{t("admin.juniorpage.email")}</th>
-              <th className="p-3 text-center">{t("admin.juniorpage.questsInProgress")}</th>
-              <th className="p-3 text-center">{t("admin.juniorpage.questsInReview")}</th>
+              <th className="p-3 text-center">{t("admin.juniorpage.level")}</th>
+              <th className="p-3 text-center">{t("admin.juniorpage.totalExp")}</th>
               <th className="p-3 text-center">{t("admin.juniorpage.questsCompleted")}</th>
               <th className="p-3 text-center">{t("admin.juniorpage.role")}</th>
             </tr>
@@ -100,8 +100,8 @@ const ManageJunior = () => {
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{junior.id.substring(0, 8)}...</td>
                   <td className={`p-3 text-foreground ${fontClass}`}>{junior.username}</td>
                   <td className={`p-3 text-muted-foreground ${fontClass}`}>{junior.email}</td>
-                  <td className={`p-3 text-center text-orange-400 ${fontClass}`}>{junior.questsInProgress || 0}</td>
-                  <td className={`p-3 text-center text-blue-400 ${fontClass}`}>{junior.questsInReview || 0}</td>
+                  <td className={`p-3 text-center text-orange-400 ${fontClass}`}>{junior.level || 1}</td>
+                  <td className={`p-3 text-center text-blue-400 ${fontClass}`}>{junior.totalExp || 0}</td>
                   <td className={`p-3 text-center text-accent ${fontClass}`}>{junior.questsCompleted || 0}</td>
                   <td className="p-3 text-center">
                     <span className={`px-2 py-1 uppercase tracking-wider bg-green-900/50 text-green-400 border border-green-800 ${fontClass}`}>
@@ -147,26 +147,7 @@ const ManageJunior = () => {
                     ? `${selectedJunior.firstNameEn ?? ""} ${selectedJunior.lastNameEn ?? ""}`.trim()
                     : t("admin.juniorpage.dialog.notSpecified")}
                 </span>
-
-                <span className="text-muted-foreground">{t("admin.juniorpage.role")}</span>
-                <span className="text-green-400 uppercase">{selectedJunior.role}</span>
-
-                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.points")}</span>
-                <span className="text-accent">{selectedJunior.points ?? 0}</span>
-
-                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.rating")}</span>
-                <span className="text-yellow-400">{selectedJunior.rating ?? 0}</span>
-
-                <span className="text-muted-foreground">{t("admin.juniorpage.questsInProgress")}</span>
-                <span className="text-orange-400">{selectedJunior.questsInProgress ?? 0}</span>
-
-                <span className="text-muted-foreground">{t("admin.juniorpage.questsInReview")}</span>
-                <span className="text-blue-400">{selectedJunior.questsInReview ?? 0}</span>
-
-                <span className="text-muted-foreground">{t("admin.juniorpage.questsCompleted")}</span>
-                <span className="text-accent">{selectedJunior.questsCompleted ?? 0}</span>
-
-                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.github")}</span>
+                                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.github")}</span>
                 <span className="text-foreground">
                   {selectedJunior.github
                     ? <a href={selectedJunior.github} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedJunior.github}</a>
@@ -179,6 +160,21 @@ const ManageJunior = () => {
                     ? <a href={selectedJunior.linkin} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">{selectedJunior.linkin}</a>
                     : t("admin.juniorpage.dialog.notSpecified")}
                 </span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.role")}</span>
+                <span className="text-green-400 uppercase">{selectedJunior.role}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.dialog.rating")}</span>
+                <span className="text-yellow-400">{selectedJunior.rating ?? 0}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.level")}</span>
+                <span className="text-orange-400">{selectedJunior.level ?? 1}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.totalExp")}</span>
+                <span className="text-blue-400">{selectedJunior.totalExp ?? 0}</span>
+
+                <span className="text-muted-foreground">{t("admin.juniorpage.questsCompleted")}</span>
+                <span className="text-accent">{selectedJunior.questsCompleted ?? 0}</span>
               </div>
 
               <div className="pt-2">
