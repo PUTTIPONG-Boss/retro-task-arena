@@ -1,5 +1,6 @@
 {
   "navbar": {
+    "dashboard": "Dashboard",
     "quest_board": "Quest Board",
     "ranking": "Ranking",
     "post_quest": "Post Quest",
@@ -9,6 +10,39 @@
     "notifications": "Notifications",
     "clearAll": "Clear All",
     "noNotifications": "No Notifications"
+  },
+  "dashboard": {
+    "pointBalance": "Point Balance",
+    "pointBalanceSub": "Available to spend",
+    "completedTasks": "Quests Completed",
+    "completedTasksSub": "Finished adventures",
+    "reviews": "reviews received",
+    "inProgress": "In Progress",
+    "inProgressSub": "Currently active",
+    "rating": "Rating",
+    "ratingAvg": "Avg. score",
+    "openTasks": "Open Quests",
+    "openTasksSub": "Awaiting adventurers",
+    "totalExp": "Total EXP",
+    "totalRatings": "Total Ratings",
+    "totalRatingsSub": "Reviews received",
+    "totalUsers": "Guild Members",
+    "totalUsersSub": "Registered users",
+    "totalTasks": "Total Quests",
+    "totalTasksSub": "All time posted",
+    "recentTasks": "Recent Tasks",
+    "taskBreakdown": "Task Breakdown",
+    "total": "total",
+    "tasks": "Tasks",
+    "noTasks": "No recent tasks",
+    "view": "View",
+    "status": {
+      "open": "Open",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "inReview": "In Review"
+    },
+    "error": "Failed to load dashboard"
   },
   "questBoard": {
     "title": "Inet Quest Board",

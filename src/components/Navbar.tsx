@@ -50,6 +50,7 @@ const Navbar = () => {
   };
 
   const links = [
+    { to: "/dashboard", label: t("navbar.dashboard", "Dashboard"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
     { to: "/", label: t("navbar.quest_board", "Quest Board"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
     { to: "/ranking", label: t("navbar.ranking", "Ranking"), icon: <PixelClipboardList size={20} className="text-yellow-400" /> },
     ...(isAdmin ? [{

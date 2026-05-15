@@ -1,5 +1,6 @@
 {
-  "navbar": {
+  "navbar": {    
+    "dashboard": "แดชบอร์ด",
     "quest_board": "กระดานเควสต์",
     "ranking": "กระดานอันดับ",
     "post_quest": "สร้างเควสต์ใหม่",
@@ -10,6 +11,39 @@
     "notifications": "การแจ้งเตือน",
     "clearAll": "ล้างทั้งหมด",
     "noNotifications": "ไม่มีการแจ้งเตือน"
+  },
+  "dashboard": {
+    "pointBalance": "ยอดแต้มคงเหลือ",
+    "pointBalanceSub": "แต้มที่ใช้แลกรางวัลได้",
+    "completedTasks": "เควสต์ที่สำเร็จ",
+    "completedTasksSub": "พิชิตการผจญภัยแล้ว",
+    "reviews": "รีวิวที่ได้รับ",
+    "inProgress": "กำลังดำเนินการ",
+    "inProgressSub": "เควสต์ที่กำลังทำอยู่",
+    "rating": "เรตติ้ง",
+    "ratingAvg": "คะแนนเฉลี่ย",
+    "openTasks": "เควสต์ที่เปิดอยู่",
+    "openTasksSub": "รอเหล่านักผจญภัย",
+    "totalExp": "EXP ทั้งหมด",
+    "totalRatings": "รีวิวทั้งหมด",
+    "totalRatingsSub": "จำนวนรีวิวที่ได้รับ",
+    "totalUsers": "สมาชิกในระบบ",
+    "totalUsersSub": "จำนวนนักผจญภัย",
+    "totalTasks": "เควสต์ทั้งหมด",
+    "totalTasksSub": "เควสต์ทั้งหมดในระบบ",
+    "recentTasks": "เควสต์ล่าสุด",
+    "taskBreakdown": "สัดส่วนเควสต์",
+    "total": "รวม",
+    "tasks": "เควสต์",
+    "noTasks": "ไม่พบเควสต์ล่าสุด",
+    "view": "ดู",
+    "status": {
+      "open": "เปิด",
+      "inProgress": "กำลังดำเนินการ",
+      "completed": "เสร็จสิ้น",
+      "inReview": "รอตรวจสอบ"
+    },
+    "error": "ไม่สามารถโหลดข้อมูลแดชบอร์ดได้"
   },
   "questBoard": {
     "title": "กระดานเควสต์",

@@ -98,20 +98,6 @@ const QuestBoard = () => {
       return catMatch && diffMatch && searchMatch;
     })
     .sort((a, b) => {
-      // 1. Status Priority: In Review and In Progress come first
-      const getStatusPriority = (status: string) => {
-        if (status === "review" || status === "in-progress") return 0;
-        return 1;
-      };
-
-      const priorityA = getStatusPriority(a.status);
-      const priorityB = getStatusPriority(b.status);
-
-      if (priorityA !== priorityB) {
-        return priorityA - priorityB;
-      }
-
-      // 2. Date Sort (within same priority)
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
       return appliedFilters.sort === "newest" ? dateB - dateA : dateA - dateB;
