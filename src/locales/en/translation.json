@@ -1,6 +1,8 @@
 {
   "navbar": {
+    "dashboard": "Dashboard",
     "quest_board": "Quest Board",
+    "ranking": "Ranking",
     "post_quest": "Post Quest",
     "reward_shop": "Reward Shop",
     "profile": "Profile",
@@ -8,6 +10,39 @@
     "notifications": "Notifications",
     "clearAll": "Clear All",
     "noNotifications": "No Notifications"
+  },
+  "dashboard": {
+    "pointBalance": "Point Balance",
+    "pointBalanceSub": "Available to spend",
+    "completedTasks": "Quests Completed",
+    "completedTasksSub": "Finished adventures",
+    "reviews": "reviews received",
+    "inProgress": "In Progress",
+    "inProgressSub": "Currently active",
+    "rating": "Rating",
+    "ratingAvg": "Avg. score",
+    "openTasks": "Open Quests",
+    "openTasksSub": "Awaiting adventurers",
+    "totalExp": "Total EXP",
+    "totalRatings": "Total Ratings",
+    "totalRatingsSub": "Reviews received",
+    "totalUsers": "Guild Members",
+    "totalUsersSub": "Registered users",
+    "totalTasks": "Total Quests",
+    "totalTasksSub": "All time posted",
+    "recentTasks": "Recent Tasks",
+    "taskBreakdown": "Task Breakdown",
+    "total": "total",
+    "tasks": "Tasks",
+    "noTasks": "No recent tasks",
+    "view": "View",
+    "status": {
+      "open": "Open",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "inReview": "In Review"
+    },
+    "error": "Failed to load dashboard"
   },
   "questBoard": {
     "title": "Inet Quest Board",
@@ -509,6 +544,8 @@
       "quests": "Quests",
       "questsInProgress": "In Progress Quests",
       "questsInReview": "In Review Quests",
+      "level": "Level",
+      "totalExp": "Total EXP",
       "questsCompleted": "Completed Quests",
       "role": "Role",
       "loading": "Loading Juniors...",
@@ -533,11 +570,16 @@
       "username": "Username",
       "email": "Email",
       "quests": "Posted Quests",
+      "level": "Level",
+      "totalExp": "Total EXP",
+      "questsCompleted": "Completed Quests",
+      "postedTasks": "Posted Quests",
       "role": "Role",
       "loading": "Loading Seniors...",
       "notfoundsenior": "No Seniors found in the system.",
       "dialog": {
         "title": "Senior Profile",
+        "questProfile": "Quest Profile",
         "fullId": "Full ID",
         "nameTh": "Name (TH)",
         "nameEn": "Name (EN)",
@@ -545,8 +587,15 @@
         "linkedin": "LinkedIn",
         "skills": "Skills",
         "points": "Points",
+        "level": "Level",
+        "totalExp": "Total EXP",
         "rating": "Rating",
         "postedQuests": "Posted Quests",
+        "openTasksCount": "Open Quests",
+        "inProgressTasksCount": "In Progress Quests",
+        "finishedTasksCount": "Finished Quests",
+        "reviewCount": "Review Count",
+        "postedTasksCount": "Total Posted Quests",
         "noSkills": "No skills listed",
         "notSpecified": "Not specified"
       }
@@ -662,6 +711,42 @@
     "workApproved": "[{{title}}] Your work has been approved!{{points}}",
     "changesRequested": "[{{title}}] Changes requested{{comment}}",
     "statusChanged": "[{{title}}] Status changed to {{status}}",
-    "newBid": "[{{title}}] New bid arrived! {{amount}} GP"
+    "newBid": "[{{title}}] New bid received! {{amount}} points"
+  },
+  "ranking": {
+    "banner": {
+      "marquee": "✦ TOP ADVENTURERS ✦ IMPROVE SKILLS ✦ CONQUER QUESTS ✦ BECOME LEGENDARY ✦",
+      "title": "Ranking Board",
+      "subtitle": "Ranking the brave adventurers who conquered quests and accumulated the highest EXP in the realm"
+    },
+    "stats": {
+      "totalPlayers": "Total Players",
+      "totalPlayersSub": "Registered Adventurers",
+      "highestQuests": "Highest Quests",
+      "highestExp": "Highest EXP",
+      "totalExp": "Total Realm EXP",
+      "totalExpSub": "Sum of all EXP",
+      "by": "by",
+      "questsUnit": "Quests"
+    },
+    "filter": {
+      "sortBy": "Sort by:",
+      "exp": "Highest EXP",
+      "quests": "Quests Completed",
+      "points": "Total Points"
+    },
+    "table": {
+      "rank": "Rank",
+      "adventurer": "Adventurer",
+      "quests": "Quests",
+      "rating": "Rating",
+      "exp": "EXP",
+      "points": "Total Points"
+    },
+    "podium": {
+      "title": "TOP ADVENTURERS"
+    },
+    "error": "⚠ Unable to load Ranking data",
+    "loading": "Loading Ranking data..."
   }
 }

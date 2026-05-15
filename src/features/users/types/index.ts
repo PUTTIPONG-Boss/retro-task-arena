@@ -45,4 +45,12 @@ export interface UserProfile {
   station?: string;
   contractType?: string;
   type?: string;
+
+  // Admin
+  openTasksCount?: number;
+  inProgressTasksCount?: number;
+  finishedTasksCount?: number;
+  reviewCount?: number;
+  postedTasks?: any[];
+  
 }

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { Quest, QuestStatus, CreateQuestPayload, Bid, SubmitBidPayload } from '../types';
+import { Quest, QuestStatus, CreateQuestPayload, Bid, SubmitBidPayload, DistributePointsPayload, CompletedTask, PortfolioTask } from '../types';
 
 // The Backend Response Types
 interface BackendBid {
@@ -22,6 +22,23 @@ interface BackendBid {
     lastName: string;
   }[];
   createdAt: string;
+  // Backend may return as camelCase or snake_case
+  portfolioTasks?: {
+    id: string;
+    title: string;
+    type: string;
+    point: number;
+    estimatedTime: string;
+    skills: string;
+  }[];
+  portfolio_tasks?: {
+    id: string;
+    title: string;
+    type: string;
+    point: number;
+    estimatedTime: string;
+    skills: string;
+  }[];
 }
 
 const mapBackendBid = (b: BackendBid): Bid => ({
@@ -41,7 +58,15 @@ const mapBackendBid = (b: BackendBid): Bid => ({
   githubUrl: '',
   requestedPoints: 0,
   estimatedTime: '',
-  explanation: ''
+  explanation: '',
+  portfolioTasks: (b.portfolioTasks ?? b.portfolio_tasks)?.map((t): PortfolioTask => ({
+    id: t.id,
+    title: t.title,
+    category: t.type,
+    rewardPoints: t.point || 0,
+    estimatedTime: t.estimatedTime || '',
+    skills: t.skills || '',
+  })),
 });
 
 
@@ -200,6 +225,7 @@ export const useGetBids = (taskId: string | undefined) => {
       const raw = response.data;
       // Handle either flat array or wrapped in {message, data}
       const bids: BackendBid[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
+      console.log('[DEBUG] raw bids[0] from backend:', JSON.stringify(bids[0], null, 2)); // TODO: remove
       return bids.map(mapBackendBid);
     },
     enabled: !!taskId,
@@ -287,6 +313,48 @@ export const useGetMyTasks = () => {
       const raw = response.data;
       const tasks: BackendTask[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
       return tasks.map(mapTaskToQuest);
+    },
+  });
+};
+
+export const useDistributePoints = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ taskId, payload }: { taskId: string; payload: DistributePointsPayload }) => {
+      const response = await apiClient.post(`/tasks/${taskId}/distribute-points`, payload);
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['quest', variables.taskId] });
+      queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['bids', variables.taskId] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+};
+
+/**
+ * ดึง task ที่ user ทำเสร็จแล้ว (status=completed) เพื่อใช้แนบเป็น portfolio ตอน bid
+ * GET /api/v1/user/tasks?status=completed
+ */
+export const useGetCompletedUserTasks = () => {
+  return useQuery({
+    queryKey: ['user-tasks-completed'],
+    queryFn: async (): Promise<CompletedTask[]> => {
+      const response = await apiClient.get('/user/tasks', {
+        params: { status: 'completed' },
+      });
+      const raw = response.data;
+      const tasks: BackendTask[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
+      return tasks.map((task) => ({
+        id: task.id,
+        title: task.title,
+        category: task.type,
+        rewardPoints: task.point || 0,
+        estimatedTime: task.estimatedTime,
+        skills: task.skills || '',
+        completedAt: task.updatedAt,
+      }));
     },
   });
 };

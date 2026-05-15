@@ -24,6 +24,8 @@ export async function getUsersByRole(role: string): Promise<UserProfile[]> {
     email: u.email,
     role: u.role,
     points: u.points || 0,
+    level: u.level || 1,
+    totalExp: u.totalExp || 0,
     questsInProgress: u.questsInProgress || 0,
     questsInReview: u.questsInReview || 0,
     questsCompleted: u.questsCompleted || 0,
@@ -35,6 +37,11 @@ export async function getUsersByRole(role: string): Promise<UserProfile[]> {
     lastNameTh: u.lastNameTh,
     firstNameEn: u.firstNameEn,
     lastNameEn: u.lastNameEn,
+    openTasksCount: u.openTasksCount || 0,
+    inProgressTasksCount: u.inProgressTasksCount || 0,
+    finishedTasksCount: u.finishedTasksCount || 0,
+    reviewCount: u.reviewCount || 0,
+    postedTasks: u.postedTasks || [],
   }));
 }
 

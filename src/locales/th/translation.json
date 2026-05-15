@@ -1,6 +1,8 @@
 {
-  "navbar": {
+  "navbar": {    
+    "dashboard": "แดชบอร์ด",
     "quest_board": "กระดานเควสต์",
+    "ranking": "กระดานอันดับ",
     "post_quest": "สร้างเควสต์ใหม่",
     "reward_shop": "ร้านค้ารางวัล",
     "profile": "โปรไฟล์",
@@ -10,9 +12,42 @@
     "clearAll": "ล้างทั้งหมด",
     "noNotifications": "ไม่มีการแจ้งเตือน"
   },
+  "dashboard": {
+    "pointBalance": "ยอดแต้มคงเหลือ",
+    "pointBalanceSub": "แต้มที่ใช้แลกรางวัลได้",
+    "completedTasks": "เควสต์ที่สำเร็จ",
+    "completedTasksSub": "พิชิตการผจญภัยแล้ว",
+    "reviews": "รีวิวที่ได้รับ",
+    "inProgress": "กำลังดำเนินการ",
+    "inProgressSub": "เควสต์ที่กำลังทำอยู่",
+    "rating": "เรตติ้ง",
+    "ratingAvg": "คะแนนเฉลี่ย",
+    "openTasks": "เควสต์ที่เปิดอยู่",
+    "openTasksSub": "รอเหล่านักผจญภัย",
+    "totalExp": "EXP ทั้งหมด",
+    "totalRatings": "รีวิวทั้งหมด",
+    "totalRatingsSub": "จำนวนรีวิวที่ได้รับ",
+    "totalUsers": "สมาชิกในระบบ",
+    "totalUsersSub": "จำนวนนักผจญภัย",
+    "totalTasks": "เควสต์ทั้งหมด",
+    "totalTasksSub": "เควสต์ทั้งหมดในระบบ",
+    "recentTasks": "เควสต์ล่าสุด",
+    "taskBreakdown": "สัดส่วนเควสต์",
+    "total": "รวม",
+    "tasks": "เควสต์",
+    "noTasks": "ไม่พบเควสต์ล่าสุด",
+    "view": "ดู",
+    "status": {
+      "open": "เปิด",
+      "inProgress": "กำลังดำเนินการ",
+      "completed": "เสร็จสิ้น",
+      "inReview": "รอตรวจสอบ"
+    },
+    "error": "ไม่สามารถโหลดข้อมูลแดชบอร์ดได้"
+  },
   "questBoard": {
     "title": "กระดานเควสต์",
-    "subtitle": "กระดานเควสต์ ✦ มีเควสต์ใหม่ทุกวัน ✦ ยอมรับโชคชะตาของคุณ ✦ กระดานเควสต์",
+    "subtitle": "กระดานเควสต์ ✦ มีเควสต์ใหม่ทุกวัน ✦ ยอมรับโชคชะตาของคุณ",
     "guildBoard": "กระดานเควสต์กิลด์",
     "searchPlaceholder": "ค้นหา",
     "postNewQuest": "ประกาศเควสต์ใหม่",
@@ -79,8 +114,8 @@
       "GP": "แต้ม"
     },
     "viewmode": {
-      "yourbidsub": "ส่งข้อเสนอรับเควสเรียบร้อย!",
-      "teambidsub": "ส่งข้อเสนอรับเควสของทีมเรียบร้อย!",
+      "yourbidsub": "ส่งข้อเสนอรับเควสต์เรียบร้อย!",
+      "teambidsub": "ส่งข้อเสนอรับเควสต์ของทีมเรียบร้อย!",
       "amount": "จำนวนข้อเสนอ",
       "GP": "แต้ม",
       "duration": "ระยะเวลาที่ใช้",
@@ -88,7 +123,7 @@
       "status": "สถานะ"
     },
     "acceptbid": "ยอมรับข้อเสนอ",
-    "ownerbids": "นักผจญภัยยื่นข้อเสนอในเควสนี้แล้ว",
+    "ownerbids": "นักผจญภัยยื่นข้อเสนอในเควสต์นี้แล้ว",
     "bidsdetail": "รายละเอียดถูกซ่อนไว้เพื่อความเป็นธรรม",
     "btnbids": "ยื่นข้อเสนอ",
     "whatsolution": "แนวทางการดำเนินงานของคุณ?",
@@ -503,9 +538,11 @@
       "username": "ชื่อผู้ใช้งาน",
       "email": "อีเมล",
       "quests": "เควสต์",
-      "questsInProgress": "เควสที่กำลังทำ",
-      "questsInReview": "เควสรอรีวิว",
-      "questsCompleted": "เควสที่เสร็จแล้ว",
+      "questsInProgress": "เควสต์ที่กำลังทำ",
+      "questsInReview": "เควสต์รอรีวิว",
+      "level": "เลเวล",
+      "totalExp": "EXP ทั้งหมด",
+      "questsCompleted": "เควสต์ที่ทำเสร็จแล้ว",
       "role": "บทบาท",
       "loading": "กำลังโหลดข้อมูล...",
       "notfoundjunior": "ไม่พบจูเนียร์ในระบบ",
@@ -528,12 +565,17 @@
       "id": "รหัส (ID)",
       "username": "ชื่อผู้ใช้งาน",
       "email": "อีเมล",
-      "quests": "เควสที่เคยโพส",
+      "quests": "เควสต์ที่เคยโพส",
+      "level": "เลเวล",
+      "totalExp": "EXP ทั้งหมด",
+      "questsCompleted": "เควสต์ที่ทำเสร็จแล้ว",
+      "postedTasks": "เควสต์ที่เคยสร้าง",
       "role": "บทบาท",
       "loading": "กำลังโหลดข้อมูล...",
       "notfoundsenior": "ไม่พบซีเนียร์ในระบบ",
       "dialog": {
         "title": "โปรไฟล์ซีเนียร์",
+        "questProfile": "โปรไฟล์เควสต์",
         "fullId": "รหัสเต็ม (ID)",
         "nameTh": "ชื่อ (ไทย)",
         "nameEn": "ชื่อ (อังกฤษ)",
@@ -541,8 +583,15 @@
         "linkedin": "LinkedIn",
         "skills": "ทักษะ",
         "points": "แต้ม",
+        "level": "เลเวล",
+        "totalExp": "EXP ทั้งหมด",
         "rating": "เรตติ้ง",
-        "postedQuests": "เควสที่โพส",
+        "postedQuests": "เควสต์ที่โพส",
+        "openTasksCount": "เควสต์ที่เคยสร้าง(เปิด)",
+        "inProgressTasksCount": "เควสต์ที่เคยสร้าง(กำลังดำเนินการ)",
+        "finishedTasksCount": "เควสต์ที่เคยสร้าง(เสร็จสิ้น)",
+        "reviewCount": "จำนวนการรีวิว",
+        "postedTasksCount": "เควสต์ที่เคยสร้างทั้งหมด",
         "noSkills": "ยังไม่มีทักษะ",
         "notSpecified": "ไม่ระบุ"
       }
@@ -659,5 +708,41 @@
     "changesRequested": "[{{title}}] มีการขอให้แก้ไขงาน{{comment}}",
     "statusChanged": "[{{title}}] สถานะเปลี่ยนเป็น {{status}}",
     "newBid": "[{{title}}] มีข้อเสนอใหม่! {{amount}} แต้ม"
+  },
+  "ranking": {
+    "banner": {
+      "marquee": "✦ อันดับนักผจญภัยยอดเยี่ยม ✦ พัฒนาฝีมือ ✦ พิชิตเควสต์ ✦ ก้าวสู่ระดับตำนาน ✦",
+      "title": "กระดานอันดับ",
+      "subtitle": "จัดอันดับเหล่านักผจญภัยผู้กล้าหาญที่พิชิตเควสต์และสะสม EXP ได้สูงสุดในอาณาจักร"
+    },
+    "stats": {
+      "totalPlayers": "ผู้เล่นทั้งหมด",
+      "totalPlayersSub": "นักผจญภัยที่ลงทะเบียน",
+      "highestQuests": "เควสต์สำเร็จสูงสุด",
+      "highestExp": "EXP สูงสุด",
+      "totalExp": "EXP รวมทั้งหมด",
+      "totalExpSub": "รวม EXP ทุกคน",
+      "by": "โดย",
+      "questsUnit": "เควสต์"
+    },
+    "filter": {
+      "sortBy": "เรียงตาม:",
+      "exp": "EXP สูงสุด",
+      "quests": "เควสต์สำเร็จ",
+      "points": "แต้มสูงสุด"
+    },
+    "table": {
+      "rank": "อันดับ",
+      "adventurer": "นักผจญภัย",
+      "quests": "เควสต์",
+      "rating": "เรตติ้ง",
+      "exp": "EXP",
+      "points": "แต้มสูงสุด"
+    },
+    "podium": {
+      "title": "สุดยอดนักผจญภัย"
+    },
+    "error": "⚠ ไม่สามารถโหลดข้อมูล Ranking ได้",
+    "loading": "กำลังโหลดข้อมูล Ranking..."
   }
 }

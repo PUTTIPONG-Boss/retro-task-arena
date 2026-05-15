@@ -4,6 +4,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import PixelButton from "@/components/PixelButton";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import PixelStore from "@/components/icons/PixelStore";
+import PixelBuilding from "@/components/icons/PixelBuilding";
 import { useMemo } from "react";
 
 const AdminSidebar = () => {
@@ -13,14 +14,10 @@ const AdminSidebar = () => {
 
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
 
-  const BuildingIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5 text-accent flex-shrink-0"><path d="M2 22H0v-4h2v4Zm14 0h-2v-4h2v4Zm8 0h-2v-4h2v4ZM4 18H2v-2h2v2Zm10 0h-2v-2h2v2Zm8 0h-2v-2h2v2Zm-10-2H4v-2h8v2Zm8 0h-4v-2h4v2Zm-9-4H5v-2h6v2Zm8 0h-4v-2h4v2ZM5 10H3V4h2v6Zm8 0h-2V4h2v6Zm8 0h-2V4h2v6ZM11 4H5V2h6v2Zm8 0h-4V2h4v2Z"/></svg>
-  );
-
   // รายการเมนูสำหรับ Admin
   const adminMenus = useMemo(() => [
-    { icon: <BuildingIcon />, label: t("sidebar.junior"), path: "/admin/managejunior" },
-    { icon: <BuildingIcon />, label: t("sidebar.senior"), path: "/admin/managesenior" },
+    { icon: <PixelBuilding size={20} className="text-accent flex-shrink-0" />, label: t("sidebar.junior"), path: "/admin/managejunior" },
+    { icon: <PixelBuilding size={20} className="text-accent flex-shrink-0" />, label: t("sidebar.senior"), path: "/admin/managesenior" },
     { icon: <PixelClipboardList className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.quest"), path: "/admin/managequest" },
     { icon: <PixelStore className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.reward"), path: "/admin/managereward" },
     { icon: <PixelClipboardList className="w-5 h-5 flex-shrink-0 text-accent" />, label: t("sidebar.order"), path: "/admin/manageorder" },

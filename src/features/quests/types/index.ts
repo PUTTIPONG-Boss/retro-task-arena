@@ -20,11 +20,12 @@ export interface Bid {
   explanation: string;
   avatarSeed?: number;
   totalPointsEarned?: number;
-  bidAmount?: number;
-  waitDuration?: string;
+  bidAmount: number;
+  waitDuration: string;
   note?: string;
   status?: "PENDING" | "ACCEPTED" | "REJECTED" | string;
   teamMembers?: TeamMember[];
+  portfolioTasks?: PortfolioTask[];
   createdAt?: string;
 }
 
@@ -45,6 +46,7 @@ export interface SubmitBidPayload {
   note?: string;
   type: string;
   team_members?: string[];
+  portfolio_task_ids?: string[];
 }
 
 export interface Quest {
@@ -73,6 +75,11 @@ export interface Quest {
   createdAt: string;
 }
 
+export interface DistributePointsPayload {
+  mode: "AUTO" | "MANUAL";
+  allocations?: { user_id: string; point: number }[];
+}
+
 export interface CreateQuestPayload {
   title: string;
   description: string;
@@ -84,4 +91,23 @@ export interface CreateQuestPayload {
   work_type: string;
   git_repo_url?: string;
   req_branch_name?: string;
+}
+
+export interface CompletedTask {
+  id: string;
+  title: string;
+  category: string;
+  rewardPoints: number;
+  estimatedTime: string;
+  skills: string;
+  completedAt: string;
+}
+
+export interface PortfolioTask {
+  id: string;
+  title: string;
+  category: string;
+  rewardPoints: number;
+  estimatedTime: string;
+  skills: string;
 }
