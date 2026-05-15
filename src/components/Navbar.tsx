@@ -29,7 +29,8 @@ const Navbar = () => {
   const user = useUserStore((state) => state.user);
   const logout = useAuthStore((s) => s.logout);
   const { t, i18n } = useTranslation();
-  const { notifications, unreadCount, markAllRead, clearAll } = useNotificationStore();
+  const { notifications, markAllRead, clearAll } = useNotificationStore();
+  const unreadCount = notifications.filter(n => (!n.userId || n.userId === user?.id) && !n.read).length;
   const { theme, toggleTheme } = useThemeStore();
 
   if (!user) return null;

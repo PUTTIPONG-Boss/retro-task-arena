@@ -396,7 +396,7 @@ const QuestDetail = () => {
                     <DifficultyStars level={Math.round(reviews[0].rating)} />
                     <span className="text-gold font-pixel ml-1">({reviews[0].rating.toFixed(1)})</span>
                   </div>
-                  <div className="pixel-inset bg-background/50 p-4 border-l-4 border-accent">
+                  <div className="pixel-inset bg-card p-4 border-l-4 border-accent">
                     <p className={`text-muted-foreground uppercase text-[10px] mb-2 font-pixel tracking-tighter ${fontClass}`}>
                       {t("questDetail.finalReview.comment")}
                     </p>
