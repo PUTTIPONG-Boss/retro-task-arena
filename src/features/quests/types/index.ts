@@ -5,6 +5,8 @@ export interface TeamMember {
   username: string;
   firstName: string;
   lastName: string;
+  level?: number;
+  rating?: number;
 }
 
 export interface Bid {
@@ -110,4 +112,5 @@ export interface PortfolioTask {
   rewardPoints: number;
   estimatedTime: string;
   skills: string;
+  completedAt?: string;
 }

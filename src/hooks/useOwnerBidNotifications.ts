@@ -123,7 +123,7 @@ export function useOwnerBidNotifications() {
       // in-progress → review = มีคน submit งานมาตอนที่เรา offline
       if (previousStatus === 'in-progress' && quest.status === 'review') {
         const msg = t('notifications.workSubmitted', { title: quest.title });
-        addNotification(msg, 'general', 'notifications.workSubmitted', { title: quest.title }, quest.id);
+        // addNotification(msg, 'general', 'notifications.workSubmitted', { title: quest.title }, quest.id);
       }
     }
 

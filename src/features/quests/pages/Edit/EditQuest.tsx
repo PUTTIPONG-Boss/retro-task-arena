@@ -41,6 +41,7 @@ const EditQuest = () => {
   const [estimatedTime, setEstimatedTime] = useState("");
   const [timeUnit, setTimeUnit] = useState("");
   const [category, setCategory] = useState("Frontend");
+  const [workType, setWorkType] = useState("INDIVIDUAL");
   const [repoUrl, setRepoUrl] = useState("");
   const [branchName, setBranchName] = useState("");
 
@@ -87,6 +88,10 @@ const EditQuest = () => {
 
       setRepoUrl(quest.repoUrl || "");
       setBranchName(quest.branchName || "");
+
+      // Map workType from backend
+      const wt = (quest.workType || "INDIVIDUAL").toUpperCase();
+      setWorkType(["INDIVIDUAL", "TEAM", "BOTH"].includes(wt) ? wt : "INDIVIDUAL");
 
       const skillsArray = quest.skills ? quest.skills.split(",").map(s => s.trim()).filter(s => s) : ["General"];
       setSelectedSkills(skillsArray.length > 0 ? skillsArray : ["General"]);
@@ -140,6 +145,7 @@ const EditQuest = () => {
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
+      work_type: workType,
       git_repo_url: repoUrl || undefined,
       req_branch_name: branchName || undefined,
     };
@@ -268,6 +274,28 @@ const EditQuest = () => {
                     </svg>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createQuest.labels.workType", "Work Type")}
+            </label>
+            <div className="relative flex items-center border-2 bg-background focus-within:border-accent">
+              <select
+                value={workType}
+                onChange={(e) => setWorkType(e.target.value)}
+                className={`px-3 py-2 pr-8 bg-background text-foreground outline-none font-pixel ${fontClass} appearance-none cursor-pointer w-full h-full`}
+              >
+                <option value="INDIVIDUAL" className="bg-background text-foreground">{t("createQuest.workTypes.INDIVIDUAL")}</option>
+                <option value="TEAM" className="bg-background text-foreground">{t("createQuest.workTypes.TEAM")}</option>
+                <option value="BOTH" className="bg-background text-foreground">{t("createQuest.workTypes.BOTH")}</option>
+              </select>
+              <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
+                <svg className="w-4 h-4 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path>
+                </svg>
               </div>
             </div>
           </div>

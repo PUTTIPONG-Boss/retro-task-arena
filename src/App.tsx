@@ -33,6 +33,7 @@ import ManageReward from "@/features/admin/pages/ManageReward";
 import ManageOrders from "@/features/admin/pages/ManageOrders";
 import Ranking from "@/features/ranking/pages/RankingPage";
 import Dashboard from "@/features/dashboard/pages/DashboardPage"
+import ProfileView from "@/features/users/pages/View/ProfileView";
 
 import NotFound from "./pages/NotFound";
 import AuthSyncProvider from "@/features/auth/components/AuthSyncProvider";
@@ -107,6 +108,7 @@ const App = () => (
                   <Route path="/add-product" element={<AddProduct />} />
                   <Route path="/edit-product/:id" element={<EditProduct />} />
                   <Route path="/profile" element={<UserProfile />} />
+                  <Route path="/profile/view/:id" element={<ProfileView />} />
                   <Route path="/profile/edit" element={<EditUserProfile />} />
                   <Route path="/ranking" element={<Ranking />} />
                   <Route path="/dashboard" element={<Dashboard />}/>

@@ -204,7 +204,7 @@ export function useUserNotifications() {
       } else if (data.type === 'work_submitted') {
         const title = data.taskTitle ?? '';
         const msg = t('notifications.workSubmitted', { title });
-        addNotification(msg, 'general', 'notifications.workSubmitted', { title }, data.taskId);
+        // Removed addNotification here as per user request
         toast.info(msg, {
           icon: React.createElement(PixelInbox, { size: 18, color: '#60a5fa' }),
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
@@ -239,6 +239,7 @@ export function useUserNotifications() {
         queryClient.invalidateQueries({ queryKey: ['quest', data.taskId] });
         queryClient.invalidateQueries({ queryKey: ['quests'] });
       } else if (data.type === 'task_status' && data.toStatus) {
+        // Just invalidate queries, don't add to notification list
         queryClient.invalidateQueries({ queryKey: ['quest', data.taskId] });
         queryClient.invalidateQueries({ queryKey: ['quests'] });
       }

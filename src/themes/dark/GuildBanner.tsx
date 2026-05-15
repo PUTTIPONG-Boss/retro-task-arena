@@ -52,8 +52,8 @@ const GuildBannerDark = () => {
       height: 2px; background: ${colors.textAccent}; width: 80%;
       position: absolute; left: 10%; z-index: 20;
     }
-    .dk-pixel-border-top { top: 6px; }
-    .dk-pixel-border-bottom { bottom: 6px; }
+    .dk-pixel-border-top { top: 0px; }
+    .dk-pixel-border-bottom { bottom: 0px; }
     .dk-title-glow { text-shadow: 0 0 10px ${colors.glow}, 0 0 20px ${colors.glow}44; }
     .dk-scrolling-text-container { overflow: visible; width: 100%; margin: 0 auto; text-align: center; }
   `;
@@ -106,9 +106,10 @@ const GuildBannerDark = () => {
           <rect x="1564" y="864" width="16" height="16" fill="#F1C40F"/>
         </svg>
 
+        <div className="dk-pixel-border-top"></div>
+        <div className="dk-pixel-border-bottom"></div>
+
         <div className="dk-banner-content flex flex-col items-center justify-center gap-4">
-          <div className="dk-pixel-border-top"></div>
-          <div className="dk-pixel-border-bottom"></div>
           <div className="dk-pixel-corner top-2 left-3">┌─</div>
           <div className="dk-pixel-corner top-2 right-3">─┐</div>
           <div className="dk-pixel-corner bottom-2 left-3">└─</div>
