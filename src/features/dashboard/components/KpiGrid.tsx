@@ -18,6 +18,7 @@ interface KpiCardProps {
   value: string | number;
   subtext?: string;
   icon: ReactNode;
+  lightIcon?: ReactNode;
   valueColor?: string;
   size?: "normal" | "large";
 }
@@ -37,6 +38,7 @@ const KpiCard: React.FC<KpiCardProps> = ({
   value,
   subtext,
   icon,
+  lightIcon,
   valueColor = "text-foreground",
   size = "normal",
 }) => {
@@ -46,14 +48,14 @@ const KpiCard: React.FC<KpiCardProps> = ({
 
   return (
     <div className="bg-card pixel-border p-5 relative overflow-hidden group hover:bg-white/[0.03] transition-colors">
-      {/* Watermark icon — light: darken + boost opacity; dark: subtle */}
+      {/* Watermark icon — light: per-color icon at higher opacity; dark: subtle */}
       <div className={cn(
         "absolute right-4 bottom-3 pointer-events-none transition-opacity",
         isLight
-          ? "opacity-[0.18] brightness-0 group-hover:opacity-[0.28]"
+          ? "opacity-[0.28] group-hover:opacity-[0.42]"
           : "opacity-[0.08] group-hover:opacity-[0.14]"
       )}>
-        {icon}
+        {isLight && lightIcon ? lightIcon : icon}
       </div>
 
       <p className="font-pixel text-[18px] text-muted-foreground uppercase tracking-widest mb-3">
@@ -100,6 +102,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
             value={data.pointBalance.toLocaleString()}
             subtext={t("dashboard.pointBalanceSub", "Available to spend")}
             icon={<PixelCoin size={64} className="text-accent" />}
+            lightIcon={<PixelCoin size={64} className="text-amber-700" />}
             valueColor="text-accent"
           />
         )}
@@ -110,6 +113,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
           value={data.completedTasksCount}
           subtext={t("dashboard.completedTasksSub", "Finished adventures")}
           icon={<PixelTrophy size={64} className="text-accent" />}
+          lightIcon={<PixelTrophy size={64} className="text-amber-700" />}
           valueColor="text-accent"
         />
 
@@ -119,6 +123,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
           value={data.inProgressTasksCount}
           subtext={t("dashboard.inProgressSub", "Currently active")}
           icon={<PixelHourglass size={64} className="text-blue-400" />}
+          lightIcon={<PixelHourglass size={64} className="text-blue-700" />}
           valueColor="text-blue-400"
         />
 
@@ -128,6 +133,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
           value={data.totalExp.toLocaleString()}
           subtext={`Lv. ${data.level}`}
           icon={<PixelGem size={64} className="text-purple-400" />}
+          lightIcon={<PixelGem size={64} className="text-purple-700" />}
           valueColor="text-purple-400"
         />
       </div>
@@ -141,6 +147,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
             value={data.openTasksCount}
             subtext={t("dashboard.openTasksSub", "Awaiting adventurers")}
             icon={<PixelFlag size={64} className="text-emerald-400" />}
+            lightIcon={<PixelFlag size={64} className="text-emerald-700" />}
             valueColor="text-emerald-400"
           />
         )}
@@ -151,6 +158,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
           value={`${data.rating} / 5`}
           subtext={`${t("dashboard.ratingAvg", "Avg. score")}`}
           icon={<PixelStar size={64} className="text-accent" />}
+          lightIcon={<PixelStar size={64} className="text-amber-700" />}
           valueColor="text-accent"
         />
 
@@ -161,6 +169,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
             value={data.totalRatings}
             subtext={t("dashboard.totalRatingsSub", "Reviews received")}
             icon={<PixelStar size={64} className="text-yellow-400" />}
+            lightIcon={<PixelStar size={64} className="text-yellow-700" />}
             valueColor="text-yellow-400"
           />
         )}
@@ -172,6 +181,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
             value={data.totalUsersCount}
             subtext={t("dashboard.totalUsersSub", "Registered users")}
             icon={<PixelUsers size={64} className="text-red-400" />}
+            lightIcon={<PixelUsers size={64} className="text-red-700" />}
             valueColor="text-red-400"
           />
         )}
@@ -183,6 +193,7 @@ const KpiGrid: React.FC<KpiGridProps> = ({ data }) => {
             value={data.totalTasksCount}
             subtext={t("dashboard.totalTasksSub", "All time posted")}
             icon={<PixelClipboardList size={64} className="text-red-400" />}
+            lightIcon={<PixelClipboardList size={64} className="text-red-700" />}
             valueColor="text-red-400"
           />
         )}
