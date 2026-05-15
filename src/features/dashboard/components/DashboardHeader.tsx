@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useThemeStore } from "@/store/themeStore";
 
 interface DashboardHeaderProps {
   role: "ADMIN" | "JUNIOR" | "SENIOR";
@@ -11,21 +12,23 @@ const roleLabel: Record<string, string> = {
   JUNIOR: "JUNIOR",
 };
 
-const roleDotColor: Record<string, string> = {
-  ADMIN: "bg-red-400",
-  SENIOR: "bg-accent",
-  JUNIOR: "bg-emerald-400",
+const roleDotColor: Record<string, Record<string, string>> = {
+  ADMIN:  { dark: "bg-red-400",     light: "bg-red-700"     },
+  SENIOR: { dark: "bg-accent",      light: "bg-amber-700"   },
+  JUNIOR: { dark: "bg-emerald-400", light: "bg-emerald-700" },
 };
 
-const roleTextColor: Record<string, string> = {
-  ADMIN: "text-red-400 border-red-400/40",
-  SENIOR: "text-accent border-accent/40",
-  JUNIOR: "text-emerald-400 border-emerald-400/40",
+const roleTextColor: Record<string, Record<string, string>> = {
+  ADMIN:  { dark: "text-red-400 border-red-400/40",         light: "text-red-700 border-red-700/50"         },
+  SENIOR: { dark: "text-accent border-accent/40",           light: "text-amber-700 border-amber-700/50"     },
+  JUNIOR: { dark: "text-emerald-400 border-emerald-400/40", light: "text-emerald-700 border-emerald-700/50" },
 };
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ role, username }) => {
   const { i18n } = useTranslation();
   const isTh = i18n.language === "th";
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
 
   const now = new Date();
   const dateStr = now.toLocaleDateString(isTh ? "th-TH" : "en-GB", {
@@ -47,8 +50,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ role, username }) => 
           {greeting}
         </p>
         <h1
-          className={`font-pixel pixel-text-shadow text-white uppercase ${
-            isTh ? "text-[20px]" : "text-[20px]"
+          className={`font-pixel pixel-text-shadow uppercase text-[20px] ${
+            isLight ? "text-foreground" : "text-white"
           }`}
         >
           {username ?? "Adventurer"}
@@ -58,9 +61,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ role, username }) => 
       {/* Right: role badge + live date */}
       <div className="flex flex-col items-start sm:items-end gap-1.5">
         <div
-          className={`flex items-center gap-2 border px-3 py-1 ${roleTextColor[role]}`}
+          className={`flex items-center gap-2 border px-3 py-1 ${roleTextColor[role][isLight ? "light" : "dark"]}`}
         >
-          <span className={`w-2 h-2 ${roleDotColor[role]} animate-pulse`} />
+          <span className={`w-2 h-2 ${roleDotColor[role][isLight ? "light" : "dark"]} animate-pulse`} />
           <span className="font-pixel text-[18px] tracking-widest">
             {roleLabel[role]}
           </span>

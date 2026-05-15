@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { DashboardData } from "../types";
+import { useThemeStore } from "@/store/themeStore";
 
 interface TaskStatusBreakdownProps {
   data: DashboardData;
@@ -39,6 +40,8 @@ function buildArcs(segments: Segment[], total: number) {
 // ── Component ─────────────────────────────────────────────────────────────────
 const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
   const { t } = useTranslation();
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
 
   const segments: Segment[] = [
     {
@@ -75,7 +78,7 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
     <div className="bg-card pixel-border p-5 mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <p className="font-pixel text-[18px] text-white uppercase tracking-widest">
+        <p className="font-pixel text-[18px] text-foreground uppercase tracking-widest">
           {t("dashboard.taskBreakdown", "Task Breakdown")}
         </p>
         <p className="font-pixel text-[18px] text-muted-foreground">
@@ -98,7 +101,7 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
             <circle
               cx={CX} cy={CY} r={R}
               fill="none"
-              stroke="hsl(0 0% 10%)"
+              stroke={isLight ? "hsl(38 25% 72%)" : "hsl(0 0% 10%)"}
               strokeWidth={STROKE}
             />
 
@@ -107,7 +110,7 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
               <circle
                 cx={CX} cy={CY} r={R}
                 fill="none"
-                stroke="hsl(0 0% 18%)"
+                stroke={isLight ? "hsl(38 20% 78%)" : "hsl(0 0% 18%)"}
                 strokeWidth={STROKE}
                 strokeDasharray={`${CIRCUMFERENCE} 0`}
               />
@@ -133,7 +136,7 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
             <p className="font-pixel text-[16px] text-muted-foreground uppercase tracking-widest mb-1">
               {t("dashboard.total", "Total")}
             </p>
-            <p className="font-pixel text-[20px] text-white pixel-text-shadow leading-none">
+            <p className="font-pixel text-[20px] text-foreground pixel-text-shadow leading-none">
               {total}
             </p>
             <p className="font-pixel text-[16px] text-muted-foreground mt-1 uppercase">
