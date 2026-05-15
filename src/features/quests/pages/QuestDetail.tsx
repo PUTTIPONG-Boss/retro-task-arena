@@ -29,6 +29,7 @@ import PixelUsers from "@/components/icons/PixelUsers";
 import PixelHourglass from "@/components/icons/PixelHourglass";
 import PixelScroll from "@/components/icons/PixelScroll";
 import PixelX from "@/components/icons/PixelX";
+import PixelEye from "@/components/icons/PixelEye";
 import PortfolioSelector from "../components/PortfolioSelector";
 
 const statusColor: Record<string, string> = {
@@ -215,7 +216,7 @@ const QuestDetail = () => {
       await updateQuestMutation.mutateAsync({
         id: quest.id,
         payload: {
-          estimated_time: selectedBid.waitDuration || "",
+          estimatedTime: selectedBid.waitDuration || "",
         },
       });
 
@@ -310,7 +311,7 @@ const QuestDetail = () => {
           variant="danger"
           size="sm"
           className={fontClass}
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
         >
           ← {t("questDetail.back")}
         </PixelButton>
@@ -382,7 +383,7 @@ const QuestDetail = () => {
           {quest.status === "completed" && (
             <PixelFrame className="border-accent bg-accent/5">
               <h2 className={`font-pixel text-accent pixel-text-shadow mb-4 flex items-center gap-2 ${fontClass}`}>
-                🏆 {t("questDetail.finalReview.title")}
+                {t("questDetail.finalReview.title")}
               </h2>
 
               {reviewsLoading ? (
@@ -424,10 +425,10 @@ const QuestDetail = () => {
             return (
               <PixelFrame className="border-gold bg-gold/5">
                 <h2 className={`font-pixel text-gold pixel-text-shadow mb-4 flex items-center gap-2 ${fontClass}`}>
-                  <Coins size={18} className="text-gold" /> แบ่ง Point ให้ทีม
+                  <Coins size={18} className="text-gold" /> {t("questDetail.pointDistribution.title")}
                 </h2>
                 <p className={`text-muted-foreground mb-4 ${fontClass}`}>
-                  Point รวมของงานนี้: <span className="text-gold font-semibold">{totalPoints} GP</span>
+                  {t("questDetail.pointDistribution.totalPoint")} <span className="text-gold font-semibold">{totalPoints} GP</span>
                 </p>
 
                 {/* Mode Selection */}
@@ -439,7 +440,7 @@ const QuestDetail = () => {
                       }`}
                     onClick={() => setDistMode("AUTO")}
                   >
-                    ⚖ แบ่งเฉลี่ย
+                    ⚖ {t("questDetail.pointDistribution.autoMode")}
                   </button>
                   <button
                     className={`pixel-border px-4 py-2 font-pixel transition-colors ${fontClass} ${distMode === "MANUAL"
@@ -456,7 +457,7 @@ const QuestDetail = () => {
                       }
                     }}
                   >
-                    ✏ แบ่งสัดส่วน
+                    ✏ {t("questDetail.pointDistribution.manualMode")}
                   </button>
                 </div>
 
@@ -464,9 +465,9 @@ const QuestDetail = () => {
                   <div className="space-y-3">
                     <div className="pixel-inset bg-background/50 p-4">
                       <p className={`font-pixel text-foreground mb-2 ${fontClass}`}>
-                        แต่ละคนจะได้รับ: <span className="text-gold font-semibold">{Math.floor(totalPoints / allMembers.length)} GP</span>
+                        {t("questDetail.pointDistribution.eachReceive")} <span className="text-gold font-semibold">{Math.floor(totalPoints / allMembers.length)} GP</span>
                         {totalPoints % allMembers.length > 0 && (
-                          <span className="text-muted-foreground text-[12px] ml-2">(เศษ {totalPoints % allMembers.length} GP จะถูกปัดรวม)</span>
+                          <span className="text-muted-foreground text-[12px] ml-2">{t("questDetail.pointDistribution.remainder", { remainder: totalPoints % allMembers.length })}</span>
                         )}
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
@@ -474,7 +475,7 @@ const QuestDetail = () => {
                           <div key={m.userId} className="pixel-border border-border/50 bg-secondary/50 p-3 flex justify-between items-center">
                             <div>
                               <p className={`font-pixel text-accent text-[14px] ${fontClass}`}>
-                                {m.username} {m.isLeader && <span className="text-gold text-[10px]">★ Leader</span>}
+                                {m.username} {m.isLeader && <span className="text-gold text-[10px]">★ {t("questDetail.pointDistribution.leader")}</span>}
                               </p>
                             </div>
                             <span className="font-pixel text-gold">{Math.floor(totalPoints / allMembers.length)} GP</span>
@@ -492,7 +493,7 @@ const QuestDetail = () => {
                             taskId: quest.id,
                             payload: { mode: "AUTO" },
                           });
-                          toast.success("แบ่ง Point เรียบร้อยแล้ว!", { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          toast.success(t("questDetail.pointDistribution.successMsg"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
                           setPointsDistributed(true);
                         } catch (e) {
                           toast.error(getErrorMessage(e), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
@@ -500,16 +501,16 @@ const QuestDetail = () => {
                       }}
                       disabled={distributePoints.isPending}
                     >
-                      <span className={fontClass}>{distributePoints.isPending ? "กำลังแบ่ง..." : "⚖ ยืนยันแบ่งเฉลี่ย"}</span>
+                      <span className={fontClass}>{distributePoints.isPending ? t("questDetail.pointDistribution.distributing") : `⚖ ${t("questDetail.pointDistribution.confirmAuto")}`}</span>
                     </PixelButton>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     <div className="pixel-inset bg-background/50 p-4">
                       <div className="flex justify-between items-center mb-3">
-                        <p className={`font-pixel text-foreground ${fontClass}`}>กรอก Point ให้แต่ละคน:</p>
+                        <p className={`font-pixel text-foreground ${fontClass}`}>{t("questDetail.pointDistribution.fillPoint")}</p>
                         <p className={`font-pixel ${remaining < 0 ? 'text-red-400' : remaining === 0 ? 'text-success' : 'text-gold'} ${fontClass}`}>
-                          เหลือ: {remaining} / {totalPoints} GP
+                          {t("questDetail.pointDistribution.remaining")} {remaining} / {totalPoints} GP
                         </p>
                       </div>
                       <div className="space-y-2">
@@ -517,7 +518,7 @@ const QuestDetail = () => {
                           <div key={m.userId} className="pixel-border border-border/50 bg-secondary/50 p-3 flex justify-between items-center gap-3">
                             <div className="flex-1">
                               <p className={`font-pixel text-accent text-[14px] ${fontClass}`}>
-                                {m.username} {m.isLeader && <span className="text-gold text-[10px]">★ Leader</span>}
+                                {m.username} {m.isLeader && <span className="text-gold text-[10px]">★ {t("questDetail.pointDistribution.leader")}</span>}
                               </p>
                               {!m.isLeader && m.firstName && (
                                 <p className="text-[12px] text-muted-foreground font-pixel">{m.firstName} {m.lastName}</p>
@@ -550,7 +551,7 @@ const QuestDetail = () => {
 
                     {remaining < 0 && (
                       <p className={`font-pixel text-red-400 text-[12px] ${fontClass}`}>
-                        ⚠ Point ที่ใส่รวมกันเกินจำนวน Point ของงาน ({totalPoints} GP)
+                        {t("questDetail.pointDistribution.exceedPoint", { total: totalPoints })}
                       </p>
                     )}
 
@@ -560,11 +561,11 @@ const QuestDetail = () => {
                       className={`w-full ${fontClass}`}
                       onClick={async () => {
                         if (remaining < 0) {
-                          toast.error("Point ที่ใส่รวมกันเกินจำนวน Point ของงาน", { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          toast.error(t("questDetail.pointDistribution.exceedPointToast"), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
                           return;
                         }
                         if (totalAllocated === 0) {
-                          toast.error("กรุณาใส่ Point อย่างน้อย 1 คน", { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          toast.error(t("questDetail.pointDistribution.minOnePerson"), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
                           return;
                         }
                         try {
@@ -580,7 +581,7 @@ const QuestDetail = () => {
                                 })),
                             },
                           });
-                          toast.success("แบ่ง Point เรียบร้อยแล้ว!", { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
+                          toast.success(t("questDetail.pointDistribution.successMsg"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
                           setPointsDistributed(true);
                         } catch (e) {
                           toast.error(getErrorMessage(e), { style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
@@ -588,7 +589,7 @@ const QuestDetail = () => {
                       }}
                       disabled={distributePoints.isPending || remaining < 0}
                     >
-                      <span className={fontClass}>{distributePoints.isPending ? "กำลังแบ่ง..." : "✏ ยืนยันแบ่งสัดส่วน"}</span>
+                      <span className={fontClass}>{distributePoints.isPending ? t("questDetail.pointDistribution.distributing") : `✏ ${t("questDetail.pointDistribution.confirmManual")}`}</span>
                     </PixelButton>
                   </div>
                 )}
@@ -621,8 +622,11 @@ const QuestDetail = () => {
                       {/* ── Header row: username + bid stats ── */}
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                         <div className="flex-1">
-                          <p className={`font-pixel text-foreground mb-1 break-words ${fontClass}`}>
+                          <p className={`font-pixel text-foreground mb-1 break-words flex items-center gap-2 ${fontClass}`}>
                             {bid.username}
+                            <Link to={`/profile/view/${bid.userId}`} className="text-muted-foreground hover:text-accent transition-colors" title="View Profile">
+                              <PixelEye size={16} />
+                            </Link>
                           </p>
                           <p className={`text-muted-foreground flex items-center gap-1 ${fontClass}`}>
                             <PixelScroll size={12} color="currentColor" className="text-gold" /> {bid.questsCompleted} {t("questDetail.OwnerQuest.quest")} · ★ {bid.rating.toFixed(1)}
@@ -634,11 +638,11 @@ const QuestDetail = () => {
                           )}
                         </div>
                         <div className="flex flex-col items-end gap-2 shrink-0">
-                          <div className="space-y-0.5 text-right">
-                            <div className={fontClass}>
-                              <Coins size={12} className="inline mr-1 text-gold" /> {bid.bidAmount} {t("questDetail.OwnerQuest.GP")}
+                          <div className="space-y-0.5 text-right mb-1">
+                            <div className={`font-pixel text-gold text-[14px] ${fontClass}`}>
+                              <Coins size={14} className="inline mr-1" /> {bid.bidAmount} {t("questDetail.OwnerQuest.GP")}
                             </div>
-                            <p className={`text-muted-foreground flex items-center gap-1 justify-end ${fontClass}`}>
+                            <p className={`text-[12px] text-muted-foreground flex items-center gap-1 justify-end ${fontClass}`}>
                               <PixelHourglass size={12} color="currentColor" className="text-gold" /> {bid.waitDuration}
                             </p>
                           </div>
@@ -666,49 +670,43 @@ const QuestDetail = () => {
                       <div className="border-t border-border/30 pt-3">
                         <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
                           <PixelScroll size={13} color="currentColor" className="text-gold" />
-                          ผลงานที่เคยทำ
+                          {t("questDetail.portfolio.titlePlain")}
                           {bid.portfolioTasks && bid.portfolioTasks.length > 0
-                            ? ` (${bid.portfolioTasks.length} รายการ)`
+                            ? ` (${t("questDetail.portfolio.itemsCount", { count: bid.portfolioTasks.length })})`
                             : ""}
                         </p>
                         {bid.portfolioTasks && bid.portfolioTasks.length > 0 ? (
                           <div className="space-y-1.5">
                             {bid.portfolioTasks.map((pt) => (
-                              <div
+                              <Link
                                 key={pt.id}
-                                className="pixel-border border-border/40 bg-background/40 px-3 py-2 flex items-center justify-between gap-3"
+                                to={`/quest/${pt.id}`}
+                                className="flex items-center justify-between gap-3 pixel-border border-border/40 bg-background/40 hover:bg-accent/10 hover:border-accent/50 transition-colors px-3 py-2 cursor-pointer group"
                               >
                                 <div className="min-w-0 flex-1">
-                                  <p className={`font-pixel text-foreground text-[13px] truncate ${fontClass}`}>
+                                  <p className={`font-pixel text-foreground group-hover:text-accent transition-colors text-[12px] truncate ${fontClass}`}>
                                     {pt.title}
                                   </p>
                                   <div className="flex items-center gap-2 mt-0.5">
-                                    <span className={`text-[11px] font-pixel uppercase text-muted-foreground ${fontClass}`}>
+                                    <span className={`text-[10px] font-pixel uppercase text-muted-foreground ${fontClass}`}>
                                       {pt.category}
                                     </span>
-                                    {pt.estimatedTime && (
-                                      <span className={`text-[11px] font-pixel text-muted-foreground/70 ${fontClass}`}>
-                                        · <PixelHourglass size={10} color="currentColor" className="inline" /> {pt.estimatedTime}
-                                      </span>
-                                    )}
-                                    {pt.skills && (
-                                      <span className={`text-[11px] font-pixel text-accent/70 ${fontClass}`}>
-                                        · {pt.skills.split(",").slice(0, 2).join(", ")}
-                                      </span>
-                                    )}
                                   </div>
                                 </div>
-                                <div className="text-right flex-shrink-0">
-                                  <span className={`font-pixel text-gold text-[12px] flex items-center gap-1 ${fontClass}`}>
-                                    <Coins size={10} className="inline" /> {pt.rewardPoints} GP
-                                  </span>
+                                <div className="text-right flex-shrink-0 flex items-center gap-2">
+                                  {pt.completedAt && (
+                                    <span className={`font-pixel text-muted-foreground text-[10px] ${fontClass}`}>
+                                      {new Date(pt.completedAt).toLocaleDateString('th-TH')}
+                                    </span>
+                                  )}
+                                  <span className="text-muted-foreground/50 group-hover:text-accent transition-colors text-[10px] font-pixel">→</span>
                                 </div>
-                              </div>
+                              </Link>
                             ))}
                           </div>
                         ) : (
                           <p className={`text-muted-foreground/60 text-[11px] font-pixel italic ${fontClass}`}>
-                            — ไม่มีผลงานแนบ —
+                            {t("questDetail.portfolio.noAttached")}
                           </p>
                         )}
                       </div>
@@ -753,22 +751,23 @@ const QuestDetail = () => {
 
           {/* REGULAR USER VIEW: see only count + submit bid */}
           {!isOwner && quest.status === "open" && (
-            <PixelFrame>
+            <>
+              <PixelFrame>
               {/* Recruitment Section */}
               {(quest.workType === "TEAM" || quest.workType === "BOTH") && (
                 <div className="mb-6 border-b-2 border-border pb-6">
                   <h3 className={`font-pixel text-accent mb-1 flex items-center gap-2 ${fontClass}`}>
-                    <PixelUsers size={20} className="text-gold" /> Recruit Team Members ({selectedTeam.length}/10)
+                    <PixelUsers size={20} className="text-gold" /> {t("questDetail.recruitment.title")} ({selectedTeam.length}/10)
                   </h3>
                   <p className={`text-[12px] text-muted-foreground font-pixel mb-4 ${fontClass}`}>
-                    {t("questDetail.recruitmentNote") || "* คนที่ยื่นบิดจะเป็นหัวหน้าทีม"}
+                    {t("questDetail.recruitmentNote")}
                   </p>
 
                   {(!isUserInAnyBid || editMode) && (
                     <div className="relative mb-4 flex items-center">
                       <input
                         type="text"
-                        placeholder="Search teammates by name (Thai/English)..."
+                        placeholder={t("questDetail.recruitment.searchPlaceholder")}
                         className={`w-full bg-background border-2 border-border px-3 py-2 pr-10 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -777,7 +776,7 @@ const QuestDetail = () => {
                         <button
                           onClick={() => setSearchQuery("")}
                           className="absolute right-3 text-red-500 hover:text-red-400 transition-colors"
-                          title="Clear search"
+                          title={t("questDetail.recruitment.clearSearch")}
                         >
                           <PixelX size={14} color="currentColor" />
                         </button>
@@ -822,7 +821,7 @@ const QuestDetail = () => {
                           <button
                             onClick={() => handleRemoveMember(u.id)}
                             className="absolute -top-2 -right-2 bg-background border-2 border-border p-1 text-muted-foreground hover:text-red-400 transition-colors z-10"
-                            title="Remove member"
+                            title={t("questDetail.recruitment.removeMember")}
                           >
                             <PixelX size={12} />
                           </button>
@@ -905,6 +904,7 @@ const QuestDetail = () => {
                           selectedIds={editPortfolioIds}
                           onChange={setEditPortfolioIds}
                           fontClass={fontClass}
+                          initialSelectedTasks={myBid?.portfolioTasks?.map(t => ({ id: t.id, title: t.title })) || []}
                         />
                       </div>
                       <div className="flex gap-3">
@@ -971,6 +971,43 @@ const QuestDetail = () => {
                                   )}
                                 </div>
                               </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {myBid.portfolioTasks && myBid.portfolioTasks.length > 0 && (
+                        <div className="mt-4 border-t border-border/30 pt-3">
+                          <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
+                            <PixelScroll size={13} color="currentColor" className="text-gold" />
+                            {t("questDetail.portfolio.title", { count: myBid.portfolioTasks.length })}
+                          </p>
+                          <div className="space-y-1.5">
+                            {myBid.portfolioTasks.map((pt) => (
+                              <Link
+                                key={pt.id}
+                                to={`/quest/${pt.id}`}
+                                className="flex items-center justify-between gap-3 pixel-border border-border/40 bg-background/40 hover:bg-accent/10 hover:border-accent/50 transition-colors px-3 py-2 cursor-pointer group"
+                              >
+                                <div className="min-w-0 flex-1">
+                                  <p className={`font-pixel text-foreground group-hover:text-accent transition-colors text-[12px] truncate ${fontClass}`}>
+                                    {pt.title}
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-0.5">
+                                    <span className={`text-[10px] font-pixel uppercase text-muted-foreground ${fontClass}`}>
+                                      {pt.category}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="text-right flex-shrink-0 flex items-center gap-2">
+                                  {pt.completedAt && (
+                                    <span className={`font-pixel text-muted-foreground text-[10px] ${fontClass}`}>
+                                      {new Date(pt.completedAt).toLocaleDateString('th-TH')}
+                                    </span>
+                                  )}
+                                  <span className="text-muted-foreground/50 group-hover:text-accent transition-colors text-[10px] font-pixel">→</span>
+                                </div>
+                              </Link>
                             ))}
                           </div>
                         </div>
@@ -1068,7 +1105,32 @@ const QuestDetail = () => {
                   <span className={fontClass}> {t("questDetail.btnbids")}</span>
                 </PixelButton>
               )}
-            </PixelFrame>
+              </PixelFrame>
+
+              {/* NEW Bidders List */}
+              <PixelFrame className="mt-4">
+                <h3 className={`font-pixel text-foreground pixel-text-shadow mb-3 flex items-center gap-2 ${fontClass}`}>
+                  <Coins size={16} className="text-gold" /> {t("questDetail.biddersList.title", { count: bids.length })}
+                </h3>
+                {bids.length === 0 ? (
+                  <p className={`font-pixel text-muted-foreground text-[14px] ${fontClass}`}>{t("questDetail.biddersList.empty")}</p>
+                ) : (
+                  <div className="space-y-3">
+                    {bids.map(bid => (
+                      <div key={bid.id} className="pixel-border border-border/40 bg-secondary/30 p-3 flex justify-between items-center">
+                        <div className="flex flex-col">
+                          <span className={`font-pixel text-accent text-[14px] ${fontClass}`}>{bid.username}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Coins size={12} className="text-gold" />
+                          <span className={`font-pixel text-gold text-[14px] ${fontClass}`}>{bid.bidAmount} GP</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </PixelFrame>
+            </>
           )}
         </div>
 

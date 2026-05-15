@@ -99,13 +99,13 @@ const CreateQuest = () => {
       title,
       description,
       point: parseInt(rewardPoints) || 0,
-      estimated_time: `${estimatedTime} ${timeUnit}`,
+      estimatedTime: `${estimatedTime} ${timeUnit}`,
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
-      work_type: workType,
-      git_repo_url: repoUrl || undefined,
-      req_branch_name: branchName || undefined,
+      workType: workType,
+      gitRepoUrl: repoUrl || undefined,
+      reqBranchName: branchName || undefined,
     };
 
     createQuest(newQuest, {
@@ -236,6 +236,24 @@ const CreateQuest = () => {
             </div>
           </div>
 
+          <div>
+            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
+              {t("createQuest.labels.workType")}
+            </label>
+            <select
+              value={workType}
+              onChange={(e) => setWorkType(e.target.value)}
+              className={cn(
+                "w-full bg-background text-foreground font-pixel-body text-lg px-3 py-2 pixel-inset focus:border-primary outline-none",
+                fontClass
+              )}
+            >
+              <option value="INDIVIDUAL" className="bg-background text-foreground">{t("createQuest.workTypes.INDIVIDUAL")}</option>
+              <option value="TEAM" className="bg-background text-foreground">{t("createQuest.workTypes.TEAM")}</option>
+              <option value="BOTH" className="bg-background text-foreground">{t("createQuest.workTypes.BOTH")}</option>
+            </select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
@@ -275,24 +293,6 @@ const CreateQuest = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          <div>
-            <label className={`font-pixel text-foreground block mb-2 ${fontClass}`}>
-              {t("createQuest.labels.workType")}
-            </label>
-            <select
-              value={workType}
-              onChange={(e) => setWorkType(e.target.value)}
-              className={cn(
-                "w-full bg-background text-foreground font-pixel-body text-lg px-3 py-2 pixel-inset focus:border-primary outline-none",
-                fontClass
-              )}
-            >
-              <option value="INDIVIDUAL" className="bg-background text-foreground">{t("createQuest.workTypes.INDIVIDUAL")}</option>
-              <option value="TEAM" className="bg-background text-foreground">{t("createQuest.workTypes.TEAM")}</option>
-              <option value="BOTH" className="bg-background text-foreground">{t("createQuest.workTypes.BOTH")}</option>
-            </select>
           </div>
 
           {/* Skill Selection Section */}

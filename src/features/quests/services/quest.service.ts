@@ -59,13 +59,14 @@ const mapBackendBid = (b: BackendBid): Bid => ({
   requestedPoints: 0,
   estimatedTime: '',
   explanation: '',
-  portfolioTasks: (b.portfolioTasks ?? b.portfolio_tasks)?.map((t): PortfolioTask => ({
-    id: t.id,
+  portfolioTasks: (b.portfolioTasks ?? b.portfolio_tasks)?.map((t: any): PortfolioTask => ({
+    id: t.taskId || t.id,
     title: t.title,
     category: t.type,
     rewardPoints: t.point || 0,
     estimatedTime: t.estimatedTime || '',
     skills: t.skills || '',
+    completedAt: t.completedAt,
   })),
 });
 
