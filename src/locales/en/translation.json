@@ -618,7 +618,13 @@
         "points": "Points",
         "rating": "Rating",
         "noSkills": "No skills listed",
-        "notSpecified": "Not specified"
+        "notSpecified": "Not specified",
+        "editRole": "Edit Role",
+        "save": "Save",
+        "cancel": "Cancel",
+        "updating": "Saving...",
+        "success": "Role updated successfully!",
+        "error": "Failed to update role"
       }
     },
     "seniorpage": {
@@ -654,7 +660,13 @@
         "reviewCount": "Review Count",
         "postedTasksCount": "Total Posted Quests",
         "noSkills": "No skills listed",
-        "notSpecified": "Not specified"
+        "notSpecified": "Not specified",
+        "editRole": "Edit Role",
+        "save": "Save",
+        "cancel": "Cancel",
+        "updating": "Saving...",
+        "success": "Role updated successfully!",
+        "error": "Failed to update role"
       }
     },
     "questspage": {

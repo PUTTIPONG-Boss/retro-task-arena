@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PixelButton from "@/components/PixelButton";
 import PixelFrame from "@/components/PixelFrame";
 import PixelStore from "@/components/icons/PixelStore";
+import PixelTable, { Column } from "../components/PixelTable";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllProducts } from "../services/admin.service";
 import { useDeleteProduct } from "../../rewards/services/product.service";
@@ -142,6 +143,110 @@ const ManageReward = () => {
     return list;
   })();
 
+  const columns: Column<any>[] = [
+    {
+      header: (
+        <input
+          type="checkbox"
+          checked={isAllSelected}
+          onChange={handleSelectAll}
+          className="w-4 h-4 cursor-pointer accent-yellow-400"
+        />
+      ),
+      accessor: (reward) => (
+        <input
+          type="checkbox"
+          checked={selectedIds.has(reward.id)}
+          onChange={() => handleSelectOne(reward.id)}
+          className="w-4 h-4 cursor-pointer accent-yellow-400"
+        />
+      ),
+      className: "text-center w-[5%]",
+      headerClassName: "w-[5%] text-center",
+    },
+    {
+      header: t("admin.rewardspage.title"),
+      accessor: (reward) => (
+        <div className={`font-medium text-foreground truncate ${fontClass}`} title={reward.name}>
+          {reward.name}
+        </div>
+      ),
+      className: "w-[25%]",
+      headerClassName: "w-[25%]",
+    },
+    {
+      header: t("admin.rewardspage.desc"),
+      accessor: (reward) => (
+        <div className={`text-muted-foreground truncate ${fontClass}`} title={reward.description}>
+          {truncateText(reward.description, 50)}
+        </div>
+      ),
+      className: "w-[25%]",
+      headerClassName: "w-[25%]",
+    },
+    {
+      header: (
+        <button
+          onClick={() => handleSort("price")}
+          className="flex items-center justify-center gap-1 w-full hover:text-yellow-400 transition-colors"
+        >
+          {t("admin.rewardspage.cost")}
+          <span className="text-xs">
+            {sortConfig?.key === "price" ? (sortConfig.dir === "asc" ? "▲" : "▼") : "⇅"}
+          </span>
+        </button>
+      ),
+      accessor: (reward) => `${reward.price} ${t("admin.rewardspage.pts")}`,
+      className: `text-center text-yellow-400 font-bold truncate w-[15%] ${fontClass}`,
+      headerClassName: "w-[15%] text-center",
+    },
+    {
+      header: (
+        <button
+          onClick={() => handleSort("stock")}
+          className="flex items-center justify-center gap-1 w-full hover:text-yellow-400 transition-colors"
+        >
+          {t("admin.rewardspage.stock")}
+          <span className="text-xs">
+            {sortConfig?.key === "stock" ? (sortConfig.dir === "asc" ? "▲" : "▼") : "⇅"}
+          </span>
+        </button>
+      ),
+      accessor: (reward) => reward.stock > 0 ? (
+        reward.stock
+      ) : (
+        <span className="text-red-500">{t("admin.rewardspage.stockout")}</span>
+      ),
+      className: `text-center text-accent truncate w-[15%] ${fontClass}`,
+      headerClassName: "w-[15%] text-center",
+    },
+    {
+      header: t("admin.rewardspage.action"),
+      accessor: (reward) => (
+        <div className="flex items-center justify-center gap-2">
+          <PixelButton
+            onClick={() => navigate(`/edit-product/${reward.id}`)}
+            variant="gold"
+            size="sm"
+            className={fontClass}
+          >
+            {t("admin.rewardspage.edit")}
+          </PixelButton>
+          <PixelButton
+            onClick={() => handleDelete(reward.id)}
+            variant="danger"
+            size="sm"
+            className={`text-white-400 hover:text-white-300 ${fontClass}`}
+          >
+            {t("admin.rewardspage.delete")}
+          </PixelButton>
+        </div>
+      ),
+      className: "w-[20%]",
+      headerClassName: "w-[20%] text-center",
+    },
+  ];
+
   return (
     <div className={`p-6 max-w-6xl mx-auto text-foreground font-pixel ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
@@ -187,116 +292,14 @@ const ManageReward = () => {
         </div>
       </div>
 
-      {/* --- ส่วนตารางแสดงข้อมูล (ใช้ PixelFrame ครอบ) --- */}
-      <PixelFrame variant="dark" className="relative p-6 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[1000px] table-fixed">
-          <thead>
-            <tr className={`border-b border-[#333] text-muted-foreground uppercase tracking-wider ${fontClass}`}>
-              <th className="p-3 w-[5%] text-center">
-                <input
-                  type="checkbox"
-                  checked={isAllSelected}
-                  onChange={handleSelectAll}
-                  className="w-4 h-4 cursor-pointer accent-yellow-400"
-                />
-              </th>
-              <th className="p-3 w-[25%]">{t("admin.rewardspage.title")}</th>
-              <th className="p-3 w-[25%]">{t("admin.rewardspage.desc")}</th>
-              <th className="p-3 w-[15%] text-center">
-                <button
-                  onClick={() => handleSort("price")}
-                  className="flex items-center justify-center gap-1 w-full hover:text-yellow-400 transition-colors"
-                >
-                  {t("admin.rewardspage.cost")}
-                  <span className="text-xs">
-                    {sortConfig?.key === "price" ? (sortConfig.dir === "asc" ? "▲" : "▼") : "⇅"}
-                  </span>
-                </button>
-              </th>
-              <th className="p-3 w-[15%] text-center">
-                <button
-                  onClick={() => handleSort("stock")}
-                  className="flex items-center justify-center gap-1 w-full hover:text-yellow-400 transition-colors"
-                >
-                  {t("admin.rewardspage.stock")}
-                  <span className="text-xs">
-                    {sortConfig?.key === "stock" ? (sortConfig.dir === "asc" ? "▲" : "▼") : "⇅"}
-                  </span>
-                </button>
-              </th>
-              <th className="p-3 w-[20%] text-center">{t("admin.rewardspage.action")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!rewards || rewards.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="p-6 text-center text-muted-foreground"
-                >
-                  {t("admin.rewardspage.notfoundquest")}
-                </td>
-              </tr>
-            ) : (
-              sortedRewards.map((reward: any) => (
-                <tr
-                  key={reward.id}
-                  className="border-b border-[#333]/30 hover:bg-white/5 transition-colors"
-                >
-                  <td className="p-3 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(reward.id)}
-                      onChange={() => handleSelectOne(reward.id)}
-                      className="w-4 h-4 cursor-pointer accent-yellow-400"
-                    />
-                  </td>
-                  <td className="p-3">
-                    <div className={`font-medium text-foreground truncate ${fontClass}`} title={reward.name}>
-                      {reward.name}
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <div className={`text-muted-foreground truncate ${fontClass}`} title={reward.description}>
-                      {truncateText(reward.description, 50)}
-                    </div>
-                  </td>
-                  <td className={`p-3 text-center text-yellow-400 font-bold truncate ${fontClass}`}>
-                    {reward.price} {t("admin.rewardspage.pts")}
-                  </td>
-                  <td className={`p-3 text-center text-accent truncate ${fontClass}`}>
-                    {reward.stock > 0 ? (
-                      reward.stock
-                    ) : (
-                      <span className="text-red-500">{t("admin.rewardspage.stockout")}</span>
-                    )}
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center justify-center gap-2">
-                      <PixelButton
-                        onClick={() => navigate(`/edit-product/${reward.id}`)}
-                        variant="gold"
-                        size="sm"
-                        className={fontClass}
-                      >
-                        {t("admin.rewardspage.edit")}
-                      </PixelButton>
-                      <PixelButton
-                        onClick={() => handleDelete(reward.id)}
-                        variant="danger"
-                        size="sm"
-                        className={`text-white-400 hover:text-white-300 ${fontClass}`}
-                      >
-                        {t("admin.rewardspage.delete")}
-                      </PixelButton>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </PixelFrame>
+      <PixelTable
+        columns={columns}
+        data={sortedRewards}
+        isLoading={isLoading}
+        rowKeyExtractor={(reward) => reward.id}
+        emptyMessage={t("admin.rewardspage.notfoundquest")}
+        className="w-full"
+      />
       {/* Single delete confirm */}
       <AlertDialog open={!!deleteTargetId} onOpenChange={(open) => !open && setDeleteTargetId(null)}>
         <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">

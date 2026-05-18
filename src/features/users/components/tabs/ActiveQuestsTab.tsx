@@ -20,6 +20,9 @@ const ActiveQuestsTab: React.FC<ActiveQuestsTabProps> = ({ user, quests }) => {
 
   const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10;
+
   const myQuests = quests;
   const filteredMyQuests = myQuests
     .filter((q) => {
@@ -33,6 +36,15 @@ const ActiveQuestsTab: React.FC<ActiveQuestsTabProps> = ({ user, quests }) => {
       const dateB = new Date(b.createdAt).getTime();
       return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
+
+  const totalPages = Math.ceil(filteredMyQuests.length / itemsPerPage);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, sortOrder]);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const slicedQuests = filteredMyQuests.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -93,59 +105,100 @@ const ActiveQuestsTab: React.FC<ActiveQuestsTabProps> = ({ user, quests }) => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredMyQuests.map((q) => (
-              <Link
-                key={q.id}
-                to={q.status === 'completed' ? `/quest/${q.id}` : `/quest/${q.id}/workspace`}
-                className="group"
-              >
-                <div className="pixel-border bg-secondary/40 p-4 h-full flex flex-col justify-between hover:bg-muted/80 transition-all hover:translate-y-[-2px] hover:shadow-xl">
-                  <div className="mb-4">
-                    <div className="flex justify-between items-start gap-2 mb-2">
-                      <span className={cn(
-                        "font-pixel text-accent truncate flex-1",
-                        i18n.language === "th" ? "text-[14px]" : "text-[14px]"
-                      )}>{q.category}</span>
-                      <div className="flex items-center gap-1 bg-background/80 px-2 py-0.5 rounded-sm">
-                        {getStatusIcon(q.status)}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {slicedQuests.map((q) => (
+                <Link
+                  key={q.id}
+                  to={q.status === 'completed' ? `/quest/${q.id}` : `/quest/${q.id}/workspace`}
+                  className="group"
+                >
+                  <div className="pixel-border bg-secondary/40 p-4 h-full flex flex-col justify-between hover:bg-muted/80 transition-all hover:translate-y-[-2px] hover:shadow-xl">
+                    <div className="mb-4">
+                      <div className="flex justify-between items-start gap-2 mb-2">
                         <span className={cn(
-                          "font-pixel uppercase",
-                          i18n.language === "th" ? "text-[14px]" : "text-[14px]",
-                          q.status === 'review' ? "text-purple-400" :
-                            q.status === 'completed' ? "text-success" : "text-accent"
-                        )}>
-                          {getStatusLabel(q.status)}
-                        </span>
-                      </div>
-                    </div>
-                    <p className={`text-foreground font-pixel leading-relaxed group-hover:text-accent transition-colors ${fontClass}`}>
-                      {q.title}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-end border-t border-pixel-shadow/10 pt-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Hourglass size={14} className="text-yellow-400/70" />
-                        <span className={cn(
-                          "font-pixel",
+                          "font-pixel text-accent truncate flex-1",
                           i18n.language === "th" ? "text-[14px]" : "text-[14px]"
-                        )}>{q.estimatedTime}</span>
+                        )}>{q.category}</span>
+                        <div className="flex items-center gap-1 bg-background/80 px-2 py-0.5 rounded-sm">
+                          {getStatusIcon(q.status)}
+                          <span className={cn(
+                            "font-pixel uppercase",
+                            i18n.language === "th" ? "text-[14px]" : "text-[14px]",
+                            q.status === 'review' ? "text-purple-400" :
+                              q.status === 'completed' ? "text-success" : "text-accent"
+                          )}>
+                            {getStatusLabel(q.status)}
+                          </span>
+                        </div>
                       </div>
-                      <DifficultyStars level={q.difficulty} />
+                      <p className={`text-foreground font-pixel leading-relaxed group-hover:text-accent transition-colors ${fontClass}`}>
+                        {q.title}
+                      </p>
                     </div>
-                    <div className={cn(
-                      "flex items-center gap-1 text-accent font-pixel",
-                      i18n.language === "th" ? "text-[14px]" : "text-[14px]"
-                    )}>
-                      <PixelCoin size={18} />
-                      <span>{q.rewardPoints} P</span>
+
+                    <div className="flex justify-between items-end border-t border-pixel-shadow/10 pt-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Hourglass size={14} className="text-yellow-400/70" />
+                          <span className={cn(
+                            "font-pixel",
+                            i18n.language === "th" ? "text-[14px]" : "text-[14px]"
+                          )}>{q.estimatedTime}</span>
+                        </div>
+                        <DifficultyStars level={q.difficulty} />
+                      </div>
+                      <div className={cn(
+                        "flex items-center gap-1 text-accent font-pixel",
+                        i18n.language === "th" ? "text-[14px]" : "text-[14px]"
+                      )}>
+                        <PixelCoin size={18} />
+                        <span>{q.rewardPoints} P</span>
+                      </div>
                     </div>
                   </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Retro Pixelated Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2 font-pixel text-sm bg-secondary/10 border border-[#333] select-none mt-6">
+                <div className="text-muted-foreground">
+                  Showing <span className="text-foreground font-bold">{startIndex + 1}</span> to{" "}
+                  <span className="text-foreground font-bold">
+                    {Math.min(startIndex + itemsPerPage, filteredMyQuests.length)}
+                  </span>{" "}
+                  of <span className="text-foreground font-bold">{filteredMyQuests.length}</span> entries
                 </div>
-              </Link>
-            ))}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className={cn(
+                      "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                      currentPage === 1 && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    ◀ Prev
+                  </button>
+                  <span className="text-muted-foreground px-2">
+                    Page <span className="text-accent font-bold">{currentPage}</span> of{" "}
+                    <span className="text-foreground font-bold">{totalPages}</span>
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className={cn(
+                      "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                      currentPage === totalPages && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    Next ▶
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </PixelFrame>

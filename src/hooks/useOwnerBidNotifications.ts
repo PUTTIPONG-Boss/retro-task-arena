@@ -69,7 +69,7 @@ export function useOwnerBidNotifications() {
 
   // --- Missed Bid Detection: ตรวจสอบ bid ที่พลาดไปตอน offline ---
   useEffect(() => {
-    if (!isAuthenticated || !user?.id || ownedQuests.length === 0) return;
+    if (!isAuthenticated || !user?.id || user.role === 'ADMIN' || ownedQuests.length === 0) return;
 
     const lastSeen = getLastSeen(user.id);
     if (!lastSeen) return; // login ครั้งแรก ยังไม่มีประวัติ ไม่ต้องเช็ค
@@ -103,11 +103,11 @@ export function useOwnerBidNotifications() {
     };
 
     checkMissedBids();
-  }, [isAuthenticated, user?.id, ownedQuests.length]);
+  }, [isAuthenticated, user?.id, user?.role, ownedQuests.length]);
 
   // --- Missed Work Submit Detection: ตรวจสอบ quest ที่มีคน submit งานตอน offline ---
   useEffect(() => {
-    if (!isAuthenticated || !user?.id || ownedQuests.length === 0) return;
+    if (!isAuthenticated || !user?.id || user.role === 'ADMIN' || ownedQuests.length === 0) return;
 
     const snapshot = getQuestSnapshot(user.id);
     if (!snapshot) {
@@ -130,11 +130,11 @@ export function useOwnerBidNotifications() {
     // อัปเดต snapshot ด้วย status ล่าสุด
     saveQuestSnapshot(user.id, ownedQuests);
     queryClient.invalidateQueries({ queryKey: ['quests'] });
-  }, [isAuthenticated, user?.id, ownedQuests.length]);
+  }, [isAuthenticated, user?.id, user?.role, ownedQuests.length]);
 
   // --- WebSocket: รับ bid แบบ real-time ---
   useEffect(() => {
-    if (!isAuthenticated || ownedQuests.length === 0) return;
+    if (!isAuthenticated || !user?.id || user.role === 'ADMIN' || ownedQuests.length === 0) return;
 
     const centrifuge = new Centrifuge('ws://localhost:8000/connection/websocket', {
       getToken: async () => {
@@ -154,7 +154,7 @@ export function useOwnerBidNotifications() {
         const t = tRef.current;
         queryClient.invalidateQueries({ queryKey: ['bids', quest.id] });
         const msg = t('notifications.newBid', { title: quest.title, amount: data.bidAmount });
-        addNotification(msg, 'bid', 'notifications.newBid', { title: quest.title, amount: String(data.bidAmount) }, quest.id);
+        addNotification(msg, 'bid', 'notifications.newBid', { title: String(data.bidAmount) }, quest.id);
         toast.info(msg, {
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
           duration: 6000,
@@ -188,5 +188,5 @@ export function useOwnerBidNotifications() {
         saveQuestSnapshot(user.id, ownedQuests);
       }
     };
-  }, [isAuthenticated, ownedQuests.length, user?.id]);
+  }, [isAuthenticated, ownedQuests.length, user?.id, user?.role]);
 }
