@@ -118,6 +118,22 @@
       "note": "Note",
       "status": "Status"
     },
+    "portfolio": {
+      "title": "Portfolio ({{count}} Items)",
+      "titlePlain": "Portfolio Tasks",
+      "itemsCount": "{{count}} Items",
+      "hide": "▲ Hide",
+      "select": "▼ Select",
+      "loading": "Loading portfolio...",
+      "noCompleted": "No completed tasks yet",
+      "noAttached": "— No attached portfolio —",
+      "selectedCount": "Selected {{count}} items:",
+      "selected": "✓ Selected"
+    },
+    "biddersList": {
+      "title": "Bidders List ({{count}})",
+      "empty": "No bids yet"
+    },
     "GP": "Points",
     "acceptbid": "Accept Bid",
     "ownerbids": "Adventurer(s) have bid on this quest",
@@ -176,7 +192,31 @@
     "teamMember": "Team Member",
     "member": "Member",
     "members": "Members",
-    "teamLeader": "Team Leader"
+    "teamLeader": "Team Leader",
+    "pointDistribution": {
+      "title": "Distribute Points to Team",
+      "totalPoint": "Total Points for this quest:",
+      "autoMode": "Distribute Evenly",
+      "manualMode": "Manual Distribution",
+      "eachReceive": "Each member will receive:",
+      "remainder": "({{remainder}} GP remainder will be rounded)",
+      "leader": "Leader",
+      "successMsg": "Points distributed successfully!",
+      "distributing": "Distributing...",
+      "confirmAuto": "Confirm Auto Distribution",
+      "fillPoint": "Assign Points to each member:",
+      "remaining": "Remaining:",
+      "exceedPoint": "⚠ Total assigned points exceed quest points ({{total}} GP)",
+      "exceedPointToast": "Assigned points exceed total quest points",
+      "minOnePerson": "Please assign points to at least 1 person",
+      "confirmManual": "Confirm Manual Distribution"
+    },
+    "recruitment": {
+      "title": "Recruit Team Members",
+      "searchPlaceholder": "Search Team Members...",
+      "clearSearch": "Clear search",
+      "removeMember": "Remove member"
+    }
   },
   "questWorkspace": {
     "loading": "Entering Workspace...",
@@ -333,6 +373,23 @@
         "rejected": "REJECTED"
       }
     }
+  },
+  "profileView": {
+    "error": "Profile not found",
+    "memberSince": "Member Since",
+    "level": "Level",
+    "experience": "Experience",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "reviewsSub": "Ratings received",
+    "totalExp": "Total EXP",
+    "expSub": "Accumulated experience",
+    "questsCompleted": "Quests Done",
+    "questsCompletedSub": "Successfully finished",
+    "skills": "Technical Skills",
+    "noSkills": "No skills added yet",
+    "links": "Links & Contact",
+    "noLinks": "No contact links provided"
   },
   "editProfile": {
     "cancel": "< CANCEL",

@@ -122,6 +122,22 @@
       "note": "หมายเหตุ",
       "status": "สถานะ"
     },
+    "portfolio": {
+      "title": "ผลงานที่เคยทำ ({{count}} รายการ)",
+      "titlePlain": "ผลงานที่เคยทำ",
+      "itemsCount": "{{count}} รายการ",
+      "hide": "▲ ซ่อน",
+      "select": "▼ เลือก",
+      "loading": "กำลังโหลดผลงาน...",
+      "noCompleted": "ยังไม่มีผลงานที่เสร็จสิ้น",
+      "noAttached": "— ไม่มีผลงานแนบ —",
+      "selectedCount": "เลือกผลงาน {{count}} รายการ:",
+      "selected": "✓ เลือก"
+    },
+    "biddersList": {
+      "title": "รายชื่อผู้ที่ยื่นข้อเสนอ ({{count}})",
+      "empty": "ยังไม่มีผู้ยื่นข้อเสนอ"
+    },
     "acceptbid": "ยอมรับข้อเสนอ",
     "ownerbids": "นักผจญภัยยื่นข้อเสนอในเควสต์นี้แล้ว",
     "bidsdetail": "รายละเอียดถูกซ่อนไว้เพื่อความเป็นธรรม",
@@ -178,7 +194,31 @@
     "teamMember": "สมาชิกในทีม",
     "member": "คน",
     "members": "คน",
-    "teamLeader": "หัวหน้าทีม"
+    "teamLeader": "หัวหน้าทีม",
+    "pointDistribution": {
+      "title": "แบ่ง Point ให้ทีม",
+      "totalPoint": "Point รวมของงานนี้:",
+      "autoMode": "แบ่งเฉลี่ย",
+      "manualMode": "แบ่งสัดส่วน",
+      "eachReceive": "แต่ละคนจะได้รับ:",
+      "remainder": "(เศษ {{remainder}} GP จะถูกปัดรวม)",
+      "leader": "Leader",
+      "successMsg": "แบ่ง Point เรียบร้อยแล้ว!",
+      "distributing": "กำลังแบ่ง...",
+      "confirmAuto": "ยืนยันแบ่งเฉลี่ย",
+      "fillPoint": "กรอก Point ให้แต่ละคน:",
+      "remaining": "เหลือ:",
+      "exceedPoint": "⚠ Point ที่ใส่รวมกันเกินจำนวน Point ของงาน ({{total}} GP)",
+      "exceedPointToast": "Point ที่ใส่รวมกันเกินจำนวน Point ของงาน",
+      "minOnePerson": "กรุณาใส่ Point อย่างน้อย 1 คน",
+      "confirmManual": "ยืนยันแบ่งสัดส่วน"
+    },
+    "recruitment": {
+      "title": "เชิญสมาชิกร่วมทีม",
+      "searchPlaceholder": "ค้นหาสมาชิกในทีม...",
+      "clearSearch": "ล้าง",
+      "removeMember": "ลบสมาชิก"
+    }
   },
   "questWorkspace": {
     "loading": "กำลังเข้าสู่พื้นที่ทำงาน...",
@@ -338,6 +378,23 @@
         "rejected": "ถูกปฏิเสธ"
       }
     }
+  },
+  "profileView": {
+    "error": "ไม่พบโปรไฟล์",
+    "memberSince": "เข้าร่วมเมื่อ",
+    "level": "เลเวล",
+    "experience": "ค่าประสบการณ์",
+    "rating": "เรตติ้ง",
+    "reviews": "รีวิว",
+    "reviewsSub": "จำนวนรีวิวที่ได้รับ",
+    "totalExp": "EXP รวม",
+    "expSub": "ประสบการณ์สะสม",
+    "questsCompleted": "เควสต์ที่สำเร็จ",
+    "questsCompletedSub": "ผลงานที่ทำสำเร็จ",
+    "skills": "ทักษะและความสามารถ",
+    "noSkills": "ยังไม่ได้ระบุทักษะ",
+    "links": "ข้อมูลติดต่อและลิงก์",
+    "noLinks": "ไม่มีข้อมูลการติดต่อ"
   },
   "editProfile": {
     "cancel": "< ยกเลิก",

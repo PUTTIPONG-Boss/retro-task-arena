@@ -3,18 +3,22 @@ import { useGetCompletedUserTasks } from "../services/quest.service";
 import PixelCheck from "@/components/icons/PixelCheck";
 import PixelScroll from "@/components/icons/PixelScroll";
 import { Coins } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface PortfolioSelectorProps {
   selectedIds: string[];
   onChange: (ids: string[]) => void;
   fontClass?: string;
+  initialSelectedTasks?: { id: string; title: string }[];
 }
 
 const PortfolioSelector = ({
   selectedIds,
   onChange,
   fontClass = "text-[16px]",
+  initialSelectedTasks = [],
 }: PortfolioSelectorProps) => {
+  const { t } = useTranslation();
   const { data: completedTasks = [], isLoading } = useGetCompletedUserTasks();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -36,15 +40,15 @@ const PortfolioSelector = ({
       >
         <span className="flex items-center gap-2 text-accent">
           <PixelScroll size={14} color="currentColor" className="text-gold" />
-          ผลงานที่เคยทำ
+          {t("questDetail.portfolio.titlePlain")}
           {selectedIds.length > 0 && (
             <span className="bg-accent text-accent-foreground px-2 py-0.5 text-[11px] font-pixel">
-              {selectedIds.length} รายการ
+              {t("questDetail.portfolio.itemsCount", { count: selectedIds.length })}
             </span>
           )}
         </span>
         <span className="text-muted-foreground text-[12px]">
-          {isExpanded ? "▲ ซ่อน" : "▼ เลือก"}
+          {isExpanded ? t("questDetail.portfolio.hide") : t("questDetail.portfolio.select")}
         </span>
       </button>
 
@@ -53,11 +57,11 @@ const PortfolioSelector = ({
         <div className="pixel-border border-border/60 bg-background/80 p-3 space-y-2 max-h-64 overflow-y-auto">
           {isLoading ? (
             <p className={`font-pixel text-muted-foreground animate-pulse ${fontClass}`}>
-              กำลังโหลดผลงาน...
+              {t("questDetail.portfolio.loading")}
             </p>
           ) : completedTasks.length === 0 ? (
             <p className={`font-pixel text-muted-foreground ${fontClass}`}>
-              ยังไม่มีผลงานที่เสร็จสิ้น
+              {t("questDetail.portfolio.noCompleted")}
             </p>
           ) : (
             completedTasks.map((task) => {
@@ -106,7 +110,7 @@ const PortfolioSelector = ({
 
                   {isSelected && (
                     <span className="text-accent text-[11px] font-pixel flex-shrink-0">
-                      ✓ เลือก
+                      {t("questDetail.portfolio.selected")}
                     </span>
                   )}
                 </button>
@@ -120,26 +124,28 @@ const PortfolioSelector = ({
       {selectedIds.length > 0 && (
         <div className="pixel-border border-accent/30 bg-accent/5 px-3 py-2">
           <p className={`font-pixel text-[12px] text-accent ${fontClass}`}>
-            เลือกผลงาน {selectedIds.length} รายการ:
+            {t("questDetail.portfolio.selectedCount", { count: selectedIds.length })}
           </p>
           <div className="flex flex-wrap gap-1 mt-1">
-            {completedTasks
-              .filter((t) => selectedIds.includes(t.id))
-              .map((t) => (
+            {selectedIds.map((sid) => {
+              const task = completedTasks.find((t) => t.id === sid) || initialSelectedTasks.find((t) => t.id === sid);
+              const title = task ? task.title : `Task ${sid.substring(0, 8)}`;
+              return (
                 <span
-                  key={t.id}
+                  key={sid}
                   className="bg-accent/20 border border-accent/40 px-2 py-0.5 text-[11px] font-pixel text-accent flex items-center gap-1"
                 >
-                  {t.title.length > 20 ? t.title.substring(0, 20) + "…" : t.title}
+                  {title.length > 20 ? title.substring(0, 20) + "…" : title}
                   <button
                     type="button"
-                    onClick={() => toggleTask(t.id)}
+                    onClick={() => toggleTask(sid)}
                     className="text-red-400 hover:text-red-300 ml-1"
                   >
                     ×
                   </button>
                 </span>
-              ))}
+              );
+            })}
           </div>
         </div>
       )}

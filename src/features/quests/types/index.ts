@@ -84,13 +84,13 @@ export interface CreateQuestPayload {
   title: string;
   description: string;
   point: number;
-  estimated_time: string;
+  estimatedTime: string;
   type: string;
   skills: string;
   difficulty: string;
-  work_type: string;
-  git_repo_url?: string;
-  req_branch_name?: string;
+  workType: string;
+  gitRepoUrl?: string;
+  reqBranchName?: string;
 }
 
 export interface CompletedTask {
@@ -110,4 +110,5 @@ export interface PortfolioTask {
   rewardPoints: number;
   estimatedTime: string;
   skills: string;
+  completedAt?: string;
 }
