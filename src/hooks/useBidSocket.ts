@@ -32,14 +32,14 @@ export function useBidSocket(taskId: string | undefined, isOwner: boolean, title
     const sub = centrifuge.newSubscription(channel);
 
     sub.on('publication', (ctx) => {
-        const data = ctx.data as NewBidPayload;
+      const data = ctx.data as NewBidPayload;
 
-        queryClient.invalidateQueries({ queryKey: ['bids', taskId] });
+      queryClient.invalidateQueries({ queryKey: ['bids', taskId] });
 
-        // แสดง toast เฉพาะฝั่งเจ้าของ quest เท่านั้น (ไม่ใช่คนที่เพิ่งกด bid เอง)
-        if (isOwner && data.userId !== user?.id) {
-          toast.info(`New bid arrived! ${data.bidAmount} GP`);
-        }
+      // แสดง toast เฉพาะฝั่งเจ้าของ quest เท่านั้น (ไม่ใช่คนที่เพิ่งกด bid เอง)
+      if (isOwner && data.userId !== user?.id) {
+        toast.info(`New bid arrived! ${data.bidAmount} GP`);
+      }
     });
 
     sub.on('error', (ctx) => {
@@ -56,7 +56,7 @@ export function useBidSocket(taskId: string | undefined, isOwner: boolean, title
     }, 100);
 
     return () => {
-      clearTimeout(connectTimer); 
+      clearTimeout(connectTimer);
       sub.unsubscribe();
       centrifuge.disconnect();
     };

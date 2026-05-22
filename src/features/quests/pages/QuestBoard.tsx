@@ -25,14 +25,7 @@ const QuestBoard = () => {
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   const [sortFilter, setSortFilter] = useState<string>("newest");
   const [searchQuery, setSearchQuery] = useState<string>("");
-
-  // Applied States (what is actually used to filter the list)
-  const [appliedFilters, setAppliedFilters] = useState({
-    category: "all",
-    difficulty: "all",
-    sort: "newest",
-    search: "",
-  });
+  const [workTypeFilter, setWorkTypeFilter] = useState<string>("all");
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
@@ -43,12 +36,6 @@ const QuestBoard = () => {
 
   // Handle applying filters
   const handleApplyFilters = () => {
-    setAppliedFilters({
-      category: filter,
-      difficulty: difficultyFilter,
-      sort: sortFilter,
-      search: searchQuery,
-    });
     setIsFilterOpen(false);
   };
 
@@ -69,6 +56,7 @@ const QuestBoard = () => {
   const categories = ["all", "frontend", "backend", "BUG FIX", "FEATURE"];
   const sorts = ["newest", "oldest"];
   const difficulties = ["all", "easy", "medium", "hard"];
+  const workTypes = ["all", "INDIVIDUAL", "TEAM", "BOTH"];
   const difficultyMap: Record<string, number> = {
     easy: 1,
     medium: 3,
@@ -79,27 +67,31 @@ const QuestBoard = () => {
 
   const filtered = quests
     .filter((q) => {
-      // Hide completed quests
-      if (q.status === "completed") return false;
+      // Only show open quests
+      if (q.status !== "open") return false;
 
       const catMatch =
-        appliedFilters.category === "all" ||
-        q.category?.toLowerCase() === appliedFilters.category.toLowerCase();
+        filter === "all" ||
+        q.category?.toLowerCase() === filter.toLowerCase();
 
       const diffMatch =
-        appliedFilters.difficulty === "all" ||
-        q.difficulty === difficultyMap[appliedFilters.difficulty];
+        difficultyFilter === "all" ||
+        q.difficulty === difficultyMap[difficultyFilter];
 
       const searchMatch =
-        appliedFilters.search.trim() === "" ||
-        q.title.toLowerCase().includes(appliedFilters.search.toLowerCase());
+        searchQuery.trim() === "" ||
+        q.title.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return catMatch && diffMatch && searchMatch;
+      const workTypeMatch =
+        workTypeFilter === "all" ||
+        q.workType?.toUpperCase() === workTypeFilter.toUpperCase();
+
+      return catMatch && diffMatch && searchMatch && workTypeMatch;
     })
     .sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
-      return appliedFilters.sort === "newest" ? dateB - dateA : dateA - dateB;
+      return sortFilter === "newest" ? dateB - dateA : dateA - dateB;
     });
 
   return (
@@ -264,6 +256,38 @@ const QuestBoard = () => {
                     </div>
                   </div>
 
+                  {/* Work Type */}
+                  <div>
+                    <p className={cn(
+                      "font-pixel mb-3 uppercase pb-1",
+                      isLight ? "text-[#3D1C08] border-b border-[#8B5A20]/40" : "text-accent border-b border-white/10",
+                      i18n.language === "th" ? "text-[16px]" : "text-[16px]"
+                    )}>
+                      {t("questBoard.workType")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {workTypes.map((wt) => (
+                        <button
+                          key={wt}
+                          onClick={() => setWorkTypeFilter(wt)}
+                          className={cn(
+                            "font-pixel px-2 py-1 border-2 transition-colors",
+                            isLight
+                              ? workTypeFilter === wt
+                                ? "border-[#6B3010] text-[#6B3010] bg-[#C89A50]"
+                                : "border-[#B8903A] text-[#8B5A30] hover:border-[#6B3010]"
+                              : workTypeFilter === wt
+                                ? "border-gold text-gold bg-gold/10"
+                                : "border-zinc-700 text-zinc-500 hover:border-zinc-500",
+                            i18n.language === "th" ? "text-[16px]" : "text-[16px]"
+                          )}
+                        >
+                          {t(`questBoard.workTypes.${wt}`)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Action Buttons */}
                   <div className="flex items-center gap-2">
                     <PixelButton
@@ -282,12 +306,7 @@ const QuestBoard = () => {
                         setDifficultyFilter("all");
                         setSortFilter("newest");
                         setSearchQuery("");
-                        setAppliedFilters({
-                          category: "all",
-                          difficulty: "all",
-                          sort: "newest",
-                          search: "",
-                        });
+                        setWorkTypeFilter("all");
                         setIsFilterOpen(false);
                       }}
                     >

@@ -24,6 +24,8 @@ export const mapUserDataToUserProfile = (userData: any): UserProfile => {
     level: userData.level || 1,
     github: userData.github || '',
     linkin: userData.linkin || '',
+    gitlabUsername: userData.gitlabUsername || '',
+    gitInetUsername: userData.gitInetUsername || '',
     joinedDate: userData.joinedDate || new Date().toISOString(),
 
     tel: userData.tel || userData.phone || userData.tel_no,
@@ -79,12 +81,14 @@ export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: Pick<UserProfile, 'github' | 'linkin' | 'skills'>) => {
-      const { github, linkin, skills } = payload;
+    mutationFn: async (payload: Pick<UserProfile, 'github' | 'linkin' | 'skills' | 'gitlabUsername' | 'gitInetUsername'>) => {
+      const { github, linkin, skills, gitlabUsername, gitInetUsername } = payload;
       const backendPayload = {
         github,
         linkin,
         skills: Array.isArray(skills) ? skills.join(',') : skills,
+        gitlabUsername,
+        gitInetUsername,
       };
 
       const response = await apiClient.patch('/user/me', backendPayload);

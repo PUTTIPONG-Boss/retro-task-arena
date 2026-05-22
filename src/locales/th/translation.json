@@ -89,7 +89,14 @@
     "difficulty": "ความยาก",
     "reward": "แลกรางวัล",
     "order": "รายการสั่งซื้อ",
-    "filter": "ฟิลเตอร์"
+    "filter": "ฟิลเตอร์",
+    "workType": "รูปแบบการทำเควสต์",
+    "workTypes": {
+      "all": "ทั้งหมด",
+      "INDIVIDUAL": "เดี่ยว",
+      "TEAM": "ทีม",
+      "BOTH": "คู่"
+    }
   },
   "questCard": {
     "reward": "แต้ม",
@@ -107,6 +114,7 @@
     "edit": "แก้ไขเควสต์",
     "questdetailboard": "รายละเอียดเควสต์",
     "recruitmentNote": "* คนที่ยื่นบิดจะเป็นหัวหน้าทีม",
+    "GP": "แต้ม",
     "OwnerQuest": {
       "aventurerbids": "การยื่นข้อเสนอของนักผจญภัย",
       "nobid": "ยังไม่มีข้อเสนอ แบ่งปันเควสต์นี้ให้กับนักผจญภัย!",
@@ -211,7 +219,9 @@
       "exceedPoint": "⚠ Point ที่ใส่รวมกันเกินจำนวน Point ของงาน ({{total}} GP)",
       "exceedPointToast": "Point ที่ใส่รวมกันเกินจำนวน Point ของงาน",
       "minOnePerson": "กรุณาใส่ Point อย่างน้อย 1 คน",
-      "confirmManual": "ยืนยันแบ่งสัดส่วน"
+      "confirmManual": "ยืนยันแบ่งสัดส่วน",
+      "blockTitle": "⚠️ ต้องแบ่ง Point ก่อน",
+      "blockMessage": "เควสต์นี้เป็นเควสต์ทีม คุณต้องแบ่ง Point ให้กับสมาชิกทีมก่อน จึงจะได้รับคะแนนเข้าบัญชี"
     },
     "recruitment": {
       "title": "เชิญสมาชิกร่วมทีม",
@@ -333,6 +343,10 @@
     "noGithub": "ยังไม่ได้ระบุลิงก์ GitHub",
     "noLinkedin": "ยังไม่ได้ระบุลิงก์ LinkedIn",
     "linkedinLinks": "ลิงก์ LinkedIn",
+    "gitlabLinks": "ชื่อผู้ใช้ GitLab",
+    "noGitlab": "ยังไม่ได้ระบุชื่อผู้ใช้ GitLab",
+    "gitInetLinks": "ชื่อผู้ใช้ Git INET",
+    "noGitInet": "ยังไม่ได้ระบุชื่อผู้ใช้ Git INET",
     "noSkills": "ยังไม่มีทักษะที่ระบุ",
     "btn": {
       "quests": "เควสต์",
@@ -393,7 +407,7 @@
     "questsCompletedSub": "ผลงานที่ทำสำเร็จ",
     "skills": "ทักษะและความสามารถ",
     "noSkills": "ยังไม่ได้ระบุทักษะ",
-    "links": "ข้อมูลติดต่อและลิงก์",
+    "links": "ข้อมูล Git",
     "noLinks": "ไม่มีข้อมูลการติดต่อ"
   },
   "editProfile": {
@@ -412,6 +426,10 @@
     "githubPlaceholder": "https://github.com/username",
     "linkinUrl": "ลิงก์ LinkedIn",
     "linkinPlaceholder": "https://linkedin.com/in/username",
+    "gitlabUrl": "ชื่อผู้ใช้ GitLab (Public)",
+    "gitlabPlaceholder": "username (ไม่ต้องใส่ @)",
+    "gitInetUrl": "ชื่อผู้ใช้ GitLab (Internal INET)",
+    "gitInetPlaceholder": "username (ไม่ต้องใส่ @)",
     "confirmBtn": "บันทึกการเปลี่ยนแปลง",
     "successMsg": "อัปเดตโปรไฟล์แล้ว!"
   },
@@ -773,10 +791,13 @@
   "notifications": {
     "bidAccepted": "[{{title}}] ข้อเสนอของคุณได้รับการยอมรับแล้ว!",
     "workSubmitted": "[{{title}}] ส่งงานให้ตรวจสอบแล้ว!",
-    "workApproved": "[{{title}}] งานของคุณได้รับการอนุมัติแล้ว!{{points}}",
+    "workApproved": "[{{title}}] งานของคุณได้รับการอนุมัติแล้ว!",
     "changesRequested": "[{{title}}] มีการขอให้แก้ไขงาน{{comment}}",
     "statusChanged": "[{{title}}] สถานะเปลี่ยนเป็น {{status}}",
-    "newBid": "[{{title}}] มีข้อเสนอใหม่! {{amount}} แต้ม"
+    "newBid": "[{{title}}] มีข้อเสนอใหม่! {{amount}} แต้ม",
+    "teamAdded": "คุณถูกเพิ่มเข้าทีมสำหรับงาน: {{title}}",
+    "bidRejected": "[{{title}}] ข้อเสนอของคุณไม่ได้รับการยอมรับ",
+    "workSubmittedNo": "[{{title}}] ส่งงานให้ตรวจสอบแล้ว! ครั้งที่ {{no}}"
   },
   "ranking": {
     "banner": {

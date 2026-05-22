@@ -417,7 +417,9 @@ const QuestWorkspace = () => {
               {(() => {
                 // Find latest log where status became in-progress and has a comment
                 const revisionLog = [...logs]
-                  .reverse()
+                  .sort(
+                    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                  )
                   .find(l => {
                     const status = l.toStatus.toUpperCase().replace("-", "_");
                     return status === "IN_PROGRESS" && l.comment;

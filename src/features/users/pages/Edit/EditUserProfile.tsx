@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import PixelButton from "@/components/PixelButton";
-import { Github, Linkedin, Sword } from "lucide-react";
+import { Github, Linkedin, Sword, Gitlab } from "lucide-react";
 
 const EditUserProfile = () => {
   const user = useUserStore((state) => state.user);
@@ -18,6 +18,8 @@ const EditUserProfile = () => {
 
   const [github, setGithub] = useState(user?.github || "");
   const [linkin, setLinkin] = useState(user?.linkin || "");
+  const [gitlabUsername, setGitlabUsername] = useState(user?.gitlabUsername || "");
+  const [gitInetUsername, setGitInetUsername] = useState(user?.gitInetUsername || "");
   const [skills, setSkills] = useState<string[]>(user?.skills || []);
   const [newSkill, setNewSkill] = useState("");
 
@@ -42,6 +44,8 @@ const EditUserProfile = () => {
         github,
         linkin,
         skills,
+        gitlabUsername,
+        gitInetUsername,
       });
 
       toast.success(t("editProfile.successMsg"), {
@@ -154,6 +158,38 @@ const EditUserProfile = () => {
       </PixelFrame>
 
       <PixelFrame className="mb-6">
+        <h2
+          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
+        >
+          <Gitlab size={18} className="text-yellow-400" />
+          {t("editProfile.gitlabUrl")}
+        </h2>
+        <input
+          type="text"
+          value={gitlabUsername}
+          onChange={(e) => setGitlabUsername(e.target.value.replace(/@/g, ""))}
+          placeholder={t("editProfile.gitlabPlaceholder")}
+          className={`w-full bg-secondary pixel-border p-3 focus:outline-none font-pixel ${fontClass}`}
+        />
+      </PixelFrame>
+
+      <PixelFrame className="mb-6">
+        <h2
+          className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
+        >
+          <Gitlab size={18} className="text-yellow-400" />
+          {t("editProfile.gitInetUrl")}
+        </h2>
+        <input
+          type="text"
+          value={gitInetUsername}
+          onChange={(e) => setGitInetUsername(e.target.value.replace(/@/g, ""))}
+          placeholder={t("editProfile.gitInetPlaceholder")}
+          className={`w-full bg-secondary pixel-border p-3 focus:outline-none font-pixel ${fontClass}`}
+        />
+      </PixelFrame>
+
+            <PixelFrame className="mb-6">
         <h2
           className={`text-foreground pixel-text-shadow mb-3 font-pixel ${fontClass} flex items-center gap-2`}
         >
