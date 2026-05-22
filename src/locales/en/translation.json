@@ -9,7 +9,8 @@
     "admin": "ADMIN PANEL",
     "notifications": "Notifications",
     "clearAll": "Clear All",
-    "noNotifications": "No Notifications"
+    "noNotifications": "No Notifications",
+    "bidRejected": "[{{title}}] Another bid was selected for this quest."
   },
   "dashboard": {
     "pointBalance": "Point Balance",
@@ -86,7 +87,14 @@
       "hard": "HARD"
     },
     "difficulty": "Difficulty",
-    "filter": "Filter"
+    "filter": "Filter",
+    "workType": "Work Type",
+    "workTypes": {
+      "all": "ALL",
+      "INDIVIDUAL": "Solo",
+      "TEAM": "Team",
+      "BOTH": "Duo"
+    }
   },
   "questCard": {
     "reward": "Points",
@@ -209,7 +217,9 @@
       "exceedPoint": "⚠ Total assigned points exceed quest points ({{total}} GP)",
       "exceedPointToast": "Assigned points exceed total quest points",
       "minOnePerson": "Please assign points to at least 1 person",
-      "confirmManual": "Confirm Manual Distribution"
+      "confirmManual": "Confirm Manual Distribution",
+      "blockTitle": "⚠️ Point Distribution Required",
+      "blockMessage": "This is a team quest. You must distribute the quest reward points among team members first before receiving the points in your account."
     },
     "recruitment": {
       "title": "Recruit Team Members",
@@ -320,7 +330,7 @@
       "reviews": "Reviews"
     },
     "skills": "Skills",
-    "links": "Links",
+    "links": "GitHub Links",
     "activeQuests": "Active Quests",
     "noActiveQuests": "No active quests. Visit the board to find your next adventure",
     "postQuests": "Posted Quests",
@@ -331,6 +341,10 @@
     "noGithub": "No GitHub link provided",
     "noLinkedin": "No LinkedIn link provided",
     "linkedinLinks": "LinkIn",
+    "gitlabLinks": "GitLab Username",
+    "noGitlab": "No GitLab username provided",
+    "gitInetLinks": "Git INET Username",
+    "noGitInet": "No Git INET username provided",
     "noSkills": "No skills added yet",
     "btn": {
       "quests": "QUESTS",
@@ -388,7 +402,7 @@
     "questsCompletedSub": "Successfully finished",
     "skills": "Technical Skills",
     "noSkills": "No skills added yet",
-    "links": "Links & Contact",
+    "links": "Git Information",
     "noLinks": "No contact links provided"
   },
   "editProfile": {
@@ -407,6 +421,10 @@
     "githubPlaceholder": "https://github.com/username",
     "linkinUrl": "LinkedIn URL",
     "linkinPlaceholder": "https://linkedin.com/in/username",
+    "gitlabUrl": "GitLab (Public) Username",
+    "gitlabPlaceholder": "username (no @)",
+    "gitInetUrl": "GitLab (Internal INET) Username",
+    "gitInetPlaceholder": "username (no @)",
     "confirmBtn": "CONFIRM UPDATES",
     "successMsg": "Profile Updated!"
   },
@@ -777,10 +795,12 @@
   "notifications": {
     "bidAccepted": "[{{title}}] Your bid has been accepted!",
     "workSubmitted": "[{{title}}] Work has been submitted for review!",
-    "workApproved": "[{{title}}] Your work has been approved!{{points}}",
+    "workApproved": "[{{title}}] Your work has been approved!",
     "changesRequested": "[{{title}}] Changes requested{{comment}}",
     "statusChanged": "[{{title}}] Status changed to {{status}}",
-    "newBid": "[{{title}}] New bid received! {{amount}} points"
+    "newBid": "[{{title}}] New bid received! {{amount}} points",
+    "teamAdded": "You were added to a bid for task: {{title}}",
+    "workSubmittedNo": "[{{title}}] Work has been submitted for review! (Submission #{{no}})"
   },
   "ranking": {
     "banner": {

@@ -11,6 +11,7 @@ export interface Review {
   behaviorScore: number;
   isPublished: boolean;
   createdAt: string;
+  isPointDistributed?: boolean;
 }
 
 export interface CreateReviewPayload {

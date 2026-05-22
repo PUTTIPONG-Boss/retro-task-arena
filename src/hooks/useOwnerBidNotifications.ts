@@ -1,12 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { Centrifuge, Subscription } from 'centrifuge';
+import { Centrifuge } from 'centrifuge';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/lib/api';
 import { useNotificationStore } from '@/store/notificationStore';
 import { useGetQuests } from '@/features/quests/services/quest.service';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import React from 'react';
+import PixelCoin from '@/components/icons/PixelCoin';
+import PixelInbox from '@/components/icons/PixelInbox';
 
 function getLastSeenKey(userId: string) {
   return `owner_bid_last_seen_${userId}`;
@@ -21,34 +24,12 @@ function getLastSeen(userId: string): Date | null {
   return raw ? new Date(raw) : null;
 }
 
-// --- Quest Status Snapshot Helpers ---
-function getQuestSnapshotKey(userId: string) {
-  return `owner_quest_status_snapshot_${userId}`;
-}
-
-type QuestSnapshot = Record<string, string>; // questId → status
-
-function saveQuestSnapshot(userId: string, ownedQuests: { id: string; status: string }[]) {
-  const snapshot: QuestSnapshot = {};
-  ownedQuests.forEach((q) => { snapshot[q.id] = q.status; });
-  localStorage.setItem(getQuestSnapshotKey(userId), JSON.stringify(snapshot));
-}
-
-function getQuestSnapshot(userId: string): QuestSnapshot | null {
-  try {
-    const raw = localStorage.getItem(getQuestSnapshotKey(userId));
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-interface NewBidPayload {
+interface OwnerRealtimePayload {
+  type: string;
   taskId: string;
-  userId: string;
-  bidAmount: number;
-  waitDuration: string;
-  note: string;
+  taskTitle?: string;
+  bidAmount?: number;
+  waitDuration?: string;
 }
 
 export function useOwnerBidNotifications() {
@@ -56,23 +37,91 @@ export function useOwnerBidNotifications() {
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const addNotification = useNotificationStore((s) => s.addNotification);
+  const getSubmissionCount = useNotificationStore((s) => s.getSubmissionCount);
   const { t } = useTranslation();
   const tRef = useRef(t);
   useEffect(() => { tRef.current = t; }, [t]);
 
   const { data: quests = [] } = useGetQuests();
-
-  const centrifugeRef = useRef<Centrifuge | null>(null);
-  const subsRef = useRef<Subscription[]>([]);
-
   const ownedQuests = quests.filter((q) => q.providerId === user?.id);
 
-  // --- Missed Bid Detection: ตรวจสอบ bid ที่พลาดไปตอน offline ---
+  // --- Real-time: รับ new_bid และ work_submitted จาก Centrifugo ---
   useEffect(() => {
-    if (!isAuthenticated || !user?.id || user.role === 'ADMIN' || ownedQuests.length === 0) return;
+    if (!isAuthenticated || !user?.id) return;
+
+    const centrifuge = new Centrifuge('ws://localhost:8000/connection/websocket', {
+      getToken: async () => {
+        const res = await apiClient.get<{ token: string }>('/centrifugo/token');
+        return res.data.token;
+      },
+    });
+
+    const channel = `user:${user.id}_notifications`;
+    const sub = centrifuge.newSubscription(channel);
+
+    sub.on('publication', (ctx) => {
+      const data = ctx.data as OwnerRealtimePayload;
+      const t = tRef.current;
+
+      if (data.type === 'new_bid' || data.type === 'bid') {
+        const title = data.taskTitle ?? '';
+        const amount = String(data.bidAmount ?? '');
+        const msg = t('notifications.newBid', { title, amount });
+        addNotification(msg, 'bid', 'notifications.newBid', { title, amount }, data.taskId);
+        toast.info(msg, {
+          icon: React.createElement(PixelCoin, { size: 18, className: 'text-yellow-400' }),
+          style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+          duration: 6000,
+        });
+        queryClient.invalidateQueries({ queryKey: ['quest', data.taskId] });
+        queryClient.invalidateQueries({ queryKey: ['quests'] });
+        queryClient.invalidateQueries({ queryKey: ['bids', data.taskId] });
+      } else if (data.type === 'work_submitted') {
+        const title = data.taskTitle ?? '';
+        const submissionNo = getSubmissionCount(data.taskId) + 1;
+        const i18nKey = submissionNo > 1 ? 'notifications.workSubmittedNo' : 'notifications.workSubmitted';
+        const i18nParams: Record<string, string> = submissionNo > 1
+          ? { title, no: String(submissionNo) }
+          : { title };
+        const msg = t(i18nKey, i18nParams);
+        addNotification(msg, 'general', i18nKey, i18nParams, data.taskId);
+        toast.info(msg, {
+          icon: React.createElement(PixelInbox, { size: 18, color: '#60a5fa' }),
+          style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
+          duration: 6000,
+        });
+        queryClient.invalidateQueries({ queryKey: ['quest', data.taskId] });
+        queryClient.invalidateQueries({ queryKey: ['quests'] });
+      }
+    });
+
+    sub.on('error', (ctx) => {
+      console.warn('[OwnerBidNotify] subscription error:', ctx.error);
+    });
+
+    centrifuge.on('error', (ctx) => {
+      console.warn('[OwnerBidNotify] connection error:', ctx.error);
+    });
+
+    const connectTimer = setTimeout(() => {
+      centrifuge.connect();
+      sub.subscribe();
+    }, 100);
+
+    return () => {
+      clearTimeout(connectTimer);
+      sub.unsubscribe();
+      centrifuge.disconnect();
+    };
+  }, [isAuthenticated, user?.id]);
+
+  // --- Missed Bid Detection: ตรวจสอบ bid ที่พลาดไปตอน offline ---
+  // (work_submitted offline จัดการโดย useLoginNotifications ผ่าน DB แล้ว)
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id || ownedQuests.length === 0) return;
 
     const lastSeen = getLastSeen(user.id);
-    if (!lastSeen) return; // login ครั้งแรก ยังไม่มีประวัติ ไม่ต้องเช็ค
+    if (!lastSeen) return;
 
     const t = tRef.current;
 
@@ -97,7 +146,7 @@ export function useOwnerBidNotifications() {
             queryClient.invalidateQueries({ queryKey: ['bids', quest.id] });
           }
         } catch {
-          // ถ้า quest ไหน fetch ไม่สำเร็จ ข้ามไป ไม่หยุดทั้งหมด
+          // ถ้า quest ไหน fetch ไม่สำเร็จ ข้ามไป
         }
       }
     };
@@ -105,88 +154,12 @@ export function useOwnerBidNotifications() {
     checkMissedBids();
   }, [isAuthenticated, user?.id, user?.role, ownedQuests.length]);
 
-  // --- Missed Work Submit Detection: ตรวจสอบ quest ที่มีคน submit งานตอน offline ---
+  // --- save lastSeen on unmount ---
   useEffect(() => {
-    if (!isAuthenticated || !user?.id || user.role === 'ADMIN' || ownedQuests.length === 0) return;
-
-    const snapshot = getQuestSnapshot(user.id);
-    if (!snapshot) {
-      // ยังไม่มี snapshot → สร้างทันที แล้วรอ login ครั้งหน้า
-      saveQuestSnapshot(user.id, ownedQuests);
-      return;
-    }
-
-    const t = tRef.current;
-
-    for (const quest of ownedQuests) {
-      const previousStatus = snapshot[quest.id];
-      // in-progress → review = มีคน submit งานมาตอนที่เรา offline
-      if (previousStatus === 'in-progress' && quest.status === 'review') {
-        const msg = t('notifications.workSubmitted', { title: quest.title });
-        // addNotification(msg, 'general', 'notifications.workSubmitted', { title: quest.title }, quest.id);
-      }
-    }
-
-    // อัปเดต snapshot ด้วย status ล่าสุด
-    saveQuestSnapshot(user.id, ownedQuests);
-    queryClient.invalidateQueries({ queryKey: ['quests'] });
-  }, [isAuthenticated, user?.id, user?.role, ownedQuests.length]);
-
-  // --- WebSocket: รับ bid แบบ real-time ---
-  useEffect(() => {
-    if (!isAuthenticated || !user?.id || user.role === 'ADMIN' || ownedQuests.length === 0) return;
-
-    const centrifuge = new Centrifuge('ws://localhost:8000/connection/websocket', {
-      getToken: async () => {
-        const res = await apiClient.get<{ token: string }>('/centrifugo/token');
-        return res.data.token;
-      },
-    });
-
-    centrifugeRef.current = centrifuge;
-
-    const subs: Subscription[] = ownedQuests.map((quest) => {
-      const channel = `bids:task_${quest.id}`;
-      const sub = centrifuge.newSubscription(channel);
-
-      sub.on('publication', (ctx) => {
-        const data = ctx.data as NewBidPayload;
-        const t = tRef.current;
-        queryClient.invalidateQueries({ queryKey: ['bids', quest.id] });
-        const msg = t('notifications.newBid', { title: quest.title, amount: data.bidAmount });
-        addNotification(msg, 'bid', 'notifications.newBid', { title: String(data.bidAmount) }, quest.id);
-        toast.info(msg, {
-          style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
-          duration: 6000,
-        });
-      });
-
-      sub.on('error', (ctx) => {
-        console.warn(`[BidNotify] subscription error on ${channel}:`, ctx.error);
-      });
-
-      sub.subscribe();
-      return sub;
-    });
-
-    subsRef.current = subs;
-
-    centrifuge.on('error', (ctx) => {
-      console.warn('[BidNotify] connection error:', ctx.error);
-    });
-
-    centrifuge.connect();
-
     return () => {
-      subs.forEach((sub) => sub.unsubscribe());
-      centrifuge.disconnect();
-      centrifugeRef.current = null;
-      subsRef.current = [];
-      // บันทึกเวลา disconnect ล่าสุด เพื่อใช้ตรวจสอบ missed bids ครั้งถัดไป
       if (user?.id) {
         saveLastSeen(user.id);
-        saveQuestSnapshot(user.id, ownedQuests);
       }
     };
-  }, [isAuthenticated, ownedQuests.length, user?.id, user?.role]);
+  }, [user?.id]);
 }

@@ -17,6 +17,8 @@ export interface UserProfile {
   role: string;
   skills: string[];
   linkin: string;
+  gitlabUsername?: string;
+  gitInetUsername?: string;
 
   // Additional Fields
   accountId?: string;
