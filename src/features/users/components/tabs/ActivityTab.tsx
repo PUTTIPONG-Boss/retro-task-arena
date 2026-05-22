@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PixelFrame from "@/components/PixelFrame";
@@ -43,6 +43,9 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
   const { t, i18n } = useTranslation();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const fontClass = i18n.language === "th" ? "text-[25px]" : "text-[25px]";
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const activities = useMemo(() => {
     const events: ActivityEvent[] = [];
@@ -137,6 +140,15 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
     });
   }, [bids, quests, user.id, sortOrder]);
 
+  const totalPages = Math.ceil(activities.length / itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortOrder]);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const slicedActivities = activities.slice(startIndex, startIndex + itemsPerPage);
+
   const renderIcon = (type: ActivityType) => {
     switch (type) {
       case "QUEST_POSTED": return <FileText size={16} className="text-accent" />;
@@ -185,62 +197,105 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ bids, quests, user }) => {
             </p>
           </div>
         ) : (
-          activities.map((event) => (
-            <div
-              key={event.id}
-              className={cn(
-                "pixel-border bg-secondary/30 p-4 transition-all hover:bg-muted/40 group",
-                event.type === "QUEST_COMPLETED" ? "border-gold/30 bg-gold/5" :
-                  event.type === "CHANGES_REQUESTED" ? "border-danger/30 bg-danger/5" : "border-pixel-shadow/20"
-              )}
-            >
-              <div className="flex gap-4 items-start">
-                <div className={cn(
-                  "pixel-border p-2 bg-background/50",
-                  event.type === "QUEST_COMPLETED" ? "text-gold" :
-                    event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-muted-foreground"
-                )}>
-                  {renderIcon(event.type)}
-                </div>
-
-                <div className="flex-1">
-                  <div className="flex justify-between items-start mb-1">
-                    <p className={cn(
-                      "font-pixel leading-tight",
-                      event.type === "QUEST_COMPLETED" ? "text-gold pixel-text-shadow-gold" :
-                        event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-foreground",
-                      i18n.language === "th" ? "text-[16px]" : "text-[16px]"
+          <div className="space-y-6">
+            <div className="space-y-4">
+              {slicedActivities.map((event) => (
+                <div
+                  key={event.id}
+                  className={cn(
+                    "pixel-border bg-secondary/30 p-4 transition-all hover:bg-muted/40 group",
+                    event.type === "QUEST_COMPLETED" ? "border-gold/30 bg-gold/5" :
+                      event.type === "CHANGES_REQUESTED" ? "border-danger/30 bg-danger/5" : "border-pixel-shadow/20"
+                  )}
+                >
+                  <div className="flex gap-4 items-start">
+                    <div className={cn(
+                      "pixel-border p-2 bg-background/50",
+                      event.type === "QUEST_COMPLETED" ? "text-gold" :
+                        event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-muted-foreground"
                     )}>
-                      {getEventText(event)}
-                    </p>
-                    <span className="text-[16px] text-muted-foreground font-pixel opacity-70">
-                      {new Date(event.timestamp).toLocaleDateString()}
-                    </span>
-                  </div>
-
-                  {(event.type === "QUEST_POSTED" || event.type === "BID_SUBMITTED" || event.type === "WORK_SUBMITTED" || event.type === "CHANGES_REQUESTED") && (
-                    <Link
-                      to={`/quest/${event.metadata.taskId}`}
-                      className="inline-flex items-center gap-1 text-[16px] text-accent hover:underline font-pixel mt-2"
-                    >
-                      {t("questDetail.back")} <ArrowRight size={16} />
-                    </Link>
-                  )}
-
-                  {event.type === "QUEST_COMPLETED" && (
-                    <div className="mt-3 flex gap-4">
-                      <Link
-                        to={`/quest/${event.metadata.taskId}`}
-                        className="pixel-border px-3 py-1 bg-gold/10 text-gold font-pixel text-[16px] hover:bg-gold/20 transition-all"
-                      >
-                        VIEW REWARDS
-                      </Link>
+                      {renderIcon(event.type)}
                     </div>
-                  )}
+
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-1">
+                        <p className={cn(
+                          "font-pixel leading-tight",
+                          event.type === "QUEST_COMPLETED" ? "text-gold pixel-text-shadow-gold" :
+                            event.type === "CHANGES_REQUESTED" ? "text-danger" : "text-foreground",
+                          i18n.language === "th" ? "text-[16px]" : "text-[16px]"
+                        )}>
+                          {getEventText(event)}
+                        </p>
+                        <span className="text-[16px] text-muted-foreground font-pixel opacity-70">
+                          {new Date(event.timestamp).toLocaleDateString()}
+                        </span>
+                      </div>
+
+                      {(event.type === "QUEST_POSTED" || event.type === "BID_SUBMITTED" || event.type === "WORK_SUBMITTED" || event.type === "CHANGES_REQUESTED") && (
+                        <Link
+                          to={`/quest/${event.metadata.taskId}`}
+                          className="inline-flex items-center gap-1 text-[16px] text-accent hover:underline font-pixel mt-2"
+                        >
+                          {t("questDetail.back")} <ArrowRight size={16} />
+                        </Link>
+                      )}
+
+                      {event.type === "QUEST_COMPLETED" && (
+                        <div className="mt-3 flex gap-4">
+                          <Link
+                            to={`/quest/${event.metadata.taskId}`}
+                            className="pixel-border px-3 py-1 bg-gold/10 text-gold font-pixel text-[16px] hover:bg-gold/20 transition-all"
+                          >
+                            VIEW REWARDS
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Retro Pixelated Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2 font-pixel text-sm bg-secondary/10 border border-[#333] select-none mt-6">
+                <div className="text-muted-foreground">
+                  Showing <span className="text-foreground font-bold">{startIndex + 1}</span> to{" "}
+                  <span className="text-foreground font-bold">
+                    {Math.min(startIndex + itemsPerPage, activities.length)}
+                  </span>{" "}
+                  of <span className="text-foreground font-bold">{activities.length}</span> entries
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className={cn(
+                      "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                      currentPage === 1 && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    ◀ Prev
+                  </button>
+                  <span className="text-muted-foreground px-2">
+                    Page <span className="text-accent font-bold">{currentPage}</span> of{" "}
+                    <span className="text-foreground font-bold">{totalPages}</span>
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className={cn(
+                      "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                      currentPage === totalPages && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    Next ▶
+                  </button>
                 </div>
               </div>
-            </div>
-          ))
+            )}
+          </div>
         )}
       </div>
     </PixelFrame>

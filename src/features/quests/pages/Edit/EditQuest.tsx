@@ -141,13 +141,13 @@ const EditQuest = () => {
       title,
       description,
       point: parseInt(rewardPoints) || 0,
-      estimatedTime: `${estimatedTime} ${timeUnit}`,
+      estimated_time: `${estimatedTime} ${timeUnit}`,
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
-      workType: workType,
-      gitRepoUrl: repoUrl || undefined,
-      reqBranchName: branchName || undefined,
+      work_type: workType,
+      git_repo_url: repoUrl || undefined,
+      req_branch_name: branchName || undefined,
     };
 
     updateQuest(

@@ -5,6 +5,8 @@ export interface TeamMember {
   username: string;
   firstName: string;
   lastName: string;
+  level?: number;
+  rating?: number;
 }
 
 export interface Bid {
@@ -84,13 +86,13 @@ export interface CreateQuestPayload {
   title: string;
   description: string;
   point: number;
-  estimatedTime: string;
+  estimated_time: string;
   type: string;
   skills: string;
   difficulty: string;
-  workType: string;
-  gitRepoUrl?: string;
-  reqBranchName?: string;
+  work_type: string;
+  git_repo_url?: string;
+  req_branch_name?: string;
 }
 
 export interface CompletedTask {

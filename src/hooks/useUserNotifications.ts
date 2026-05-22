@@ -81,7 +81,7 @@ export function useUserNotifications() {
 
   // Fetch missed notifications from backend when user logs in
   useEffect(() => {
-    if (!isAuthenticated || !user?.id) return;
+    if (!isAuthenticated || !user?.id || user.role === 'ADMIN') return;
 
     fetchUnreadNotifications()
       .then((notifs) => {
@@ -91,11 +91,11 @@ export function useUserNotifications() {
         markNotificationsRead().catch(() => {});
       })
       .catch(() => {});
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, user?.role]);
 
   // --- Missed Bid Accept Detection: ตรวจสอบ bid ที่ถูก accept ตอน offline ---
   useEffect(() => {
-    if (!isAuthenticated || !user?.id) return;
+    if (!isAuthenticated || !user?.id || user.role === 'ADMIN') return;
 
     const snapshot = getBidSnapshot(user.id);
     if (!snapshot) return; // login ครั้งแรก ยังไม่มี snapshot
@@ -117,11 +117,11 @@ export function useUserNotifications() {
         queryClient.invalidateQueries({ queryKey: ['myBids'] });
       })
       .catch(() => {});
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, user?.role]);
 
   // --- Missed Approve/Changes Requested Detection: ตรวจ quest ที่ถูก approve หรือ reject ตอน offline ---
   useEffect(() => {
-    if (!isAuthenticated || !user?.id || assignedQuests.length === 0) return;
+    if (!isAuthenticated || !user?.id || user.role === 'ADMIN' || assignedQuests.length === 0) return;
 
     const snapshot = getAssignedQuestSnapshot(user.id);
     if (!snapshot) {
@@ -152,10 +152,10 @@ export function useUserNotifications() {
     // อัปเดต snapshot ด้วย status ล่าสุด
     saveAssignedQuestSnapshot(user.id, assignedQuests);
     queryClient.invalidateQueries({ queryKey: ['quests'] });
-  }, [isAuthenticated, user?.id, assignedQuests.length]);
+  }, [isAuthenticated, user?.id, user?.role, assignedQuests.length]);
 
   useEffect(() => {
-    if (!isAuthenticated || !user?.id) return;
+    if (!isAuthenticated || !user?.id || user.role === 'ADMIN') return;
 
     const centrifuge = new Centrifuge('ws://localhost:8000/connection/websocket', {
       getToken: async () => {
@@ -204,7 +204,7 @@ export function useUserNotifications() {
       } else if (data.type === 'work_submitted') {
         const title = data.taskTitle ?? '';
         const msg = t('notifications.workSubmitted', { title });
-        addNotification(msg, 'general', 'notifications.workSubmitted', { title }, data.taskId);
+        // Removed addNotification here as per user request
         toast.info(msg, {
           icon: React.createElement(PixelInbox, { size: 18, color: '#60a5fa' }),
           style: { fontFamily: '"TA_8bit"', fontSize: '16px' },
@@ -239,6 +239,7 @@ export function useUserNotifications() {
         queryClient.invalidateQueries({ queryKey: ['quest', data.taskId] });
         queryClient.invalidateQueries({ queryKey: ['quests'] });
       } else if (data.type === 'task_status' && data.toStatus) {
+        // Just invalidate queries, don't add to notification list
         queryClient.invalidateQueries({ queryKey: ['quest', data.taskId] });
         queryClient.invalidateQueries({ queryKey: ['quests'] });
       }
@@ -266,5 +267,5 @@ export function useUserNotifications() {
         saveAssignedQuestSnapshot(user.id!, assignedQuests);
       }
     };
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, user?.role]);
 }

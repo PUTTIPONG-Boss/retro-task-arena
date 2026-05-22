@@ -614,7 +614,13 @@
         "points": "แต้ม",
         "rating": "เรตติ้ง",
         "noSkills": "ยังไม่มีทักษะ",
-        "notSpecified": "ไม่ระบุ"
+        "notSpecified": "ไม่ระบุ",
+        "editRole": "แก้ไขบทบาท",
+        "save": "บันทึก",
+        "cancel": "ยกเลิก",
+        "updating": "กำลังบันทึก...",
+        "success": "เปลี่ยนบทบาทสำเร็จ!",
+        "error": "ไม่สามารถเปลี่ยนบทบาทได้"
       }
     },
     "seniorpage": {
@@ -650,7 +656,13 @@
         "reviewCount": "จำนวนการรีวิว",
         "postedTasksCount": "เควสต์ที่เคยสร้างทั้งหมด",
         "noSkills": "ยังไม่มีทักษะ",
-        "notSpecified": "ไม่ระบุ"
+        "notSpecified": "ไม่ระบุ",
+        "editRole": "แก้ไขบทบาท",
+        "save": "บันทึก",
+        "cancel": "ยกเลิก",
+        "updating": "กำลังบันทึก...",
+        "success": "เปลี่ยนบทบาทสำเร็จ!",
+        "error": "ไม่สามารถเปลี่ยนบทบาทได้"
       }
     },
     "questspage": {

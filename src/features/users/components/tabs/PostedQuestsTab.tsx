@@ -21,6 +21,9 @@ const PostedQuestsTab: React.FC<PostedQuestsTabProps> = ({ user, quests }) => {
 
   const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10;
+
   const postedQuests = quests.filter((q) => q.providerId === user.id);
   const filteredPostedQuests = postedQuests
     .filter((q) => {
@@ -35,6 +38,15 @@ const PostedQuestsTab: React.FC<PostedQuestsTabProps> = ({ user, quests }) => {
       const dateB = new Date(b.createdAt).getTime();
       return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
+
+  const totalPages = Math.ceil(filteredPostedQuests.length / itemsPerPage);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [postedFilter, sortOrder]);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const slicedQuests = filteredPostedQuests.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="space-y-8">
@@ -79,10 +91,51 @@ const PostedQuestsTab: React.FC<PostedQuestsTabProps> = ({ user, quests }) => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredPostedQuests.map((q) => (
-              <PostedQuestCard key={q.id} quest={q} fontClass={fontClass} />
-            ))}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {slicedQuests.map((q) => (
+                <PostedQuestCard key={q.id} quest={q} fontClass={fontClass} />
+              ))}
+            </div>
+
+            {/* Retro Pixelated Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2 font-pixel text-sm bg-secondary/10 border border-[#333] select-none mt-6">
+                <div className="text-muted-foreground">
+                  Showing <span className="text-foreground font-bold">{startIndex + 1}</span> to{" "}
+                  <span className="text-foreground font-bold">
+                    {Math.min(startIndex + itemsPerPage, filteredPostedQuests.length)}
+                  </span>{" "}
+                  of <span className="text-foreground font-bold">{filteredPostedQuests.length}</span> entries
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className={cn(
+                      "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                      currentPage === 1 && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    ◀ Prev
+                  </button>
+                  <span className="text-muted-foreground px-2">
+                    Page <span className="text-accent font-bold">{currentPage}</span> of{" "}
+                    <span className="text-foreground font-bold">{totalPages}</span>
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className={cn(
+                      "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                      currentPage === totalPages && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    Next ▶
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </PixelFrame>

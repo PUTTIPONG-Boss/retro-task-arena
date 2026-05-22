@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import PixelFrame from "@/components/PixelFrame";
-import { useQuery } from "@tanstack/react-query";
-import { getUsersByRole } from "../services/admin.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getUsersByRole, updateUserRole } from "../services/admin.service";
 import {
   Dialog,
   DialogContent,
@@ -10,25 +10,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { UserProfile } from "@/features/users/types";
+import { useAuthStore } from "@/features/auth/store/authStore";
+import PixelPencil from "@/components/icons/PixelPencil";
+import PixelTable, { Column } from "../components/PixelTable";
 
-const STALE_TIME = 5 * 60 * 1_000;
+const STALE_TIME = 0;
 
-const SkeletonRows = () => (
-  <>
-    {Array.from({ length: 6 }).map((_, i) => (
-      <tr key={i} className="border-b border-[#333]/30">
-        {Array.from({ length: 8 }).map((__, j) => (
-          <td key={j} className="p-3">
-            <div
-              className="h-4 rounded bg-white/10 animate-pulse"
-              style={{ width: j === 2 ? "80%" : j === 4 ? "60%" : "50%" }}
-            />
-          </td>
-        ))}
-      </tr>
-    ))}
-  </>
-);
+const SENIOR_ROLE_OPTIONS = [
+  { value: "JUNIOR", label: "JUNIOR", color: "text-green-400", bg: "bg-green-900/40", border: "border-green-600" },
+  { value: "ADMIN", label: "ADMIN", color: "text-red-400", bg: "bg-red-900/40", border: "border-red-600" },
+] as const;
 
 const ManageSenior = () => {
   const { t, i18n } = useTranslation();
@@ -37,8 +28,52 @@ const ManageSenior = () => {
   const { data: seniors = [], isLoading } = useQuery({
     queryKey: ["admin", "users", "senior"],
     queryFn: () => getUsersByRole("SENIOR"),
-    staleTime: STALE_TIME,
-    gcTime: 10 * 60 * 1_000,
+
+  });
+
+  const queryClient = useQueryClient();
+  const logout = useAuthStore((state) => state.logout);
+  const [isEditingRole, setIsEditingRole] = React.useState(false);
+  const [pendingRole, setPendingRole] = React.useState<string>("");
+  const [saveStatus, setSaveStatus] = React.useState<"idle" | "success" | "error">("idle");
+
+  const roleMutation = useMutation({
+    mutationFn: ({ userId, role }: { userId: string; role: string }) =>
+      updateUserRole(userId, role),
+    onSuccess: (_data, variables) => {
+      // Synchronously update the React Query cache for instant real-time updates
+      queryClient.setQueryData<UserProfile[]>(["admin", "users", "senior"], (old) => {
+        if (!old) return [];
+        return old.filter((u) => u.id !== variables.userId);
+      });
+
+      if (variables.role === "JUNIOR") {
+        queryClient.setQueryData<UserProfile[]>(["admin", "users", "junior"], (old) => {
+          if (!old) return [];
+          const exists = old.some((u) => u.id === variables.userId);
+          if (exists) {
+            return old.map((u) => u.id === variables.userId ? { ...u, role: variables.role } : u);
+          }
+          if (selectedSenior) {
+            return [...old, { ...selectedSenior, role: variables.role }];
+          }
+          return old;
+        });
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", "junior"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", "senior"] });
+      setSaveStatus("success");
+      setIsEditingRole(false);
+      if (selectedSenior) setSelectedSenior({ ...selectedSenior, role: variables.role });
+      
+      // Instantly log out so the user must log in again to receive a fresh cookie
+      logout();
+    },
+    onError: () => {
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 2500);
+    },
   });
 
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
@@ -52,11 +87,66 @@ const ManageSenior = () => {
     );
   });
 
+  const columns: Column<UserProfile>[] = [
+    {
+      header: t("admin.seniorpage.id"),
+      accessor: (s) => <span className={fontClass}>{s.id.substring(0, 8)}...</span>,
+      className: "text-muted-foreground",
+      headerClassName: fontClass,
+    },
+    {
+      header: t("admin.seniorpage.username"),
+      accessor: (s) => <span className={fontClass}>{s.username}</span>,
+      className: "text-foreground",
+      headerClassName: fontClass,
+    },
+    {
+      header: t("admin.seniorpage.email"),
+      accessor: (s) => <span className={fontClass}>{s.email}</span>,
+      className: "text-muted-foreground",
+      headerClassName: fontClass,
+    },
+    {
+      header: t("admin.seniorpage.level"),
+      accessor: (s) => <span className={fontClass}>{s.level}</span>,
+      className: "text-center text-accent",
+      headerClassName: "text-center " + fontClass,
+    },
+    {
+      header: t("admin.seniorpage.totalExp"),
+      accessor: (s) => <span className={fontClass}>{s.totalExp}</span>,
+      className: "text-center text-accent",
+      headerClassName: "text-center " + fontClass,
+    },
+    {
+      header: t("admin.seniorpage.questsCompleted"),
+      accessor: (s) => <span className={fontClass}>{s.questsCompleted}</span>,
+      className: "text-center text-accent",
+      headerClassName: "text-center " + fontClass,
+    },
+    {
+      header: t("admin.seniorpage.postedTasks"),
+      accessor: (s) => <span className={fontClass}>{s.postedTasks?.length || 0}</span>,
+      className: "text-center text-accent",
+      headerClassName: "text-center " + fontClass,
+    },
+    {
+      header: t("admin.seniorpage.role"),
+      accessor: (s) => (
+        <span className={`px-2 py-1 uppercase tracking-wider bg-purple-900/50 text-purple-400 border border-purple-800 ${fontClass}`}>
+          {s.role}
+        </span>
+      ),
+      className: "text-center",
+      headerClassName: "text-center " + fontClass,
+    },
+  ];
+
   return (
     <div className="p-6 max-w-6xl mx-auto text-foreground font-pixel">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-accent pixel-text-shadow flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-7 h-7"><path d="M2 22H0v-4h2v4Zm14 0h-2v-4h2v4Zm8 0h-2v-4h2v4ZM4 18H2v-2h2v2Zm10 0h-2v-2h2v2Zm8 0h-2v-2h2v2Zm-10-2H4v-2h8v2Zm8 0h-4v-2h4v2Zm-9-4H5v-2h6v2Zm8 0h-4v-2h4v2ZM5 10H3V4h2v6Zm8 0h-2V4h2v6Zm8 0h-2V4h2v6ZM11 4H5V2h6v2Zm8 0h-4V2h4v2Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-7 h-7"><path d="M2 22H0v-4h2v4Zm14 0h-2v-4h2v4Zm8 0h-2v-4h2v4ZM4 18H2v-2h2v2Zm10 0h-2v-2h2v2Zm8 0h-2v-2h2v2Zm-10-2H4v-2h8v2Zm8 0h-4v-2h4v2Zm-9-4H5v-2h6v2Zm8 0h-4v-2h4v2ZM5 10H3V4h2v6Zm8 0h-2V4h2v6Zm8 0h-2V4h2v6ZM11 4H5V2h6v2Zm8 0h-4V2h4v2Z" /></svg>
           {t("admin.seniorpage.manage")}
         </h1>
         <input
@@ -68,56 +158,25 @@ const ManageSenior = () => {
         />
       </div>
 
-      <PixelFrame variant="dark" className="relative p-6 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[700px]">
-          <thead>
-            <tr className={`border-b border-[#333] text-muted-foreground uppercase tracking-wider ${fontClass}`}>
-              <th className="p-3">{t("admin.seniorpage.id")}</th>
-              <th className="p-3">{t("admin.seniorpage.username")}</th>
-              <th className="p-3">{t("admin.seniorpage.email")}</th>
-              <th className="p-3 text-center">{t("admin.seniorpage.level")}</th>
-              <th className="p-3 text-center">{t("admin.seniorpage.totalExp")}</th>
-              <th className="p-3 text-center">{t("admin.seniorpage.questsCompleted")}</th>
-              <th className="p-3 text-center">{t("admin.seniorpage.postedTasks")}</th>
-              <th className="p-3 text-center">{t("admin.seniorpage.role")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <SkeletonRows />
-            ) : seniors.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="p-6 text-center text-muted-foreground">
-                  {t("admin.seniorpage.notfoundsenior")}
-                </td>
-              </tr>
-            ) : (
-              filteredSeniors.map((senior: any) => (
-                <tr
-                  key={senior.id}
-                  className="border-b border-[#333]/30 hover:bg-white/5 transition-colors cursor-pointer"
-                  onClick={() => setSelectedSenior(senior)}
-                >
-                  <td className={`p-3 text-muted-foreground ${fontClass}`}>{senior.id.substring(0, 8)}...</td>
-                  <td className={`p-3 text-foreground ${fontClass}`}>{senior.username}</td>
-                  <td className={`p-3 text-muted-foreground ${fontClass}`}>{senior.email}</td>
-                  <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.level}</td>
-                  <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.totalExp}</td>
-                  <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.questsCompleted}</td>
-                  <td className={`p-3 text-center text-accent ${fontClass}`}>{senior.postedTasks?.length || 0}</td>
-                  <td className="p-3 text-center">
-                    <span className={`px-2 py-1 uppercase tracking-wider bg-purple-900/50 text-purple-400 border border-purple-800 ${fontClass}`}>
-                      {senior.role}
-                    </span>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </PixelFrame>
+      <PixelTable
+        columns={columns}
+        data={filteredSeniors}
+        isLoading={isLoading}
+        onRowClick={(s) => setSelectedSenior(s)}
+        rowKeyExtractor={(s) => s.id}
+        emptyMessage={t("admin.seniorpage.notfoundsenior")}
+      />
 
-      <Dialog open={!!selectedSenior} onOpenChange={(open) => !open && setSelectedSenior(null)}>
+      <Dialog
+        open={!!selectedSenior}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedSenior(null);
+            setIsEditingRole(false);
+            setSaveStatus("idle");
+          }
+        }}
+      >
         <DialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel max-w-2xl max-h-[90vh] overflow-y-auto">
 
           {selectedSenior && (
@@ -165,8 +224,63 @@ const ManageSenior = () => {
                       : t("admin.seniorpage.dialog.notSpecified")}
                   </span>
 
-                  <span className="text-muted-foreground">{t("admin.seniorpage.role")}</span>
-                  <span className="text-purple-400 uppercase">{selectedSenior.role}</span>
+                  <span className="text-muted-foreground self-center">{t("admin.seniorpage.role")}</span>
+                  <div className="flex items-center gap-2">
+                    {isEditingRole ? (
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <select
+                          value={pendingRole}
+                          onChange={(e) => setPendingRole(e.target.value)}
+                          className="bg-[#1a1c1e] border border-[#F59E0B] text-foreground font-pixel px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#F59E0B]"
+                        >
+                          {SENIOR_ROLE_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value} className="bg-[#12141a] text-foreground">
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => roleMutation.mutate({ userId: selectedSenior.id, role: pendingRole })}
+                          disabled={roleMutation.isPending}
+                          className="px-3 py-1 bg-green-700 hover:bg-green-600 text-white font-pixel text-xs border border-green-500 active:translate-y-[1px] transition-all"
+                        >
+                          {roleMutation.isPending ? t("admin.seniorpage.dialog.updating") : t("admin.seniorpage.dialog.save")}
+                        </button>
+                        <button
+                          onClick={() => setIsEditingRole(false)}
+                          className="px-3 py-1 bg-red-700 hover:bg-red-600 text-white font-pixel text-xs border border-red-500 active:translate-y-[1px] transition-all"
+                        >
+                          {t("admin.seniorpage.dialog.cancel")}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <span className="px-2 py-0.5 uppercase tracking-wider bg-purple-900/50 text-purple-400 border border-purple-800 text-sm">
+                          {selectedSenior.role}
+                        </span>
+                        <button
+                          onClick={() => {
+                            setPendingRole(SENIOR_ROLE_OPTIONS[0].value);
+                            setIsEditingRole(true);
+                          }}
+                          className="flex items-center gap-1 px-2 py-0.5 bg-blue-900/40 hover:bg-blue-800/60 text-blue-400 border border-blue-600 text-xs rounded font-pixel active:translate-y-[1px] transition-all"
+                        >
+                          <PixelPencil className="w-3.5 h-3.5" size={14} />
+                          {t("admin.seniorpage.dialog.editRole")}
+                        </button>
+                      </div>
+                    )}
+                    {saveStatus === "success" && (
+                      <span className="text-xs text-green-400 animate-pulse ml-2">
+                        {t("admin.seniorpage.dialog.success")}
+                      </span>
+                    )}
+                    {saveStatus === "error" && (
+                      <span className="text-xs text-red-400 animate-pulse ml-2">
+                        {t("admin.seniorpage.dialog.error")}
+                      </span>
+                    )}
+                  </div>
 
                   <span className="text-muted-foreground">{t("admin.seniorpage.dialog.level")}</span>
                   <span className="text-accent">{selectedSenior.level ?? 0}</span>
@@ -211,10 +325,10 @@ const ManageSenior = () => {
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {selectedSenior.skills && selectedSenior.skills.length > 0
                     ? selectedSenior.skills.map((skill, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-accent/20 border border-accent/40 text-accent text-xs">
-                          {skill}
-                        </span>
-                      ))
+                      <span key={i} className="px-2 py-0.5 bg-accent/20 border border-accent/40 text-accent text-xs">
+                        {skill}
+                      </span>
+                    ))
                     : <span className="text-muted-foreground">{t("admin.seniorpage.dialog.noSkills")}</span>}
                 </div>
               </div>

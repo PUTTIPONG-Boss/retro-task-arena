@@ -6,6 +6,7 @@ import PixelButton from "@/components/PixelButton";
 import PixelInput from "@/components/PixelInput";
 import PixelFrame from "@/components/PixelFrame";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
+import PixelTable, { Column } from "../components/PixelTable";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAllTasks, deleteTask } from "../services/admin.service";
 import {
@@ -151,6 +152,144 @@ const ManageQuest = () => {
 
   if (isLoading) return <div className={`p-6 font-pixel text-accent ${fontClass}`}>{t("admin.questspage.loading")}</div>;
 
+  const columns: Column<any>[] = [
+    {
+      header: (
+        <input
+          type="checkbox"
+          checked={isAllSelected}
+          onChange={handleSelectAll}
+          className="w-4 h-4 cursor-pointer accent-yellow-400"
+        />
+      ),
+      accessor: (quest) => (
+        <input
+          type="checkbox"
+          checked={selectedIds.has(quest.id)}
+          onChange={() => handleSelectOne(quest.id)}
+          onClick={(e) => e.stopPropagation()}
+          className="w-4 h-4 cursor-pointer accent-yellow-400"
+        />
+      ),
+      className: "text-center w-[4%]",
+      headerClassName: "w-[4%] text-center",
+    },
+    {
+      header: t("admin.questspage.id"),
+      accessor: (quest) => (
+        <div className={`font-medium text-foreground truncate ${fontClass}`} title={quest.id}>
+          {quest.id}
+        </div>
+      ),
+      className: "w-[10%]",
+      headerClassName: "w-[10%]",
+    },
+    {
+      header: t("admin.questspage.title"),
+      accessor: (quest) => (
+        <div className={`font-medium text-foreground truncate ${fontClass}`} title={quest.title}>
+          {quest.title}
+        </div>
+      ),
+      className: "w-[10%]",
+      headerClassName: "w-[10%]",
+    },
+    {
+      header: t("admin.questspage.desc"),
+      accessor: (quest) => (
+        <div className={`text-muted-foreground truncate ${fontClass}`} title={quest.description}>
+          {quest.description}
+        </div>
+      ),
+      className: "w-[16%]",
+      headerClassName: "w-[16%]",
+    },
+    {
+      header: (
+        <button
+          onClick={() => {
+            setSortDate("");
+            setSortReward(sortReward === "" ? "desc" : sortReward === "desc" ? "asc" : "");
+          }}
+          className="flex items-center justify-center gap-1 w-full hover:text-yellow-400 transition-colors"
+        >
+          {t("admin.questspage.reward")}
+          <span className="text-xs">
+            {sortReward === "asc" ? "▲" : sortReward === "desc" ? "▼" : "⇅"}
+          </span>
+        </button>
+      ),
+      accessor: (quest) => quest.point,
+      className: `text-center text-yellow-400 font-bold truncate w-[8%] ${fontClass}`,
+      headerClassName: "w-[8%] text-center",
+    },
+    {
+      header: t("admin.questspage.type"),
+      accessor: (quest) => quest.type,
+      className: `text-center text-muted-foreground truncate w-[8%] ${fontClass}`,
+      headerClassName: "w-[8%] text-center",
+    },
+    {
+      header: t("admin.questspage.diff"),
+      accessor: (quest) => (
+        <div className="flex items-center justify-center gap-1">
+          <span className={`px-2 py-1 border truncate inline-block max-w-full ${
+            quest.difficulty?.toLowerCase() === "easy" || quest.difficulty === "Low" ? "border-green-800 text-green-400 bg-green-900/20" :
+            quest.difficulty?.toLowerCase() === "medium" || quest.difficulty === "Medium" ? "border-yellow-800 text-yellow-400 bg-yellow-900/20" :
+            "border-red-800 text-red-400 bg-red-900/20"
+          } ${i18n.language === "th" ? "text-[18px]" : "text-[16px]"}`}>
+            {t(`admin.questspage.difficulty_values.${quest.difficulty?.toLowerCase()}`)}
+          </span>
+        </div>
+      ),
+      className: "w-[8%]",
+      headerClassName: "w-[8%] text-center",
+    },
+    {
+      header: t("admin.questspage.status"),
+      accessor: (quest) => (
+        <div className="flex items-center justify-center gap-1">
+          <span className={`px-2 py-1 uppercase tracking-wider truncate inline-block max-w-full ${getStatusColor(quest.status)} ${fontClass}`}>
+            {t(`admin.questspage.status_values.${getStatusKey(quest.status)}`)}
+          </span>
+        </div>
+      ),
+      className: "w-[15%]",
+      headerClassName: "w-[15%] text-center",
+    },
+    {
+      header: t("admin.questspage.action"),
+      accessor: (quest) => (
+        <div className="flex items-center justify-center gap-1">
+          <PixelButton
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/quest/${quest.id}/edit`);
+            }}
+            variant="gold"
+            size="sm"
+            className={`${fontClass}`}
+          >
+            {t("admin.questspage.edit")}
+          </PixelButton>
+          <PixelButton
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(quest.id);
+            }}
+            variant="danger"
+            size="sm"
+            className={`text-white-400 hover:text-white-300 ${fontClass}`}
+          >
+            {t("admin.questspage.delete")}
+          </PixelButton>
+        </div>
+      ),
+      className: "w-[17%]",
+      headerClassName: "w-[17%] text-center",
+    },
+  ];
+
   return (
     <div className={`p-6 max-w-[1400px] mx-auto text-foreground font-pixel ${i18n.language === "th" ? "font-['TA_8bit']" : ""}`}>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 ">
@@ -232,131 +371,14 @@ const ManageQuest = () => {
         </div>
       </div>
 
-      {/* --- ส่วนตารางแสดงข้อมูล --- */}
-      <PixelFrame variant="dark" className="relative p-6 overflow-x-auto">
-        <table className="w-full min-w-[900px] text-left border-collapse table-fixed">
-          <thead>
-            <tr className={`border-b border-[#333] text-muted-foreground uppercase tracking-wider ${fontClass}`}>
-              <th className="p-3 w-[4%] text-center">
-                <input
-                  type="checkbox"
-                  checked={isAllSelected}
-                  onChange={handleSelectAll}
-                  className="w-4 h-4 cursor-pointer accent-yellow-400"
-                />
-              </th>
-              <th className="p-3 w-[10%]">{t("admin.questspage.id")}</th>
-              <th className="p-3 w-[10%]">{t("admin.questspage.title")}</th>
-              <th className="p-3 w-[16%]">{t("admin.questspage.desc")}</th>
-              <th className="p-3 w-[8%] text-center">
-                <button
-                  onClick={() => {
-                    setSortDate("");
-                    setSortReward(sortReward === "" ? "desc" : sortReward === "desc" ? "asc" : "");
-                  }}
-                  className="flex items-center justify-center gap-1 w-full hover:text-yellow-400 transition-colors"
-                >
-                  {t("admin.questspage.reward")}
-                  <span className="text-xs">
-                    {sortReward === "asc" ? "▲" : sortReward === "desc" ? "▼" : "⇅"}
-                  </span>
-                </button>
-              </th>
-              <th className="p-3 w-[8%] text-center">{t("admin.questspage.type")}</th>
-              <th className="p-3 w-[8%] text-center">{t("admin.questspage.diff")}</th>
-              <th className="p-3 w-[15%] text-center">{t("admin.questspage.status")}</th>
-              <th className="p-3 w-[17%] text-center">{t("admin.questspage.action")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredQuests.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="p-6 text-center text-muted-foreground">
-                  {t("admin.questspage.notfoundquest")}
-                </td>
-              </tr>
-            ) : (
-              filteredQuests.map((quest: any) => (
-                <tr 
-                  key={quest.id} 
-                  className="border-b border-[#333]/30 hover:bg-white/5 transition-colors cursor-pointer"
-                  onClick={() => navigate(`/quest/${quest.id}`)}
-                >
-                  <td className="p-3 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(quest.id)}
-                      onChange={() => handleSelectOne(quest.id)}
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-4 h-4 cursor-pointer accent-yellow-400"
-                    />
-                  </td>
-                  <td className="p-3">
-                    <div className={`font-medium text-foreground truncate ${fontClass}`} title={quest.id}>{quest.id}</div>
-                  </td>
-                  <td className="p-3">
-                    <div className={`font-medium text-foreground truncate ${fontClass}`} title={quest.title}>{quest.title}</div>
-                  </td>
-                  <td className="p-3">
-                    <div className={`text-muted-foreground truncate ${fontClass}`} title={quest.description}>
-                      {quest.description}
-                    </div>
-                  </td>
-                  <td className={`p-3 text-center text-yellow-400 font-bold truncate ${fontClass}`}>
-                    {quest.point}
-                  </td>
-                  <td className={`p-3 text-center text-muted-foreground truncate ${fontClass}`}>
-                    {quest.type}
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center justify-center gap-1">
-                      <span className={`px-2 py-1 border truncate inline-block max-w-full ${quest.difficulty?.toLowerCase() === "easy" || quest.difficulty === "Low" ? "border-green-800 text-green-400 bg-green-900/20" :
-                        quest.difficulty?.toLowerCase() === "medium" || quest.difficulty === "Medium" ? "border-yellow-800 text-yellow-400 bg-yellow-900/20" :
-                          "border-red-800 text-red-400 bg-red-900/20"
-                        } ${i18n.language === "th" ? "text-[18px]" : "text-[16px]"}`}>
-                        {t(`admin.questspage.difficulty_values.${quest.difficulty?.toLowerCase()}`)}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center justify-center gap-1">
-                      <span className={`px-2 py-1 uppercase tracking-wider truncate inline-block max-w-full ${getStatusColor(quest.status)} ${fontClass}`}>
-                        {t(`admin.questspage.status_values.${getStatusKey(quest.status)}`)}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center justify-center gap-1">
-                      <PixelButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/quest/${quest.id}/edit`);
-                        }}
-                        variant="gold"
-                        size="sm"
-                        className={`${fontClass}`}
-                      >
-                        {t("admin.questspage.edit")}
-                      </PixelButton>
-                      <PixelButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(quest.id);
-                        }}
-                        variant="danger"
-                        size="sm"
-                        className={`text-white-400 hover:text-white-300 ${fontClass}`}
-                      >
-                        {t("admin.questspage.delete")}
-                      </PixelButton>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </PixelFrame>
+      <PixelTable
+        columns={columns}
+        data={filteredQuests}
+        onRowClick={(quest) => navigate(`/quest/${quest.id}`)}
+        rowKeyExtractor={(quest) => quest.id}
+        emptyMessage={t("admin.questspage.notfoundquest")}
+        className="w-full"
+      />
 
       {/* Single delete confirm */}
       <AlertDialog open={!!deleteTargetId} onOpenChange={(open) => !open && setDeleteTargetId(null)}>

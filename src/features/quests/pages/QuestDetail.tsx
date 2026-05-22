@@ -13,6 +13,7 @@ import {
   useUpdateBid,
   useGetQuestById,
   useUpdateQuest,
+  useDistributePoints,
 } from "../services/quest.service";
 import { useGetAllUsers } from "@/features/users/services/user.service";
 import { UserProfile } from "@/features/users/types";
@@ -76,6 +77,14 @@ const QuestDetail = () => {
   const submitBid = useSubmitBid();
   const acceptBid = useAcceptBid();
   const updateQuestMutation = useUpdateQuest();
+  const distributePoints = useDistributePoints();
+  const [pointsDistributed, setPointsDistributed] = useState(false);
+  const [distMode, setDistMode] = useState<"AUTO" | "MANUAL">("AUTO");
+  const [manualAllocations, setManualAllocations] = useState<Record<string, number>>({});
+
+  // --- Portfolio selection state ---
+  const [portfolioIds, setPortfolioIds] = useState<string[]>([]);
+  const [editPortfolioIds, setEditPortfolioIds] = useState<string[]>([]);
 
   // --- Bid form state ---
   const [bidAmount, setBidAmount] = useState<number>(0);
@@ -192,6 +201,7 @@ const QuestDetail = () => {
           note,
           type: selectedTeam.length > 0 ? "TEAM" : "INDIVIDUAL",
           team_members: selectedTeam.map(m => m.id),
+          portfolio_task_ids: portfolioIds,
         },
       });
       toast.success(t("questDetail.toast.bidSubmitted"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
@@ -214,7 +224,7 @@ const QuestDetail = () => {
       await updateQuestMutation.mutateAsync({
         id: quest.id,
         payload: {
-          estimatedTime: selectedBid.waitDuration || "",
+          estimated_time: selectedBid.waitDuration || "",
         },
       });
 
@@ -268,6 +278,7 @@ const QuestDetail = () => {
       setSelectedTeam([]);
     }
 
+    setEditPortfolioIds(myBid.portfolioTasks?.map(t => t.id) || []);
     setEditMode(true);
   };
 
@@ -288,6 +299,7 @@ const QuestDetail = () => {
           note: editNote,
           type: selectedTeam.length > 0 ? "TEAM" : "INDIVIDUAL",
           team_members: selectedTeam.map(m => m.id),
+          portfolio_task_ids: editPortfolioIds,
         },
       });
       toast.success(t("questDetail.editbid.SuccessMsg"), { icon: <PixelCheck size={18} color="#4ade80" />, style: { fontFamily: '"TA_8bit"', fontSize: '16px' } });
@@ -303,11 +315,14 @@ const QuestDetail = () => {
     <div className={`max-w-[1280px] mx-auto px-4 py-8 ${fontClass}`}>
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-6">
-        <Link to="/">
-          <PixelButton variant="danger" size="sm" className={fontClass}>
-            ← {t("questDetail.back")}
-          </PixelButton>
-        </Link>
+        <PixelButton
+          variant="danger"
+          size="sm"
+          className={fontClass}
+          onClick={() => navigate("/")}
+        >
+          ← {t("questDetail.back")}
+        </PixelButton>
         {isOwner && (
           <Link to={`/quest/${quest.id}/edit`}>
             <button className={`pixel-border bg-secondary hover:bg-muted px-4 py-2 font-pixel text-accent transition-colors ${fontClass}`}>
@@ -629,14 +644,19 @@ const QuestDetail = () => {
                             <PixelEye size={16} />
                           </Link>
                         </p>
-                        <p className={`text-muted-foreground flex items-center gap-1 ${fontClass}`}>
+
+                        <p className={`text-muted-foreground flex items-center gap-1 text-[12px] ${fontClass}`}>
                           <PixelScroll size={12} color="currentColor" className="text-gold" /> {bid.questsCompleted} {t("questDetail.OwnerQuest.quest")} · ★ {bid.rating.toFixed(1)}
                         </p>
+
+                        {/* Bid Note */}
                         {bid.note && (
-                          <p className={`text-foreground/70 mt-1 italic break-words overflow-hidden ${fontClass}`}>
+                          <p className={`text-foreground/70 mt-2 italic break-words overflow-hidden text-[13px] ${fontClass}`}>
                             "{bid.note}"
                           </p>
                         )}
+
+                        {/* Team Members */}
                         {bid.teamMembers && bid.teamMembers.length > 0 && (
                           <div className="mt-4 border-t border-border/30 pt-3">
                             <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
@@ -644,16 +664,16 @@ const QuestDetail = () => {
                             </p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               {bid.teamMembers.map((m) => (
-                                <div key={m.userId} className="pixel-border border-border/50 bg-background/40 p-4 flex flex-col relative group">
+                                <div key={m.userId} className="pixel-border border-border/50 bg-background/40 p-3 flex flex-col relative group">
                                   <div className="flex justify-between items-start">
                                     <div>
                                       <p className="text-[14px] font-pixel text-accent">{m.username}</p>
-                                      <p className="text-[14px] font-pixel text-foreground/80">{m.firstName} {m.lastName}</p>
+                                      <p className="text-[12px] font-pixel text-foreground/80">{m.firstName} {m.lastName}</p>
                                     </div>
-                                    {(quest?.status === "in-progress" || quest?.status === "review" || quest?.status === "in_review") && bid.status === "ACCEPTED" && (
+                                    {(quest?.status === "in-progress" || quest?.status === "review") && bid.status === "ACCEPTED" && (
                                       <PixelButton
                                         variant="gold"
-                                        size="xs"
+                                        size="sm"
                                         className="opacity-0 group-hover:opacity-100 transition-opacity"
                                         onClick={() => navigate(`/quest/${quest.id}/workspace`)}
                                       >
@@ -666,18 +686,65 @@ const QuestDetail = () => {
                             </div>
                           </div>
                         )}
+
+                        {/* Portfolio Tasks */}
+                        <div className="border-t border-border/30 mt-4 pt-3">
+                          <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
+                            <PixelScroll size={13} color="currentColor" className="text-gold" />
+                            {t("questDetail.portfolio.titlePlain")}
+                            {bid.portfolioTasks && bid.portfolioTasks.length > 0
+                              ? ` (${t("questDetail.portfolio.itemsCount", { count: bid.portfolioTasks.length })})`
+                              : ""}
+                          </p>
+                          {bid.portfolioTasks && bid.portfolioTasks.length > 0 ? (
+                            <div className="space-y-1.5">
+                              {bid.portfolioTasks.map((pt) => (
+                                <Link
+                                  key={pt.id}
+                                  to={`/quest/${pt.id}`}
+                                  className="flex items-center justify-between gap-3 pixel-border border-border/40 bg-background/40 hover:bg-accent/10 hover:border-accent/50 transition-colors px-3 py-2 cursor-pointer group"
+                                >
+                                  <div className="min-w-0 flex-1">
+                                    <p className={`font-pixel text-foreground group-hover:text-accent transition-colors text-[12px] truncate ${fontClass}`}>
+                                      {pt.title}
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                      <span className={`text-[10px] font-pixel uppercase text-muted-foreground ${fontClass}`}>
+                                        {pt.category}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="text-right flex-shrink-0 flex items-center gap-2">
+                                    {pt.completedAt && (
+                                      <span className={`font-pixel text-muted-foreground text-[10px] ${fontClass}`}>
+                                        {new Date(pt.completedAt).toLocaleDateString('th-TH')}
+                                      </span>
+                                    )}
+                                    <span className="text-muted-foreground/50 group-hover:text-accent transition-colors text-[10px] font-pixel">→</span>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className={`text-muted-foreground/60 text-[11px] font-pixel italic ${fontClass}`}>
+                              {t("questDetail.portfolio.noAttached")}
+                            </p>
+                          )}
+                        </div>
                       </div>
+
+                      {/* Bid Actions/Stats */}
                       <div className="text-right flex flex-col justify-between items-end min-w-[160px] gap-4">
                         <div className="space-y-1">
-                          <div className={fontClass}>
-                            <Coins size={12} className="inline mr-1 text-gold" /> {bid.bidAmount} {t("questDetail.OwnerQuest.GP")}
+                          <div className={`font-pixel text-gold text-[16px] ${fontClass}`}>
+                            <Coins size={14} className="inline mr-1" /> {bid.bidAmount} {t("questDetail.OwnerQuest.GP")}
                           </div>
-                          <p className={`text-muted-foreground flex items-center gap-1 justify-end ${fontClass}`}>
+                          <p className={`text-[12px] text-muted-foreground flex items-center gap-1 justify-end ${fontClass}`}>
                             <PixelHourglass size={12} color="currentColor" className="text-gold" /> {bid.waitDuration}
                           </p>
                         </div>
 
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-2">
                           {bid.status === "PENDING" && (
                             <PixelButton
                               variant="gold"
@@ -686,93 +753,23 @@ const QuestDetail = () => {
                               onClick={() => handleAcceptBid(bid.id)}
                               disabled={acceptBid.isPending}
                             >
-                              <span className={`flex items-center gap-1 ${fontClass}`}><PixelCheck size={14} color="#4ade80" /> {t("questDetail.acceptbid")}</span>
+                              <span className={`flex items-center gap-1 ${fontClass}`}>
+                                <PixelCheck size={14} color="#4ade80" /> {t("questDetail.acceptbid")}
+                              </span>
                             </PixelButton>
                           )}
                           {bid.status === "ACCEPTED" && (
-                            <span className={`font-pixel text-success flex items-center gap-1 ${fontClass}`}><PixelCheck size={14} color="#4ade80" /> {t("questDetail.accept")}</span>
+                            <span className={`font-pixel text-success flex items-center gap-1 ${fontClass}`}>
+                              <PixelCheck size={14} color="#4ade80" /> {t("questDetail.accept")}
+                            </span>
                           )}
                           {bid.status === "REJECTED" && (
-                            <span className={`font-pixel text-muted-foreground flex items-center gap-1 ${fontClass}`}><PixelX size={12} color="currentColor" /> {t("questDetail.reject")}</span>
+                            <span className={`font-pixel text-muted-foreground flex items-center gap-1 ${fontClass}`}>
+                              <PixelX size={12} color="currentColor" /> {t("questDetail.reject")}
+                            </span>
                           )}
                         </div>
                       </div>
-
-                      {/* ── PORTFOLIO TASKS (ผลงานที่ bidder แนบมา) ── */}
-                      <div className="border-t border-border/30 pt-3">
-                        <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
-                          <PixelScroll size={13} color="currentColor" className="text-gold" />
-                          {t("questDetail.portfolio.titlePlain")}
-                          {bid.portfolioTasks && bid.portfolioTasks.length > 0
-                            ? ` (${t("questDetail.portfolio.itemsCount", { count: bid.portfolioTasks.length })})`
-                            : ""}
-                        </p>
-                        {bid.portfolioTasks && bid.portfolioTasks.length > 0 ? (
-                          <div className="space-y-1.5">
-                            {bid.portfolioTasks.map((pt) => (
-                              <Link
-                                key={pt.id}
-                                to={`/quest/${pt.id}`}
-                                className="flex items-center justify-between gap-3 pixel-border border-border/40 bg-background/40 hover:bg-accent/10 hover:border-accent/50 transition-colors px-3 py-2 cursor-pointer group"
-                              >
-                                <div className="min-w-0 flex-1">
-                                  <p className={`font-pixel text-foreground group-hover:text-accent transition-colors text-[12px] truncate ${fontClass}`}>
-                                    {pt.title}
-                                  </p>
-                                  <div className="flex items-center gap-2 mt-0.5">
-                                    <span className={`text-[10px] font-pixel uppercase text-muted-foreground ${fontClass}`}>
-                                      {pt.category}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="text-right flex-shrink-0 flex items-center gap-2">
-                                  {pt.completedAt && (
-                                    <span className={`font-pixel text-muted-foreground text-[10px] ${fontClass}`}>
-                                      {new Date(pt.completedAt).toLocaleDateString('th-TH')}
-                                    </span>
-                                  )}
-                                  <span className="text-muted-foreground/50 group-hover:text-accent transition-colors text-[10px] font-pixel">→</span>
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className={`text-muted-foreground/60 text-[11px] font-pixel italic ${fontClass}`}>
-                            {t("questDetail.portfolio.noAttached")}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* ── TEAM MEMBERS ── */}
-                      {bid.teamMembers && bid.teamMembers.length > 0 && (
-                        <div className="border-t border-border/30 pt-3">
-                          <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
-                            <PixelUsers size={14} className="text-gold" /> {bid.teamMembers.length > 1 ? t("questDetail.teamMembers") : t("questDetail.teamMember")}: {bid.teamMembers.length} {bid.teamMembers.length > 1 ? t("questDetail.members") : t("questDetail.member")}
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {bid.teamMembers.map((m) => (
-                              <div key={m.userId} className="pixel-border border-border/50 bg-background/40 p-4 flex flex-col relative group">
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <p className="text-[14px] font-pixel text-accent">{m.username}</p>
-                                    <p className="text-[14px] font-pixel text-foreground/80">{m.firstName} {m.lastName}</p>
-                                  </div>
-                                  {((quest?.status as string) === "in-progress" || (quest?.status as string) === "review" || (quest?.status as string) === "in_review") && bid.status === "ACCEPTED" && (
-                                    <PixelButton
-                                      variant="gold"
-                                      size="sm"
-                                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                      onClick={() => navigate(`/quest/${quest.id}/workspace`)}
-                                    >
-                                      <span className="text-[10px]">{t("questDetail.sidebar.openWorkspace")}</span>
-                                    </PixelButton>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -784,350 +781,357 @@ const QuestDetail = () => {
           {!isOwner && quest.status === "open" && (
             <>
               <PixelFrame>
-              {/* Recruitment Section */}
-              {(quest.workType === "TEAM" || quest.workType === "BOTH") && (
-                <div className="mb-6 border-b-2 border-border pb-6">
-                  <h3 className={`font-pixel text-accent mb-1 flex items-center gap-2 ${fontClass}`}>
-                    <PixelUsers size={20} className="text-gold" /> {t("questDetail.recruitment.title")} ({selectedTeam.length}/10)
-                  </h3>
-                  <p className={`text-[12px] text-muted-foreground font-pixel mb-4 ${fontClass}`}>
-                    {t("questDetail.recruitmentNote")}
-                  </p>
+                {/* Recruitment Section */}
+                {(quest.workType === "TEAM" || quest.workType === "BOTH") && (
+                  <div className="mb-6 border-b-2 border-border pb-6">
+                    <h3 className={`font-pixel text-accent mb-1 flex items-center gap-2 ${fontClass}`}>
+                      <PixelUsers size={20} className="text-gold" /> {t("questDetail.recruitment.title")} ({selectedTeam.length}/10)
+                    </h3>
+                    <p className={`text-[12px] text-muted-foreground font-pixel mb-4 ${fontClass}`}>
+                      {t("questDetail.recruitmentNote")}
+                    </p>
 
-                  {(!isUserInAnyBid || editMode) && (
-                    <div className="relative mb-4 flex items-center">
-                      <input
-                        type="text"
-                        placeholder={t("questDetail.recruitment.searchPlaceholder")}
-                        className={`w-full bg-background border-2 border-border px-3 py-2 pr-10 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                      {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery("")}
-                          className="absolute right-3 text-red-500 hover:text-red-400 transition-colors"
-                          title={t("questDetail.recruitment.clearSearch")}
-                        >
-                          <PixelX size={14} color="currentColor" />
-                        </button>
-                      )}
-
-                      {searchQuery && filteredUsers.length > 0 && (
-                        <div className="absolute z-50 w-full bg-secondary border-2 border-border mt-1 top-full max-h-60 overflow-y-auto shadow-xl">
-                          {filteredUsers.map((u) => (
-                            <div
-                              key={u.id}
-                              className="p-3 hover:bg-muted cursor-pointer border-b border-border last:border-0 group"
-                              onClick={() => handleAddMember(u)}
-                            >
-                              <div className="flex justify-between items-center">
-                                <div>
-                                  <p className="font-pixel text-foreground group-hover:text-gold transition-colors">
-                                    {u.username}
-                                  </p>
-                                  <p className="text-[14px] text-muted-foreground font-pixel">
-                                    {u.firstNameTh} {u.lastNameTh} {u.firstNameEn && u.lastNameEn && `(${u.firstNameEn} ${u.lastNameEn})`}
-                                  </p>
-                                </div>
-                                <div className="text-right text-[14px] font-pixel text-muted-foreground">
-                                  <p>Lvl {u.level}</p>
-                                  <p>★ {u.rating.toFixed(1)}</p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {selectedTeam.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                      {selectedTeam.map((u) => (
-                        <div
-                          key={u.id}
-                          className="relative pixel-border border-accent bg-secondary/50 p-4 animate-pixel-fade-in"
-                        >
-                          <button
-                            onClick={() => handleRemoveMember(u.id)}
-                            className="absolute -top-2 -right-2 bg-background border-2 border-border p-1 text-muted-foreground hover:text-red-400 transition-colors z-10"
-                            title={t("questDetail.recruitment.removeMember")}
-                          >
-                            <PixelX size={12} />
-                          </button>
-
-                          <div className="flex justify-between items-start">
-                            <div className="space-y-1">
-                              <p className="font-pixel text-accent text-[14px]">
-                                {u.username}
-                              </p>
-                              <div className="text-[12px] font-pixel text-foreground/90">
-                                <p>{u.firstNameTh} {u.lastNameTh}</p>
-                                {u.firstNameEn && u.lastNameEn && (
-                                  <p className="text-muted-foreground text-[10px]">
-                                    {u.firstNameEn} {u.lastNameEn}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            <div className="text-right text-[12px] font-pixel text-muted-foreground">
-                              <p className="text-gold">Lvl {u.level}</p>
-                              <p className="text-yellow-400">★ {u.rating.toFixed(1)}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <h2 className={`font-pixel text-foreground pixel-text-shadow mb-2 flex items-center gap-2 ${fontClass}`}>
-                <PixelUsers size={20} color="currentColor" className="text-gold" /> {bids.length} {t("questDetail.ownerbids")}
-              </h2>
-              <p className={`text-muted-foreground mb-4 ${fontClass}`}>
-                {t("questDetail.bidsdetail")}
-              </p>
-
-              {myBid ? (
-                <div className={`pixel-border bg-secondary p-4 mt-3 ${fontClass}`}>
-                  {editMode ? (
-                    /* ── EDIT FORM ── */
-                    <div className="space-y-3">
-                      <p className={`font-pixel text-accent mb-2 ${fontClass}`}> {t("questDetail.editbid.editbids")}</p>
-                      <div>
-                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.bidamount")}</label>
-                        <input
-                          type="number"
-                          value={editBidAmount}
-                          onChange={(e) => {
-                            const val = Number(e.target.value);
-                            if (val <= 1000) setEditBidAmount(val);
-                          }}
-                          className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
-                          min={1}
-                          max={1000}
-                        />
-                      </div>
-                      <div>
-                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.waitduration")}</label>
+                    {(!isUserInAnyBid || editMode) && (
+                      <div className="relative mb-4 flex items-center">
                         <input
                           type="text"
-                          value={editWaitDuration}
-                          onChange={(e) => setEditWaitDuration(e.target.value)}
-                          className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
-                          placeholder="e.g. 3 days, 1 week"
+                          placeholder={t("questDetail.recruitment.searchPlaceholder")}
+                          className={`w-full bg-background border-2 border-border px-3 py-2 pr-10 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                      </div>
-                      <div>
-                        <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.note")}</label>
-                        <textarea
-                          value={editNote}
-                          onChange={(e) => setEditNote(e.target.value)}
-                          rows={2}
-                          className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent resize-none ${fontClass}`}
-                        />
-                      </div>
-                      {/* ── PORTFOLIO SELECTOR (EDIT MODE) ── */}
-                      <div>
-                        <PortfolioSelector
-                          selectedIds={editPortfolioIds}
-                          onChange={setEditPortfolioIds}
-                          fontClass={fontClass}
-                          initialSelectedTasks={myBid?.portfolioTasks?.map(t => ({ id: t.id, title: t.title })) || []}
-                        />
-                      </div>
-                      <div className="flex gap-3">
-                        <PixelButton
-                          variant="gold"
-                          size="sm"
-                          className={`flex-1 ${fontClass}`}
-                          onClick={handleUpdateBid}
-                          disabled={updateBid.isPending}
-                        >
-                          <span className={fontClass}>{updateBid.isPending ? t("questDetail.editbid.Saving") : t("questDetail.editbid.SuccessSave")}</span>
-                        </PixelButton>
-                        <PixelButton variant="ghost" size="sm" className={fontClass} onClick={() => {
-                          setEditMode(false);
-                          setSelectedTeam([]);
-                        }}>
-                          <span className={fontClass}>{t("questDetail.editbid.btncancel")}</span>
-                        </PixelButton>
-                      </div>
-                    </div>
-                  ) : (
-                    /* ── VIEW MODE ── */
-                    <>
-                      <div className="flex justify-between items-start">
-                        <p className={`font-pixel text-success mb-1 flex items-center gap-1 ${fontClass}`}><PixelCheck size={18} color="#4ade80" /> {myBidStatus === "BIDDER" ? t("questDetail.viewmode.yourbidsub") : t("questDetail.viewmode.teambidsub") || "Your team's bid has been submitted!"}</p>
-                      </div>
-                      {myBidStatus === "TEAM_MEMBER" && (
-                        <p className={`text-foreground mb-1 ${fontClass}`}>
-                          {t("questDetail.teamLeader")}: <span className="text-accent">{myBid.username}</span>
-                        </p>
-                      )}
-                      <p className={`text-foreground ${fontClass}`}>{t("questDetail.viewmode.amount")} : <span className="text-accent">{myBid.bidAmount} {t("questDetail.viewmode.GP")}</span></p>
-                      <p className={`text-muted-foreground ${fontClass}`}>{t("questDetail.viewmode.duration")}: {myBid.waitDuration}</p>
-                      {myBid.note && <p className={`text-muted-foreground mt-1 break-words overflow-hidden ${fontClass}`}>{t("questDetail.viewmode.note")}: {myBid.note}</p>}
-                      <p className={`mt-2 ${fontClass}`}>
-                        {t("questDetail.viewmode.status")}:
-                        <span className={myBid.status === "ACCEPTED" ? "text-success font-semibold" : myBid.status === "REJECTED" ? "text-red-400" : "text-muted-foreground"}>
-                          {myBid.status}
-                        </span>
-                      </p>
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-3 text-red-500 hover:text-red-400 transition-colors"
+                            title={t("questDetail.recruitment.clearSearch")}
+                          >
+                            <PixelX size={14} color="currentColor" />
+                          </button>
+                        )}
 
-                      {myBid.teamMembers && myBid.teamMembers.length > 0 && (
-                        <div className="mt-4 border-t border-border/30 pt-3">
-                          <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
-                            <PixelUsers size={14} className="text-gold" /> {myBid.teamMembers.length > 1 ? t("questDetail.teamMembers") : t("questDetail.teamMember")}: {myBid.teamMembers.length} {myBid.teamMembers.length > 1 ? t("questDetail.members") : t("questDetail.member")}
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {myBid.teamMembers.map((m) => (
-                              <div key={m.userId} className="pixel-border border-border/50 bg-background/40 p-4 flex flex-col relative group">
-                                <div className="flex justify-between items-start">
+                        {searchQuery && filteredUsers.length > 0 && (
+                          <div className="absolute z-50 w-full bg-secondary border-2 border-border mt-1 top-full max-h-60 overflow-y-auto shadow-xl">
+                            {filteredUsers.map((u) => (
+                              <div
+                                key={u.id}
+                                className="p-3 hover:bg-muted cursor-pointer border-b border-border last:border-0 group"
+                                onClick={() => handleAddMember(u)}
+                              >
+                                <div className="flex justify-between items-center">
                                   <div>
-                                    <p className="text-[14px] font-pixel text-accent">{m.username}</p>
-                                    <p className="text-[14px] font-pixel text-foreground/80">{m.firstName} {m.lastName}</p>
+                                    <p className="font-pixel text-foreground group-hover:text-gold transition-colors">
+                                      {u.username}
+                                    </p>
+                                    <p className="text-[14px] text-muted-foreground font-pixel">
+                                      {u.firstNameTh} {u.lastNameTh} {u.firstNameEn && u.lastNameEn && `(${u.firstNameEn} ${u.lastNameEn})`}
+                                    </p>
                                   </div>
-                                  {(quest.status === "in-progress" || quest.status === "review") && myBid.status === "ACCEPTED" && (
-                                    <PixelButton
-                                      variant="gold"
-                                      size="xs"
-                                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                      onClick={() => navigate(`/quest/${quest.id}/workspace`)}
-                                    >
-                                      <span className="text-[10px]">{t("questDetail.sidebar.openWorkspace")}</span>
-                                    </PixelButton>
-                                  )}
+                                  <div className="text-right text-[14px] font-pixel text-muted-foreground">
+                                    <p>Lvl {u.level}</p>
+                                    <p>★ {u.rating.toFixed(1)}</p>
+                                  </div>
                                 </div>
                               </div>
                             ))}
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
+                    )}
 
-                      {myBid.portfolioTasks && myBid.portfolioTasks.length > 0 && (
-                        <div className="mt-4 border-t border-border/30 pt-3">
-                          <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
-                            <PixelScroll size={13} color="currentColor" className="text-gold" />
-                            {t("questDetail.portfolio.title", { count: myBid.portfolioTasks.length })}
+                    {selectedTeam.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        {selectedTeam.map((u) => (
+                          <div
+                            key={u.id}
+                            className="relative pixel-border border-accent bg-secondary/50 p-4 animate-pixel-fade-in"
+                          >
+                            <button
+                              onClick={() => handleRemoveMember(u.id)}
+                              className="absolute -top-2 -right-2 bg-background border-2 border-border p-1 text-muted-foreground hover:text-red-400 transition-colors z-10"
+                              title={t("questDetail.recruitment.removeMember")}
+                            >
+                              <PixelX size={12} />
+                            </button>
+
+                            <div className="flex justify-between items-start">
+                              <div className="space-y-1">
+                                <p className="font-pixel text-accent text-[14px]">
+                                  {u.username}
+                                </p>
+                                <div className="text-[12px] font-pixel text-foreground/90">
+                                  <p>{u.firstNameTh} {u.lastNameTh}</p>
+                                  {u.firstNameEn && u.lastNameEn && (
+                                    <p className="text-muted-foreground text-[10px]">
+                                      {u.firstNameEn} {u.lastNameEn}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="text-right text-[12px] font-pixel text-muted-foreground">
+                                <p className="text-gold">Lvl {u.level}</p>
+                                <p className="text-yellow-400">★ {u.rating.toFixed(1)}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <h2 className={`font-pixel text-foreground pixel-text-shadow mb-2 flex items-center gap-2 ${fontClass}`}>
+                  <PixelUsers size={20} color="currentColor" className="text-gold" /> {bids.length} {t("questDetail.ownerbids")}
+                </h2>
+                <p className={`text-muted-foreground mb-4 ${fontClass}`}>
+                  {t("questDetail.bidsdetail")}
+                </p>
+
+                {myBid ? (
+                  <div className={`pixel-border bg-secondary p-4 mt-3 ${fontClass}`}>
+                    {editMode ? (
+                      /* ── EDIT FORM ── */
+                      <div className="space-y-3">
+                        <p className={`font-pixel text-accent mb-2 ${fontClass}`}> {t("questDetail.editbid.editbids")}</p>
+                        <div>
+                          <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.bidamount")}</label>
+                          <input
+                            type="number"
+                            value={editBidAmount}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              if (val <= 1000) setEditBidAmount(val);
+                            }}
+                            className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
+                            min={1}
+                            max={1000}
+                          />
+                        </div>
+                        <div>
+                          <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.waitduration")}</label>
+                          <input
+                            type="text"
+                            value={editWaitDuration}
+                            onChange={(e) => setEditWaitDuration(e.target.value)}
+                            className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
+                            placeholder="e.g. 3 days, 1 week"
+                          />
+                        </div>
+                        <div>
+                          <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.editbid.note")}</label>
+                          <textarea
+                            value={editNote}
+                            onChange={(e) => setEditNote(e.target.value)}
+                            rows={2}
+                            className={`w-full bg-background border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent resize-none ${fontClass}`}
+                          />
+                        </div>
+                        {/* ── PORTFOLIO SELECTOR (EDIT MODE) ── */}
+                        <div>
+                          <PortfolioSelector
+                            selectedIds={editPortfolioIds}
+                            onChange={setEditPortfolioIds}
+                            fontClass={fontClass}
+                            initialSelectedTasks={myBid?.portfolioTasks?.map(t => ({ id: t.id, title: t.title })) || []}
+                          />
+                        </div>
+                        <div className="flex gap-3">
+                          <PixelButton
+                            variant="gold"
+                            size="sm"
+                            className={`flex-1 ${fontClass}`}
+                            onClick={handleUpdateBid}
+                            disabled={updateBid.isPending}
+                          >
+                            <span className={fontClass}>{updateBid.isPending ? t("questDetail.editbid.Saving") : t("questDetail.editbid.SuccessSave")}</span>
+                          </PixelButton>
+                          <PixelButton variant="ghost" size="sm" className={fontClass} onClick={() => {
+                            setEditMode(false);
+                            setSelectedTeam([]);
+                          }}>
+                            <span className={fontClass}>{t("questDetail.editbid.btncancel")}</span>
+                          </PixelButton>
+                        </div>
+                      </div>
+                    ) : (
+                      /* ── VIEW MODE ── */
+                      <>
+                        <div className="flex justify-between items-start">
+                          <p className={`font-pixel text-success mb-1 flex items-center gap-1 ${fontClass}`}><PixelCheck size={18} color="#4ade80" /> {myBidStatus === "BIDDER" ? t("questDetail.viewmode.yourbidsub") : t("questDetail.viewmode.teambidsub") || "Your team's bid has been submitted!"}</p>
+                        </div>
+                        {myBidStatus === "TEAM_MEMBER" && (
+                          <p className={`text-foreground mb-1 ${fontClass}`}>
+                            {t("questDetail.teamLeader")}: <span className="text-accent">{myBid.username}</span>
                           </p>
-                          <div className="space-y-1.5">
-                            {myBid.portfolioTasks.map((pt) => (
-                              <Link
-                                key={pt.id}
-                                to={`/quest/${pt.id}`}
-                                className="flex items-center justify-between gap-3 pixel-border border-border/40 bg-background/40 hover:bg-accent/10 hover:border-accent/50 transition-colors px-3 py-2 cursor-pointer group"
-                              >
-                                <div className="min-w-0 flex-1">
-                                  <p className={`font-pixel text-foreground group-hover:text-accent transition-colors text-[12px] truncate ${fontClass}`}>
-                                    {pt.title}
-                                  </p>
-                                  <div className="flex items-center gap-2 mt-0.5">
-                                    <span className={`text-[10px] font-pixel uppercase text-muted-foreground ${fontClass}`}>
-                                      {pt.category}
-                                    </span>
+                        )}
+                        <p className={`text-foreground ${fontClass}`}>{t("questDetail.viewmode.amount")} : <span className="text-accent">{myBid.bidAmount} {t("questDetail.viewmode.GP")}</span></p>
+                        <p className={`text-muted-foreground ${fontClass}`}>{t("questDetail.viewmode.duration")}: {myBid.waitDuration}</p>
+                        {myBid.note && <p className={`text-muted-foreground mt-1 break-words overflow-hidden ${fontClass}`}>{t("questDetail.viewmode.note")}: {myBid.note}</p>}
+                        <p className={`mt-2 ${fontClass}`}>
+                          {t("questDetail.viewmode.status")}:
+                          <span className={myBid.status === "ACCEPTED" ? "text-success font-semibold" : myBid.status === "REJECTED" ? "text-red-400" : "text-muted-foreground"}>
+                            {myBid.status}
+                          </span>
+                        </p>
+
+                        {myBid.teamMembers && myBid.teamMembers.length > 0 && (
+                          <div className="mt-4 border-t border-border/30 pt-3">
+                            <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
+                              <PixelUsers size={14} className="text-gold" /> {myBid.teamMembers.length > 1 ? t("questDetail.teamMembers") : t("questDetail.teamMember")}: {myBid.teamMembers.length} {myBid.teamMembers.length > 1 ? t("questDetail.members") : t("questDetail.member")}
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {myBid.teamMembers.map((m) => (
+                                <div key={m.userId} className="pixel-border border-border/50 bg-background/40 p-4 flex flex-col relative group">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <p className="text-[14px] font-pixel text-accent">{m.username}</p>
+                                      <p className="text-[14px] font-pixel text-foreground/80">{m.firstName} {m.lastName}</p>
+                                    </div>
+                                    {(quest.status === "in-progress" || quest.status === "review") && myBid.status === "ACCEPTED" && (
+                                      <PixelButton
+                                        variant="gold"
+                                        size="sm"
+                                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={() => navigate(`/quest/${quest.id}/workspace`)}
+                                      >
+                                        <span className="text-[10px]">{t("questDetail.sidebar.openWorkspace")}</span>
+                                      </PixelButton>
+                                    )}
                                   </div>
                                 </div>
-                                <div className="text-right flex-shrink-0 flex items-center gap-2">
-                                  {pt.completedAt && (
-                                    <span className={`font-pixel text-muted-foreground text-[10px] ${fontClass}`}>
-                                      {new Date(pt.completedAt).toLocaleDateString('th-TH')}
-                                    </span>
-                                  )}
-                                  <span className="text-muted-foreground/50 group-hover:text-accent transition-colors text-[10px] font-pixel">→</span>
-                                </div>
-                              </Link>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {myBidStatus === "BIDDER" && myBid.status === "PENDING" && (
-                        <PixelButton
-                          variant="gold"
-                          size="md"
-                          className={`w-full mt-4 ${fontClass}`}
-                          onClick={handleEditBid}
-                        >
-                          <span className={fontClass}>⚙ {t("questDetail.editbid.editbids")}</span>
-                        </PixelButton>
-                      )}
-                    </>
-                  )}
-                </div>
-              ) : showBidForm ? (
-                <div className={`space-y-4 mt-3 ${fontClass}`}>
-                  <div>
-                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.bidamount")}</label>
-                    <input
-                      type="number"
-                      value={bidAmount}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        if (val <= 1000) setBidAmount(val);
-                      }}
-                      className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
-                      placeholder="e.g. 500"
-                      min={1}
-                      max={1000}
-                    />
+                        {myBid.portfolioTasks && myBid.portfolioTasks.length > 0 && (
+                          <div className="mt-4 border-t border-border/30 pt-3">
+                            <p className={`text-[12px] text-accent font-pixel flex items-center gap-1 mb-2 ${fontClass}`}>
+                              <PixelScroll size={13} color="currentColor" className="text-gold" />
+                              {t("questDetail.portfolio.title", { count: myBid.portfolioTasks.length })}
+                            </p>
+                            <div className="space-y-1.5">
+                              {myBid.portfolioTasks.map((pt) => (
+                                <Link
+                                  key={pt.id}
+                                  to={`/quest/${pt.id}`}
+                                  className="flex items-center justify-between gap-3 pixel-border border-border/40 bg-background/40 hover:bg-accent/10 hover:border-accent/50 transition-colors px-3 py-2 cursor-pointer group"
+                                >
+                                  <div className="min-w-0 flex-1">
+                                    <p className={`font-pixel text-foreground group-hover:text-accent transition-colors text-[12px] truncate ${fontClass}`}>
+                                      {pt.title}
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                      <span className={`text-[10px] font-pixel uppercase text-muted-foreground ${fontClass}`}>
+                                        {pt.category}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="text-right flex-shrink-0 flex items-center gap-2">
+                                    {pt.completedAt && (
+                                      <span className={`font-pixel text-muted-foreground text-[10px] ${fontClass}`}>
+                                        {new Date(pt.completedAt).toLocaleDateString('th-TH')}
+                                      </span>
+                                    )}
+                                    <span className="text-muted-foreground/50 group-hover:text-accent transition-colors text-[10px] font-pixel">→</span>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {myBidStatus === "BIDDER" && myBid.status === "PENDING" && (
+                          <PixelButton
+                            variant="gold"
+                            size="md"
+                            className={`w-full mt-4 ${fontClass}`}
+                            onClick={handleEditBid}
+                          >
+                            <span className={fontClass}>⚙ {t("questDetail.editbid.editbids")}</span>
+                          </PixelButton>
+                        )}
+                      </>
+                    )}
                   </div>
-                  <div>
-                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.waitduration")}</label>
-                    <input
-                      type="text"
-                      value={waitDuration}
-                      onChange={(e) => setWaitDuration(e.target.value)}
-                      className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
-                      placeholder="e.g. 3 days, 1 week"
-                    />
+                ) : showBidForm ? (
+                  <div className={`space-y-4 mt-3 ${fontClass}`}>
+                    <div>
+                      <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.bidamount")}</label>
+                      <input
+                        type="number"
+                        value={bidAmount}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          if (val <= 1000) setBidAmount(val);
+                        }}
+                        className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
+                        placeholder="e.g. 500"
+                        min={1}
+                        max={1000}
+                      />
+                    </div>
+                    <div>
+                      <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.waitduration")}</label>
+                      <input
+                        type="text"
+                        value={waitDuration}
+                        onChange={(e) => setWaitDuration(e.target.value)}
+                        className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent ${fontClass}`}
+                        placeholder="e.g. 3 days, 1 week"
+                      />
+                    </div>
+                    <div>
+                      <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.note")}</label>
+                      <textarea
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        rows={3}
+                        className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent resize-none ${fontClass}`}
+                        placeholder={t("questDetail.whatsolution")}
+                      />
+                    </div>
+                    <div>
+                      <PortfolioSelector
+                        selectedIds={portfolioIds}
+                        onChange={setPortfolioIds}
+                        fontClass={fontClass}
+                      />
+                    </div>
+                    <div className="flex gap-3">
+                      <PixelButton
+                        variant="gold"
+                        size="md"
+                        className={`flex-1 ${fontClass}`}
+                        onClick={handleSubmitBid}
+                        disabled={submitBid.isPending}
+                      >
+                        <span className={fontClass}>{submitBid.isPending ? t("questDetail.Submitting") : t("questDetail.btnbids")}</span>
+                      </PixelButton>
+                      <PixelButton
+                        variant="ghost"
+                        size="md"
+                        className={fontClass}
+                        onClick={() => setShowBidForm(false)}
+                      >
+                        <span className={fontClass}> {t("questDetail.btncancel")}</span>
+                      </PixelButton>
+                    </div>
                   </div>
-                  <div>
-                    <label className={`font-pixel text-muted-foreground block mb-1 ${fontClass}`}>{t("questDetail.note")}</label>
-                    <textarea
-                      value={note}
-                      onChange={(e) => setNote(e.target.value)}
-                      rows={3}
-                      className={`w-full bg-secondary border border-border px-3 py-2 text-foreground font-pixel focus:outline-none focus:border-accent resize-none ${fontClass}`}
-                      placeholder={t("questDetail.whatsolution")}
-                    />
-                  </div>
-                  <div className="flex gap-3">
-                    <PixelButton
-                      variant="gold"
-                      size="md"
-                      className={`flex-1 ${fontClass}`}
-                      onClick={handleSubmitBid}
-                      disabled={submitBid.isPending}
-                    >
-                      <span className={fontClass}>{submitBid.isPending ? t("questDetail.Submitting") : t("questDetail.btnbids")}</span>
-                    </PixelButton>
-                    <PixelButton
-                      variant="ghost"
-                      size="md"
-                      className={fontClass}
-                      onClick={() => setShowBidForm(false)}
-                    >
-                      <span className={fontClass}> {t("questDetail.btncancel")}</span>
-                    </PixelButton>
-                  </div>
-                </div>
-              ) : (
-                <PixelButton
-                  variant="gold"
-                  size="md"
-                  className={`w-full mt-2 ${fontClass}`}
-                  onClick={() => {
-                    setBidAmount(quest.rewardPoints);
-                    setWaitDuration(quest.estimatedTime);
-                    setShowBidForm(true);
-                  }}
-                >
-                  <span className={fontClass}> {t("questDetail.btnbids")}</span>
-                </PixelButton>
-              )}
+                ) : (
+                  <PixelButton
+                    variant="gold"
+                    size="md"
+                    className={`w-full mt-2 ${fontClass}`}
+                    onClick={() => {
+                      setBidAmount(quest.rewardPoints);
+                      setWaitDuration(quest.estimatedTime);
+                      setShowBidForm(true);
+                    }}
+                  >
+                    <span className={fontClass}> {t("questDetail.btnbids")}</span>
+                  </PixelButton>
+                )}
               </PixelFrame>
 
               {/* NEW Bidders List */}

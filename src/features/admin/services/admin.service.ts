@@ -16,7 +16,7 @@ async function withTTFB<T>(label: string, fn: () => Promise<T>): Promise<T> {
 }
 
 export async function getUsersByRole(role: string): Promise<UserProfile[]> {
-  const response = await apiClient.get(`/user/list?role=${role}`);
+  const response = await apiClient.get(`/user/list?role=${role}&t=${Date.now()}`);
   const data = Array.isArray(response.data) ? response.data : (response.data.data || []);
   return data.map((u: any) => ({
     id: u.userId || u.id,
@@ -76,4 +76,12 @@ export async function getAllOrders(params: { page?: number; limit?: number; stat
 
 export async function updateOrderStatus(id: string, status: string): Promise<void> {
   await apiClient.patch(`/order/${id}`, { status });
+}
+
+
+export async function updateUserRole(userId: string, newRole: string): Promise<void> {
+  await apiClient.patch(
+    `/user/${userId}/role`,
+    { role: newRole }
+  );
 }

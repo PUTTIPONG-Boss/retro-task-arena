@@ -30,7 +30,7 @@ const Navbar = () => {
   const logout = useAuthStore((s) => s.logout);
   const { t, i18n } = useTranslation();
   const { notifications, markAllRead, clearAll } = useNotificationStore();
-  const unreadCount = notifications.filter(n => (!n.userId || n.userId === user?.id) && !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read && (!n.userId || n.userId === user?.id)).length;
   const { theme, toggleTheme } = useThemeStore();
 
   if (!user) return null;
@@ -96,12 +96,12 @@ const Navbar = () => {
             ))}
 
             {/* Notification Bell */}
-            <DropdownMenu onOpenChange={(open) => { if (!open) markAllRead(); }}>
+            <DropdownMenu onOpenChange={(open) => { if (open) markAllRead(); }}>
               <DropdownMenuTrigger asChild>
                 <button className="relative p-2 text-foreground hover:text-accent transition-colors flex items-center justify-center">
                   <PixelBell size={24} className="text-yellow-400 relative z-10" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1.5 right-1.5 min-w-[16px] h-[16px] flex items-center justify-center bg-red-500 rounded-full text-[8px] font-pixel text-white px-0.5 animate-pulse border border-[#1a1c1e] z-20">
+                    <span className="absolute top-1 right-1 min-w-[16px] h-[16px] flex items-center justify-center bg-red-500 rounded-full text-[9px] font-pixel text-white px-0.5 animate-pulse border-2 border-[#1a1c1e] z-20 shadow-[0_0_8px_rgba(239,68,68,0.8)]">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
@@ -123,12 +123,14 @@ const Navbar = () => {
                   )}
                 </div>
                 <div className="overflow-y-auto flex-1 [scrollbar-width:thin] [scrollbar-color:rgba(245,158,11,0.3)_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.3)] [&::-webkit-scrollbar-thumb]:rounded-none hover:[&::-webkit-scrollbar-thumb]:bg-[rgba(245,158,11,0.6)]">
-                  {notifications.length === 0 ? (
+                  {notifications.filter(n => !n.userId || n.userId === user?.id).length === 0 ? (
                     <div className="px-3 py-6 text-center font-pixel text-[14px] text-muted-foreground uppercase">
                       {t('navbar.noNotifications', 'No notifications')}
                     </div>
                   ) : (
-                    notifications.map((n) => (
+                    notifications
+                      .filter(n => !n.userId || n.userId === user?.id)
+                      .map((n) => (
                       <div
                         key={n.id}
                         onClick={() => {
