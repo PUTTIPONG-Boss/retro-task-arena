@@ -13,6 +13,7 @@ import { UserProfile } from "@/features/users/types";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import PixelPencil from "@/components/icons/PixelPencil";
 import PixelTable, { Column } from "../components/PixelTable";
+import { useThemeStore } from "@/store/themeStore";
 
 const STALE_TIME = 0;
 
@@ -77,6 +78,11 @@ const ManageSenior = () => {
   });
 
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
+  const inputCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60" : "bg-[#1a1c1e] border-[#333]";
+  const dialogCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]" : "bg-[#12141a] border-[#333]";
+  const sectionBorderCls = isLight ? "border-[#8B5A20]/40" : "border-[#333]";
 
   const filteredSeniors = seniors.filter((s) => {
     const q = search.toLowerCase();
@@ -154,7 +160,7 @@ const ManageSenior = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={`${t("admin.seniorpage.id")}/ ${t("admin.seniorpage.username")}/ ${t("admin.seniorpage.email")}`}
-          className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-3 py-1.5 w-72 hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
+          className={`${inputCls} border text-foreground font-pixel px-3 py-1.5 w-72 hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
         />
       </div>
 
@@ -177,13 +183,13 @@ const ManageSenior = () => {
           }
         }}
       >
-        <DialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className={`${dialogCls} border text-foreground font-pixel max-w-2xl max-h-[90vh] overflow-y-auto`}>
 
           {selectedSenior && (
             <div className={`space-y-6 ${fontClass}`}>
               {/* Senior Profile Section */}
               <div className="space-y-4">
-                <h3 className="text-accent font-bold border-b border-dashed border-[#333] pb-2">
+                <h3 className={`text-accent font-bold border-b border-dashed ${sectionBorderCls} pb-2`}>
                   {t("admin.seniorpage.dialog.title")}
                 </h3>
                 <div className="grid grid-cols-[160px_1fr] gap-x-3 gap-y-2">
@@ -231,10 +237,10 @@ const ManageSenior = () => {
                         <select
                           value={pendingRole}
                           onChange={(e) => setPendingRole(e.target.value)}
-                          className="bg-[#1a1c1e] border border-[#F59E0B] text-foreground font-pixel px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#F59E0B]"
+                          className={`${inputCls} border border-[#F59E0B] text-foreground font-pixel px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#F59E0B]`}
                         >
                           {SENIOR_ROLE_OPTIONS.map((opt) => (
-                            <option key={opt.value} value={opt.value} className="bg-[#12141a] text-foreground">
+                            <option key={opt.value} value={opt.value} className={`${isLight ? "bg-[#EDE4CF]" : "bg-[#12141a]"} text-foreground`}>
                               {opt.label}
                             </option>
                           ))}
@@ -295,7 +301,7 @@ const ManageSenior = () => {
 
               {/* Quest Profile Section */}
               <div className="space-y-4">
-                <h3 className="text-accent font-bold border-b border-dashed border-[#333] pb-2">
+                <h3 className={`text-accent font-bold border-b border-dashed ${sectionBorderCls} pb-2`}>
                   {t("admin.seniorpage.dialog.questProfile")}
                 </h3>
                 <div className="grid grid-cols-[160px_1fr] gap-x-3 gap-y-2">
@@ -320,7 +326,7 @@ const ManageSenior = () => {
               </div>
 
               {/* Skills Section */}
-              <div className="pt-2 border-t border-dashed border-[#333]">
+              <div className={`pt-2 border-t border-dashed ${sectionBorderCls}`}>
                 <span className="text-muted-foreground">{t("admin.seniorpage.dialog.skills")}</span>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {selectedSenior.skills && selectedSenior.skills.length > 0

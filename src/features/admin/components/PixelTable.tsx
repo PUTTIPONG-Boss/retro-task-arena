@@ -1,6 +1,7 @@
 import React, { ReactNode, useState, useEffect } from "react";
 import PixelFrame from "@/components/PixelFrame";
 import { cn } from "@/lib/utils";
+import { useThemeStore } from "@/store/themeStore";
 
 export interface Column<T> {
   header: ReactNode;
@@ -30,6 +31,8 @@ const PixelTable = <T,>({
   emptyMessage = "No data found",
   rowKeyExtractor,
 }: PixelTableProps<T>) => {
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -49,7 +52,7 @@ const PixelTable = <T,>({
       <PixelFrame variant="dark" className={cn("relative p-6 overflow-x-auto", className)}>
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
-            <tr className="border-b border-[#333] text-muted-foreground uppercase tracking-wider">
+            <tr className={`border-b ${isLight ? "border-[#8B5A20]/40" : "border-[#333]"} text-muted-foreground uppercase tracking-wider`}>
               {columns.map((col, idx) => (
                 <th key={idx} className={cn("p-3 font-semibold", col.headerClassName)}>
                   {col.header}
@@ -61,7 +64,7 @@ const PixelTable = <T,>({
             {isLoading ? (
               <>
                 {Array.from({ length: skeletonRows }).map((_, rIdx) => (
-                  <tr key={rIdx} className="border-b border-[#333]/30">
+                  <tr key={rIdx} className={`border-b ${isLight ? "border-[#8B5A20]/20" : "border-[#333]/30"}`}>
                     {columns.map((_, cIdx) => (
                       <td key={cIdx} className="p-3">
                         <div
@@ -86,7 +89,7 @@ const PixelTable = <T,>({
                 <tr
                   key={rowKeyExtractor ? rowKeyExtractor(item, rIdx) : rIdx}
                   className={cn(
-                    "border-b border-[#333]/30 hover:bg-white/5 transition-colors",
+                    `border-b transition-colors ${isLight ? "border-[#8B5A20]/20 hover:bg-[#8B5A20]/8" : "border-[#333]/30 hover:bg-white/5"}`,
                     onRowClick && "cursor-pointer"
                   )}
                   onClick={() => onRowClick?.(item)}
@@ -115,7 +118,7 @@ const PixelTable = <T,>({
 
       {/* Retro Pixelated Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2 font-pixel text-sm bg-[#12141a] border border-[#333] select-none">
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2 font-pixel text-sm border select-none ${isLight ? "bg-[#D6C9A8] border-[#8B5A20]/60" : "bg-[#12141a] border-[#333]"}`}>
           <div className="text-muted-foreground">
             Showing <span className="text-foreground font-bold">{startIndex + 1}</span> to{" "}
             <span className="text-foreground font-bold">
@@ -128,7 +131,7 @@ const PixelTable = <T,>({
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className={cn(
-                "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                `px-3 py-1 text-foreground border hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95 ${isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60" : "bg-[#1a1c1e] border-[#333]"}`,
                 currentPage === 1 && "opacity-50 cursor-not-allowed"
               )}
             >
@@ -142,7 +145,7 @@ const PixelTable = <T,>({
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className={cn(
-                "px-3 py-1 bg-[#1a1c1e] text-foreground border border-[#333] hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95",
+                `px-3 py-1 text-foreground border hover:border-accent disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150 active:scale-95 ${isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60" : "bg-[#1a1c1e] border-[#333]"}`,
                 currentPage === totalPages && "opacity-50 cursor-not-allowed"
               )}
             >

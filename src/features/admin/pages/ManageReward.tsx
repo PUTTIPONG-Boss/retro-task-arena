@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useThemeStore } from "@/store/themeStore";
 import { useNavigate } from "react-router-dom";
 import PixelButton from "@/components/PixelButton";
 import PixelFrame from "@/components/PixelFrame";
@@ -26,6 +27,11 @@ const ManageReward = () => {
   const queryClient = useQueryClient();
 
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
+  const inputCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60" : "bg-[#1a1c1e] border-[#333]";
+  const dialogCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]" : "bg-[#12141a] border-[#333]";
+  const cancelCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60 hover:bg-[#D6C9A8]" : "bg-[#1a1c1e] border-[#333] hover:bg-white/10";
 
   const [page, setPage] = useState(1);
   const LIMIT = 20;
@@ -260,7 +266,7 @@ const ManageReward = () => {
             value={searchTitle}
             onChange={(e) => setSearchTitle(e.target.value)}
             placeholder={t("admin.rewardspage.searchTitle", "Search Product Name...")}
-            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-3 py-1.5 leading-none hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
+            className={`${inputCls} border text-foreground font-pixel px-3 py-1.5 leading-none hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
           />
           {selectedIds.size > 0 && (
             <PixelButton
@@ -275,7 +281,7 @@ const ManageReward = () => {
           <select
             value={dateFilter}
             onChange={e => setDateFilter(e.target.value as "all" | "newest" | "oldest")}
-            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-3 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+            className={`${inputCls} border text-foreground font-pixel px-3 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
           >
             <option value="all">{t("admin.rewardspage.date.dateAll")}</option>
             <option value="newest">{t("admin.rewardspage.date.newest")}</option>
@@ -302,7 +308,7 @@ const ManageReward = () => {
       />
       {/* Single delete confirm */}
       <AlertDialog open={!!deleteTargetId} onOpenChange={(open) => !open && setDeleteTargetId(null)}>
-        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+        <AlertDialogContent className={`${dialogCls} border text-foreground font-pixel`}>
           <AlertDialogHeader>
             <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
               {t("admin.rewardspage.deleteConfirmTitle")}
@@ -312,7 +318,7 @@ const ManageReward = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+            <AlertDialogCancel className={`${cancelCls} border text-foreground font-pixel ${fontClass}`}>
               {t("admin.rewardspage.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
@@ -327,7 +333,7 @@ const ManageReward = () => {
 
       {/* Bulk delete confirm */}
       <AlertDialog open={bulkDeletePending} onOpenChange={(open) => !open && setBulkDeletePending(false)}>
-        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+        <AlertDialogContent className={`${dialogCls} border text-foreground font-pixel`}>
           <AlertDialogHeader>
             <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
               {t("admin.rewardspage.deleteBulkConfirmTitle")}
@@ -337,7 +343,7 @@ const ManageReward = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+            <AlertDialogCancel className={`${cancelCls} border text-foreground font-pixel ${fontClass}`}>
               {t("admin.rewardspage.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction

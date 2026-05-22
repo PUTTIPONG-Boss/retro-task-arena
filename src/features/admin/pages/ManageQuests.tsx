@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useThemeStore } from "@/store/themeStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import PixelButton from "@/components/PixelButton";
@@ -25,6 +26,11 @@ const ManageQuest = () => {
   const navigate = useNavigate();
 
   const fontClass = i18n.language === "th" ? "text-[16px]" : "text-[16px]";
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
+  const inputCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60" : "bg-[#1a1c1e] border-[#333]";
+  const dialogCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]" : "bg-[#12141a] border-[#333]";
+  const cancelCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60 hover:bg-[#D6C9A8]" : "bg-[#1a1c1e] border-[#333] hover:bg-white/10";
 
   const [page, setPage] = useState(1);
   const LIMIT = 20;
@@ -304,13 +310,13 @@ const ManageQuest = () => {
             value={searchTitle}
             onChange={(e) => setSearchTitle(e.target.value)}
             placeholder={t("admin.questspage.searchTitle", "Search Quest Name...")}
-            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 leading-none hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
+            className={`${inputCls} border text-foreground font-pixel px-2 py-1.5 leading-none hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
           />
           {/* Filters */}
           <select
             value={filterDifficulty}
             onChange={(e) => setFilterDifficulty(e.target.value)}
-            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+            className={`${inputCls} border text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
           >
             <option value="">{t("admin.questspage.diff")}: {t("admin.questspage.all", "All")}</option>
             <option value="easy">{t("admin.questspage.difficulty_values.easy", "Easy")}</option>
@@ -321,7 +327,7 @@ const ManageQuest = () => {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+            className={`${inputCls} border text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
           >
             <option value="">{t("admin.questspage.type")}: {t("admin.questspage.all", "All")}</option>
             {uniqueTypes.map((type) => (
@@ -332,7 +338,7 @@ const ManageQuest = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+            className={`${inputCls} border text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
           >
             <option value="">{t("admin.questspage.status")}: {t("admin.questspage.all", "All")}</option>
             <option value="open">{t("admin.questspage.status_values.open", "Open")}</option>
@@ -344,7 +350,7 @@ const ManageQuest = () => {
           <select
             value={sortDate}
             onChange={(e) => { setSortDate(e.target.value); setSortReward(""); }}
-            className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
+            className={`${inputCls} border text-foreground font-pixel px-2 py-1.5 cursor-pointer hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors ${fontClass}`}
           >
             <option value="">{t("admin.questspage.sort_date", "Date")}: {t("admin.questspage.all", "All")}</option>
             <option value="newest">{t("admin.questspage.date.newest")}</option>
@@ -382,7 +388,7 @@ const ManageQuest = () => {
 
       {/* Single delete confirm */}
       <AlertDialog open={!!deleteTargetId} onOpenChange={(open) => !open && setDeleteTargetId(null)}>
-        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+        <AlertDialogContent className={`${dialogCls} border text-foreground font-pixel`}>
           <AlertDialogHeader>
             <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
               {t("admin.questspage.deleteConfirmTitle")}
@@ -392,7 +398,7 @@ const ManageQuest = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+            <AlertDialogCancel className={`${cancelCls} border text-foreground font-pixel ${fontClass}`}>
               {t("admin.questspage.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
@@ -407,7 +413,7 @@ const ManageQuest = () => {
 
       {/* Bulk delete confirm */}
       <AlertDialog open={bulkDeletePending} onOpenChange={(open) => !open && setBulkDeletePending(false)}>
-        <AlertDialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel">
+        <AlertDialogContent className={`${dialogCls} border text-foreground font-pixel`}>
           <AlertDialogHeader>
             <AlertDialogTitle className={`text-red-400 ${fontClass}`}>
               {t("admin.questspage.deleteBulkConfirmTitle")}
@@ -417,7 +423,7 @@ const ManageQuest = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className={`bg-[#1a1c1e] border border-[#333] text-foreground hover:bg-white/10 font-pixel ${fontClass}`}>
+            <AlertDialogCancel className={`${cancelCls} border text-foreground font-pixel ${fontClass}`}>
               {t("admin.questspage.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction

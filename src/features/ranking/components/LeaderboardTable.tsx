@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { LeaderboardEntry } from "../types";
 import { useTranslation } from "react-i18next";
+import { useThemeStore } from "@/store/themeStore";
 
 interface Props {
     entries: LeaderboardEntry[]; // Rank 4+ only
@@ -14,6 +15,8 @@ interface TableRowProps {
 }
 
 const TableRow = ({ entry, index }: TableRowProps) => {
+    const { theme } = useThemeStore();
+    const isLight = theme === "light";
     const displayName = entry.nameEn || entry.nameTh || entry.username;
     const avatarInitial = displayName.charAt(0).toUpperCase();
 
@@ -38,7 +41,9 @@ const TableRow = ({ entry, index }: TableRowProps) => {
 
             {/* Col 1 — Rank */}
             <div className="flex items-center justify-center">
-                <span className="font-pixel text-[18px] text-muted-foreground">{entry.rank}</span>
+                <span className="font-pixel text-[18px]"
+                    style={{ color: isLight ? "#5A3010" : undefined }}
+                >{entry.rank}</span>
             </div>
 
             {/* Col 2 — Player info */}
@@ -47,27 +52,37 @@ const TableRow = ({ entry, index }: TableRowProps) => {
                 <div
                     className="w-16 h-16 flex items-center justify-center border-2 text-sm flex-shrink-0"
                     style={{
-                        borderColor: "hsl(var(--border))",
-                        background: "transparent",
+                        borderColor: isLight ? "#8B5A20" : "hsl(var(--border))",
+                        background: isLight ? "rgba(237,228,207,0.8)" : "transparent",
                     }}
                 >
                     {entry.avatarUrl ? (
                         <img src={entry.avatarUrl} alt={displayName} className="w-full h-full object-cover" />
                     ) : (
-                        <span className="font-pixel text-muted-foreground">{avatarInitial}</span>
+                        <span className="font-pixel" style={{ color: isLight ? "#5A3010" : undefined }}>{avatarInitial}</span>
                     )}
                 </div>
 
                 {/* Name + level */}
                 <div className="flex flex-col gap-1 min-w-0">
                     <div className="flex items-center gap-2">
-                        <span className="font-pixel text-[14px] text-foreground uppercase tracking-wide">
+                        <span className="font-pixel text-[14px] text-foreground uppercase tracking-wide"
+                            style={isLight ? { color: "#2A1A08" } : undefined}>
                             {displayName}
                         </span>
                     </div>
-                    <span className="text-[12px] text-muted-foreground truncate">{entry.username}</span>
+                    <span className="text-[12px] text-muted-foreground truncate"
+                        style={isLight ? { color: "#6B4C2A" } : undefined}>
+                        {entry.username}
+                    </span>
                     <div className="flex items-center gap-2">
-                        <span className="font-pixel text-[12px] text-accent border border-border bg-white/5 px-1 py-0.5">
+                        <span
+                            className="font-pixel text-[12px] border px-1 py-0.5"
+                            style={isLight
+                                ? { color: "#7A5C00", borderColor: "#8B5A20", background: "#EDE4CF" }
+                                : { color: "hsl(var(--accent))", borderColor: "hsl(var(--border))", background: "rgba(255,255,255,0.05)" }
+                            }
+                        >
                             LV {entry.level}
                         </span>
                     </div>
@@ -76,21 +91,21 @@ const TableRow = ({ entry, index }: TableRowProps) => {
 
             {/* Col 3 — EXP */}
             <div className="text-center">
-                <span className="font-pixel text-[12px] text-foreground">
+                <span className="font-pixel text-[12px]" style={{ color: isLight ? "#3D1C08" : undefined }}>
                     {entry.totalExp.toLocaleString()}
                 </span>
             </div>
 
             {/* Col 4 — Points */}
             <div className="text-center">
-                <span className="font-pixel text-[12px] text-yellow-500">
+                <span className="font-pixel text-[12px]" style={{ color: isLight ? "#7A5C00" : "#eab308" }}>
                     {(entry.totalPointsEarned || 0).toLocaleString()}
                 </span>
             </div>
 
             {/* Col 5 — Quests completed */}
             <div className="text-center">
-                <span className="font-pixel text-[12px] text-foreground">{entry.questsCompleted}</span>
+                <span className="font-pixel text-[12px]" style={{ color: isLight ? "#3D1C08" : undefined }}>{entry.questsCompleted}</span>
             </div>
         </motion.div>
     );
