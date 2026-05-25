@@ -419,7 +419,7 @@ const QuestDetail = () => {
                     <DifficultyStars level={Math.round(reviews[0].rating)} />
                     <span className="text-gold font-pixel ml-1">({reviews[0].rating.toFixed(1)})</span>
                   </div>
-                  <div className="pixel-inset bg-background/50 p-4 border-l-4 border-accent">
+                  <div className="pixel-inset bg-card p-4 border-l-4 border-accent">
                     <p className={`text-muted-foreground uppercase text-[10px] mb-2 font-pixel tracking-tighter ${fontClass}`}>
                       {t("questDetail.finalReview.comment")}
                     </p>
@@ -713,7 +713,6 @@ const QuestDetail = () => {
                       className={`pixel-border bg-secondary p-4 flex flex-col sm:flex-row justify-between gap-4 ${fontClass}`}
                     >
                       <div className="flex-1">
-                        {/* Bidder Header */}
                         <p className={`font-pixel text-foreground mb-1 break-words flex items-center gap-2 ${fontClass}`}>
                           {bid.username}
                           <Link to={`/profile/view/${bid.userId}`} className="text-muted-foreground hover:text-accent transition-colors" title="View Profile">

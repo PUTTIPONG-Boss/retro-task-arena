@@ -78,10 +78,10 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
     <div className="bg-card pixel-border p-5 mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <p className="font-pixel text-[18px] text-foreground uppercase tracking-widest">
+        <p className={`font-pixel text-[18px] text-foreground uppercase tracking-widest ${isLight ? "pixel-text-shadow" : ""}`}>
           {t("dashboard.taskBreakdown", "Task Breakdown")}
         </p>
-        <p className="font-pixel text-[18px] text-muted-foreground">
+        <p className={`font-pixel text-[18px] text-muted-foreground ${isLight ? "pixel-text-shadow" : ""}`}>
           {total} {t("dashboard.total", "total")}
         </p>
       </div>
@@ -90,7 +90,10 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
       <div className="flex flex-col sm:flex-row items-center gap-8">
 
         {/* ── Donut SVG ── */}
-        <div className="relative flex-shrink-0 w-[220px] h-[220px]">
+        <div
+          className="relative flex-shrink-0 w-[220px] h-[220px]"
+          style={isLight ? { filter: "drop-shadow(3px 4px 0px rgba(45,18,5,0.22))" } : undefined}
+        >
           <svg
             viewBox="0 0 200 200"
             width="220"
@@ -133,13 +136,13 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
 
           {/* Centre label (rotated back upright) */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <p className="font-pixel text-[16px] text-muted-foreground uppercase tracking-widest mb-1">
+            <p className={`font-pixel text-[16px] text-muted-foreground uppercase tracking-widest mb-1 ${isLight ? "pixel-text-shadow" : ""}`}>
               {t("dashboard.total", "Total")}
             </p>
             <p className="font-pixel text-[20px] text-foreground pixel-text-shadow leading-none">
               {total}
             </p>
-            <p className="font-pixel text-[16px] text-muted-foreground mt-1 uppercase">
+            <p className={`font-pixel text-[16px] text-muted-foreground mt-1 uppercase ${isLight ? "pixel-text-shadow" : ""}`}>
               {t("dashboard.tasks", "Tasks")}
             </p>
           </div>
@@ -152,22 +155,25 @@ const TaskStatusBreakdown: React.FC<TaskStatusBreakdownProps> = ({ data }) => {
             return (
               <div key={seg.label} className="flex items-center gap-3">
                 {/* Color square */}
-                <div className={`w-4 h-4 flex-shrink-0 ${seg.squareColor}`} />
+                <div
+                  className={`w-4 h-4 flex-shrink-0 ${seg.squareColor}`}
+                  style={isLight ? { boxShadow: "1px 2px 0px rgba(45,18,5,0.30)" } : undefined}
+                />
 
-                {/* Label + count */}
+                {/* Label */}
                 <div className="flex-1 min-w-0">
-                  <p className={`font-pixel text-[14px] uppercase tracking-wider ${seg.color}`}>
+                  <p className={`font-pixel text-[14px] uppercase tracking-wider ${seg.color} ${isLight ? "pixel-text-shadow" : ""}`}>
                     {seg.label}
                   </p>
                 </div>
 
                 {/* Count */}
-                <p className={`font-pixel text-[14px] ${seg.color} flex-shrink-0 w-6 text-right`}>
+                <p className={`font-pixel text-[14px] ${seg.color} flex-shrink-0 w-6 text-right ${isLight ? "pixel-text-shadow" : ""}`}>
                   {seg.count}
                 </p>
 
                 {/* Percent */}
-                <p className="font-pixel text-[14px] text-muted-foreground flex-shrink-0 w-14 text-right">
+                <p className={`font-pixel text-[14px] text-muted-foreground flex-shrink-0 w-14 text-right ${isLight ? "pixel-text-shadow" : ""}`}>
                   {pct}%
                 </p>
               </div>

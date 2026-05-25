@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useThemeStore } from "@/store/themeStore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAllOrders, updateOrderStatus } from "../services/admin.service";
 import PixelButton from "@/components/PixelButton";
@@ -26,6 +27,14 @@ const ManageOrders = () => {
   const limit = 10;
 
   const fontClass = i18n.language === "th" ? "text-[20px]" : "text-[20px]";
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
+  const headerBg = isLight ? "bg-[#D6C9A8]" : "bg-[#1a1a1b]";
+  const inputBg = isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60" : "bg-secondary border-[#333]";
+  const borderColor = isLight ? "border-[#8B5A20]/40" : "border-[#333]";
+  const cardBg = isLight ? "bg-[#EDE4CF]" : "bg-secondary";
+  const textColor = isLight ? "#3D1C08" : undefined;
+  const avatarBg = isLight ? "bg-[#C8BA98]" : "bg-[#333]";
 
   // Fetch orders
   const { data, isLoading } = useQuery({
@@ -67,16 +76,33 @@ const ManageOrders = () => {
   return (
     <div className="p-4 md:p-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#1a1a1b] p-6 pixel-border-b">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-accent/20 flex items-center justify-center pixel-border border-accent">
-            <Package className="w-6 h-6 text-accent" />
+      <div
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 pixel-border"
+        style={isLight
+          ? { background: "linear-gradient(135deg, #A07838 0%, #B89050 50%, #9A7030 100%)", borderColor: "#6B4820", boxShadow: "0 4px 0 #6B4820" }
+          : { background: "#1a1a1b" }
+        }
+      >
+        <div className="flex items-center gap-4">
+          {/* Icon box — warm amber on dark wood */}
+          <div
+            className="w-14 h-14 flex items-center justify-center flex-shrink-0 pixel-border"
+            style={isLight
+              ? { background: "rgba(255,248,220,0.25)", borderColor: "#FFF0A0", boxShadow: "2px 2px 0 rgba(0,0,0,0.25)" }
+              : { background: "rgba(251,191,36,0.15)", borderColor: "#F59E0B" }
+            }
+          >
+            <Package className="w-7 h-7" style={{ color: isLight ? "#FFFACD" : "#F59E0B" }} />
           </div>
+
           <div>
-            <h1 className={`text-[24px] text-accent pixel-text-shadow ${fontClass}`}>
+            <h1
+              className={`text-[22px] font-pixel pixel-text-shadow ${fontClass}`}
+              style={{ color: isLight ? "#FFFACD" : "#F59E0B", textShadow: isLight ? "1px 1px 0 rgba(0,0,0,0.4)" : undefined }}
+            >
               {t("admin.orders.title")}
             </h1>
-            <p className="text-muted-foreground opacity-70">
+            <p className="font-pixel text-[13px] mt-0.5" style={{ color: isLight ? "#F5DFA0" : "rgba(200,186,152,0.6)" }}>
               {t("admin.orders.subtitle")}
             </p>
           </div>
@@ -89,9 +115,13 @@ const ManageOrders = () => {
             placeholder={t("admin.orders.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-secondary border-2 border-[#333] p-2 pl-10 text-sm focus:outline-none focus:border-accent transition-colors font-pixel"
+            className={`w-full border-2 p-2 pl-10 text-sm focus:outline-none focus:border-accent transition-colors font-pixel ${isLight ? "[&::placeholder]:text-[#F0D080] [&::placeholder]:opacity-80" : ""}`}
+            style={isLight
+              ? { background: "rgba(0,0,0,0.25)", borderColor: "#D4A840", color: "#FFFACD" }
+              : { background: "hsl(var(--secondary))", borderColor: "#333", color: "hsl(var(--foreground))" }
+            }
           />
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-accent" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-accent" style={{ color: isLight ? "#F0D080" : undefined }} />
         </form>
       </div>
 
@@ -114,9 +144,9 @@ const ManageOrders = () => {
       <div className="flex justify-end px-1">
         <button
           onClick={() => setSort(s => s === "desc" ? "asc" : "desc")}
-          className="flex items-center gap-2 text-[12px] text-accent hover:text-accent/80 transition-colors font-pixel uppercase tracking-widest bg-secondary/50 px-3 py-1.5 pixel-border border-[#333]"
+          className={`flex items-center gap-2 text-[12px] transition-colors font-pixel uppercase tracking-widest px-3 py-1.5 pixel-border ${isLight ? "bg-[#EDE4CF] border-[#8B5A20] text-[#3D1C08] hover:bg-[#D6C9A8]" : "text-accent hover:text-accent/80 bg-secondary/50 border-[#333]"}`}
         >
-          <Filter className="w-3 h-3" />
+          <Filter className="w-3 h-3" style={{ color: isLight ? "#5A3010" : undefined }} />
           {sort === "desc" ? "Newest First (ล่าสุด)" : "Oldest First (เก่าสุด)"}
         </button>
       </div>
@@ -135,7 +165,7 @@ const ManageOrders = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             {data.data.map((order) => (
-              <div key={order.id} className="bg-secondary pixel-border p-5 hover:bg-secondary/80 transition-colors">
+              <div key={order.id} className={`${cardBg} pixel-border p-5 hover:brightness-95 transition-all`}>
                 <div className="flex flex-col md:flex-row justify-between gap-4">
                   {/* Order Info */}
                   <div className="space-y-2">
@@ -145,8 +175,8 @@ const ManageOrders = () => {
                         {order.status}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-white">
-                      <div className="w-6 h-6 bg-[#333] pixel-border border-[#444] flex items-center justify-center text-[10px]">
+                    <div className="flex items-center gap-2" style={{ color: isLight ? "#3D1C08" : "white" }}>
+                      <div className={`w-6 h-6 ${avatarBg} pixel-border ${isLight ? "border-[#8B5A20]/40" : "border-[#444]"} flex items-center justify-center text-[10px]`}>
                         {order.user?.username?.[0]?.toUpperCase() || "?"}
                       </div>
                       <span className="font-medium">{order.user?.username || "Quest Hunter"}</span>
@@ -158,15 +188,15 @@ const ManageOrders = () => {
                   </div>
 
                   {/* Items Summary */}
-                  <div className="flex-1 border-l-2 border-[#333] md:pl-6">
+                  <div className={`flex-1 border-l-2 ${borderColor} md:pl-6`}>
                     <div className="space-y-1">
                       {order.orderItems?.map((item: any) => (
                         <div key={item.id} className="flex justify-between">
-                          <span className="text-[#e3d8c1]">x{item.quantity} {item.product?.name || "Item"}</span>
+                          <span style={{ color: isLight ? "#3D1C08" : "#e3d8c1" }}>x{item.quantity} {item.product?.name || "Item"}</span>
                           <span className="text-accent">{item.totalPrice} P</span>
                         </div>
                       ))}
-                      <div className="pt-2 mt-2 border-t border-[#333] flex justify-between font-bold text-accent">
+                      <div className={`pt-2 mt-2 border-t ${borderColor} flex justify-between font-bold text-accent`}>
                         <span>{t("admin.orders.total")}</span>
                         <span>{order.totalPrice} P</span>
                       </div>
@@ -218,7 +248,7 @@ const ManageOrders = () => {
 
                 {/* Shipping Address */}
                 {order.shippingAddress && (
-                  <div className="mt-4 pt-4 border-t border-[#333] text-[11px] text-muted-foreground italic">
+                  <div className={`mt-4 pt-4 border-t ${borderColor} text-[11px] text-muted-foreground italic`}>
                     📍 {order.shippingAddress}
                   </div>
                 )}

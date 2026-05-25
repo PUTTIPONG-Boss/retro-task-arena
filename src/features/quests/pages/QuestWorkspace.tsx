@@ -355,14 +355,14 @@ const QuestWorkspace = () => {
               </p>
               <div className="flex flex-col gap-3">
                 <PixelButton variant="gold" size="md" onClick={handleApprove} className={`w-full ${fontClass}`}>
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white mr-2">
-                    <PixelCheck size={14} color="#22c55e" />
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-black/20 mr-2">
+                    <PixelCheck size={14} color="#ffffff" />
                   </span>
                   <span className={fontClass}>{t("questWorkspace.review.approveBtn")}</span>
                 </PixelButton>
                 <PixelButton variant="danger" size="md" onClick={handleRequestChanges} className={`w-full ${fontClass}`}>
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white mr-2">
-                    <PixelRecycle size={14} color="#ef4444" />
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-black/20 mr-2">
+                    <PixelRecycle size={14} color="#ffffff" />
                   </span>
                   <span className={fontClass}>{t("questWorkspace.review.requestChangesBtn")}</span>
                 </PixelButton>

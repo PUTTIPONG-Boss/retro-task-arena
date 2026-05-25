@@ -4,6 +4,7 @@ import { LeaderboardEntry } from "../types";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import PixelCoin from "@/components/icons/PixelCoin";
 import { useRankingStore } from "../store/rankingStore";
+import { useThemeStore } from "@/store/themeStore";
 
 interface Props {
     entries: LeaderboardEntry[]; // Top 3 entries only
@@ -11,9 +12,9 @@ interface Props {
 
 // ─── Medal config ─────────────────────────────────────────────────────────────
 const MEDAL = {
-    1: { color: "#FFD700", borderColor: "#FFD700", bgColor: "#ffd70015", podiumHeight: "h-44", avatarSize: "w-24 h-24 text-4xl", labelNum: "①", rankLabel: "#1" },
-    2: { color: "#C0C0C0", borderColor: "#aaaaaa", bgColor: "#c0c0c015", podiumHeight: "h-36", avatarSize: "w-20 h-20 text-3xl", labelNum: "②", rankLabel: "#2" },
-    3: { color: "#CD7F32", borderColor: "#a0633a", bgColor: "#cd7f3215", podiumHeight: "h-28", avatarSize: "w-16 h-16 text-2xl", labelNum: "③", rankLabel: "#3" },
+    1: { color: "#FFD700", borderColor: "#FFD700", bgColor: "#ffd70015", lightBgColor: "rgba(255,215,0,0.18)", lightBorderColor: "#B8860B", lightColor: "#7A5C00", podiumHeight: "h-44", avatarSize: "w-24 h-24 text-4xl", labelNum: "①", rankLabel: "#1" },
+    2: { color: "#C0C0C0", borderColor: "#aaaaaa", bgColor: "#c0c0c015", lightBgColor: "rgba(160,160,160,0.15)", lightBorderColor: "#7A7A7A", lightColor: "#4A4A4A", podiumHeight: "h-36", avatarSize: "w-20 h-20 text-3xl", labelNum: "②", rankLabel: "#2" },
+    3: { color: "#CD7F32", borderColor: "#a0633a", bgColor: "#cd7f3215", lightBgColor: "rgba(160,90,30,0.15)", lightBorderColor: "#7A4A1A", lightColor: "#5A3010", podiumHeight: "h-28", avatarSize: "w-16 h-16 text-2xl", labelNum: "③", rankLabel: "#3" },
 } as const;
 
 // ─── Sub-component: PodiumCard ────────────────────────────────────────────────
@@ -25,9 +26,14 @@ interface PodiumCardProps {
 const PodiumCard = ({ entry, order }: PodiumCardProps) => {
     const { t } = useTranslation();
     const { sortBy } = useRankingStore();
+    const { theme } = useThemeStore();
+    const isLight = theme === "light";
     const rank = entry.rank as 1 | 2 | 3;
     const medal = MEDAL[rank];
     const displayName = entry.nameEn || entry.nameTh || entry.username;
+    const activeColor = isLight ? medal.lightColor : medal.color;
+    const activeBorderColor = isLight ? medal.lightBorderColor : medal.borderColor;
+    const activeBgColor = isLight ? medal.lightBgColor : medal.bgColor;
 
     // ตัวอักษรแรกของชื่อ สำหรับ avatar placeholder
     const avatarInitial = displayName.charAt(0).toUpperCase();
@@ -66,25 +72,29 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
                 <motion.div
                     className={`${medal.avatarSize} flex items-center justify-center font-bold border-2 relative`}
                     style={{
-                        background: medal.bgColor,
-                        borderColor: medal.borderColor,
+                        background: isLight ? `rgba(237,228,207,0.92)` : medal.bgColor,
+                        borderColor: activeBorderColor,
                         boxShadow: rank === 1
-                            ? `0 0 20px ${medal.color}88, 0 0 40px ${medal.color}44, 4px 4px 0 #00000099`
-                            : `4px 4px 0 #00000099`,
+                            ? `0 0 20px ${activeColor}88, 0 0 40px ${activeColor}44, 4px 4px 0 ${isLight ? "#00000033" : "#00000099"}`
+                            : `4px 4px 0 ${isLight ? "#00000033" : "#00000099"}`,
                     }}
-                    animate={rank === 1 ? { boxShadow: [`0 0 20px ${medal.color}88`, `0 0 30px ${medal.color}cc`, `0 0 20px ${medal.color}88`] } : {}}
+                    animate={rank === 1 ? { boxShadow: [`0 0 20px ${activeColor}88`, `0 0 30px ${activeColor}cc`, `0 0 20px ${activeColor}88`] } : {}}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
                     {entry.avatarUrl ? (
                         <img src={entry.avatarUrl} alt={displayName} className="w-full h-full object-cover" />
                     ) : (
-                        <span className="leading-none" style={{ color: medal.color }}>{avatarInitial}</span>
+                        <span className="leading-none" style={{ color: activeColor }}>{avatarInitial}</span>
                     )}
 
-                    {/* Level badge - Moved inside for better relative positioning */}
+                    {/* Level badge */}
                     <span
-                        className="absolute -bottom-2 -right-2 bg-[#1a1a1a] border font-pixel text-[10px] px-1.5 py-0.5 leading-none z-20 shadow-md whitespace-nowrap"
-                        style={{ borderColor: medal.color, color: medal.color }}
+                        className="absolute -bottom-2 -right-2 border font-pixel text-[10px] px-1.5 py-0.5 leading-none z-20 shadow-md whitespace-nowrap"
+                        style={{
+                            background: isLight ? "#EDE4CF" : "#1a1a1a",
+                            borderColor: activeBorderColor,
+                            color: activeColor,
+                        }}
                     >
                         LV {entry.level}
                     </span>
@@ -95,15 +105,17 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
             <div
                 className={`${medal.podiumHeight} w-44 border-2 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-300 hover:brightness-110`}
                 style={{
-                    background: medal.bgColor,
-                    borderColor: medal.color,
-                    boxShadow: `inset 0 0 20px ${medal.color}22`
+                    background: isLight ? `rgba(237,228,207,0.93)` : activeBgColor,
+                    borderColor: activeBorderColor,
+                    boxShadow: isLight
+                        ? `inset 0 0 20px ${activeColor}22, 2px 2px 0 #00000022`
+                        : `inset 0 0 20px ${activeColor}22`,
                 }}
             >
                 {/* Large Background Rank Watermark */}
                 <span
-                    className="font-pixel text-6xl absolute pointer-events-none opacity-10 select-none"
-                    style={{ color: medal.color, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                    className="font-pixel text-6xl absolute pointer-events-none select-none"
+                    style={{ color: activeColor, opacity: isLight ? 0.08 : 0.10, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
                 >
                     {rank}
                 </span>
@@ -112,11 +124,11 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
                 <div className="z-10 flex flex-col items-center gap-1.5 w-full px-2">
                     {/* Name & Surname */}
                     <div className="flex flex-col items-center">
-                        <p className="font-pixel text-[14px] uppercase tracking-wide text-center leading-tight mb-0.5" style={{ color: medal.color }}>
+                        <p className="font-pixel text-[14px] uppercase tracking-wide text-center leading-tight mb-0.5" style={{ color: activeColor }}>
                             {displayName.split(' ')[0]}
                         </p>
                         {displayName.split(' ').length > 1 && (
-                            <p className="font-pixel text-[10px] uppercase tracking-wide text-center leading-tight opacity-80" style={{ color: medal.color }}>
+                            <p className="font-pixel text-[10px] uppercase tracking-wide text-center leading-tight opacity-80" style={{ color: activeColor }}>
                                 {displayName.split(' ').slice(1).join(' ')}
                             </p>
                         )}
@@ -126,48 +138,46 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
                     <div className="flex flex-col items-center gap-0.5 mt-0.5">
                         <p
                             className="font-pixel text-[14px] text-center"
-                            style={{ color: medal.color, textShadow: `0 0 10px ${medal.color}44` }}
+                            style={{ color: activeColor, textShadow: `0 0 10px ${activeColor}44` }}
                         >
-                            {primary.value.toLocaleString()} 
+                            {primary.value.toLocaleString()}
                         </p>
-                        <p className="font-pixel text-[8px] uppercase tracking-tighter opacity-70" style={{ color: medal.color }}>
+                        <p className="font-pixel text-[8px] uppercase tracking-tighter opacity-70" style={{ color: activeColor }}>
                             {primary.label}
                         </p>
 
                         {/* Stats Row */}
                         <div className="flex items-center justify-center gap-4 mt-1 opacity-80">
-                            {/* Slot 1: Primary Alternative Stat */}
                             <div className="flex items-center gap-1">
                                 {sortBy === "exp" ? (
                                     <>
-                                        <PixelClipboardList size={14} className="text-yellow-400" />
-                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                        <PixelClipboardList size={14} style={{ color: activeColor }} />
+                                        <span className="font-pixel text-[12px]" style={{ color: activeColor }}>
                                             {entry.questsCompleted}
                                         </span>
                                     </>
                                 ) : (
                                     <>
-                                        <span className="font-pixel text-[10px] text-accent">EXP</span>
-                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                        <span className="font-pixel text-[10px]" style={{ color: activeColor }}>EXP</span>
+                                        <span className="font-pixel text-[12px]" style={{ color: activeColor }}>
                                             {entry.totalExp.toLocaleString()}
                                         </span>
                                     </>
                                 )}
                             </div>
 
-                            {/* Slot 2: Secondary Alternative Stat */}
                             <div className="flex items-center gap-1">
                                 {sortBy === "points" ? (
                                     <>
-                                        <PixelClipboardList size={14} className="text-yellow-400" />
-                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                        <PixelClipboardList size={14} style={{ color: activeColor }} />
+                                        <span className="font-pixel text-[12px]" style={{ color: activeColor }}>
                                             {entry.questsCompleted}
                                         </span>
                                     </>
                                 ) : (
                                     <>
-                                        <PixelCoin size={14} className="text-yellow-400" />
-                                        <span className="font-pixel text-[12px]" style={{ color: medal.color }}>
+                                        <PixelCoin size={14} style={{ color: activeColor }} />
+                                        <span className="font-pixel text-[12px]" style={{ color: activeColor }}>
                                             {(entry.totalPointsEarned || 0).toLocaleString()}
                                         </span>
                                     </>
@@ -175,10 +185,10 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
 
                 {/* Small corner rank label */}
-                <span className="font-pixel text-[18px] absolute top-2 right-2 opacity-40" style={{ color: medal.color }}>
+                <span className="font-pixel text-[18px] absolute top-2 right-2 opacity-40" style={{ color: activeColor }}>
                     #{rank}
                 </span>
             </div>
@@ -189,7 +199,7 @@ const PodiumCard = ({ entry, order }: PodiumCardProps) => {
 // ─── Component ────────────────────────────────────────────────────────────────
 const PodiumTop3 = ({ entries }: Props) => {
     const { t } = useTranslation();
-    if (entries.length < 3) return null;
+    if (entries.length === 0) return null;
 
     // Flexbox order: rank2=1, rank1=2 (กลาง), rank3=3
     const orderMap: Record<number, number> = { 1: 2, 2: 1, 3: 3 };

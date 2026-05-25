@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useThemeStore } from "@/store/themeStore";
 import PixelFrame from "@/components/PixelFrame";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUsersByRole, updateUserRole } from "../services/admin.service";
@@ -78,6 +79,11 @@ const ManageJunior = () => {
   });
 
   const fontClass = i18n.language === "th" ? "text-[18px]" : "text-[16px]";
+  const { theme } = useThemeStore();
+  const isLight = theme === "light";
+  const inputCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]/60" : "bg-[#1a1c1e] border-[#333]";
+  const dialogCls = isLight ? "bg-[#EDE4CF] border-[#8B5A20]" : "bg-[#12141a] border-[#333]";
+  const sectionBorderCls = isLight ? "border-[#8B5A20]/40" : "border-[#333]";
 
   const filteredJuniors = (juniors as any[]).filter((j) => {
     const q = search.toLowerCase();
@@ -149,7 +155,7 @@ const ManageJunior = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={`${t("admin.juniorpage.id")}/ ${t("admin.juniorpage.username")}/ ${t("admin.juniorpage.email")}`}
-          className={`bg-[#1a1c1e] border border-[#333] text-foreground font-pixel px-3 py-1.5 w-72 hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
+          className={`${inputCls} border text-foreground font-pixel px-3 py-1.5 w-72 hover:border-[#F59E0B] focus:outline-none focus:border-[#F59E0B] transition-colors placeholder:text-muted-foreground ${fontClass}`}
         />
       </div>
 
@@ -172,7 +178,7 @@ const ManageJunior = () => {
           }
         }}
       >
-        <DialogContent className="bg-[#12141a] border border-[#333] text-foreground font-pixel max-w-lg">
+        <DialogContent className={`${dialogCls} border text-foreground font-pixel max-w-lg`}>
           <DialogHeader>
             <DialogTitle className={`text-accent pixel-text-shadow ${fontClass}`}>
               {t("admin.juniorpage.dialog.title")}
@@ -224,10 +230,10 @@ const ManageJunior = () => {
                       <select
                         value={pendingRole}
                         onChange={(e) => setPendingRole(e.target.value)}
-                        className="bg-[#1a1c1e] border border-[#F59E0B] text-foreground font-pixel px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#F59E0B]"
+                        className={`${inputCls} border border-[#F59E0B] text-foreground font-pixel px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#F59E0B]`}
                       >
                         {JUNIOR_ROLE_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value} className="bg-[#12141a] text-foreground">
+                          <option key={opt.value} value={opt.value} className={`${isLight ? "bg-[#EDE4CF]" : "bg-[#12141a]"} text-foreground`}>
                             {opt.label}
                           </option>
                         ))}

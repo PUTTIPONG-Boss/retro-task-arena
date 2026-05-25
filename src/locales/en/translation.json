@@ -820,7 +820,7 @@
     "banner": {
       "marquee": "✦ TOP ADVENTURERS ✦ IMPROVE SKILLS ✦ CONQUER QUESTS ✦ BECOME LEGENDARY ✦",
       "title": "Ranking Board",
-      "subtitle": "Ranking the brave adventurers who conquered quests and accumulated the highest EXP in the realm"
+      "subtitle": "Ranking Top adventurers ranked by quests conquered and EXP earned."
     },
     "stats": {
       "totalPlayers": "Total Players",
