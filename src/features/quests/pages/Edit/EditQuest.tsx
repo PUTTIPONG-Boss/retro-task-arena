@@ -7,7 +7,7 @@ import PixelInput from "@/components/PixelInput";
 import PixelTextarea from "@/components/PixelTextarea";
 import { useTranslation } from "react-i18next";
 import { useUpdateQuest, useGetQuestById } from "@/features/quests/services/quest.service";
-import { CreateQuestPayload } from "@/features/quests/types";
+import { UpdateQuestPayload } from "@/features/quests/types";
 import { useUserStore } from "@/features/users/store/userStore";
 import { toast } from "sonner";
 import PixelClipboardList from "@/components/icons/PixelClipboardList";
@@ -136,18 +136,18 @@ const EditQuest = () => {
     if (category === "Bug Fix") categoryStr = "BUG FIX";
     if (category === "Feature") categoryStr = "FEATURE";
 
-    // Format Backend Payload
-    const updatedQuest: Partial<CreateQuestPayload> = {
+    // Format Backend Payload (camelCase to match UpdateTaskReq struct)
+    const updatedQuest: UpdateQuestPayload = {
       title,
       description,
       point: parseInt(rewardPoints) || 0,
-      estimated_time: `${estimatedTime} ${timeUnit}`,
+      estimatedTime: `${estimatedTime} ${timeUnit}`,
       type: categoryStr,
       skills: selectedSkills.join(", "),
       difficulty: difficultyStr,
-      work_type: workType,
-      git_repo_url: repoUrl || undefined,
-      req_branch_name: branchName || undefined,
+      workType: workType,
+      gitRepoUrl: repoUrl || undefined,
+      reqBranchName: branchName || undefined,
     };
 
     updateQuest(
@@ -286,7 +286,8 @@ const EditQuest = () => {
               <select
                 value={workType}
                 onChange={(e) => setWorkType(e.target.value)}
-                className={`px-3 py-2 pr-8 bg-background text-foreground outline-none font-pixel ${fontClass} appearance-none cursor-pointer w-full h-full`}
+                disabled={quest?.status === "in-progress"}
+                className={`px-3 py-2 pr-8 bg-background text-foreground outline-none font-pixel ${fontClass} appearance-none ${quest?.status === "in-progress" ? "cursor-not-allowed opacity-50" : "cursor-pointer"} w-full h-full`}
               >
                 <option value="INDIVIDUAL" className="bg-background text-foreground">{t("createQuest.workTypes.INDIVIDUAL")}</option>
                 <option value="TEAM" className="bg-background text-foreground">{t("createQuest.workTypes.TEAM")}</option>
@@ -298,6 +299,11 @@ const EditQuest = () => {
                 </svg>
               </div>
             </div>
+            {quest?.status === "in-progress" && (
+              <p className={`font-pixel text-muted-foreground text-[12px] mt-1 ${fontClass}`}>
+                ⚠ {t("editQuest.workTypeDisabled")}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNotificationStore } from "@/store/notificationStore";
+import { useNotificationStore } from "@/features/notifications/store/notificationStore";
 import { useThemeStore } from "@/store/themeStore";
 
 const Navbar = () => {

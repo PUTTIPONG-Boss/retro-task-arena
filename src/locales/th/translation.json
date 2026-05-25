@@ -1,5 +1,5 @@
 {
-  "navbar": {    
+  "navbar": {
     "dashboard": "แดชบอร์ด",
     "quest_board": "กระดานเควสต์",
     "ranking": "กระดานอันดับ",
@@ -228,6 +228,19 @@
       "searchPlaceholder": "ค้นหาสมาชิกในทีม...",
       "clearSearch": "ล้าง",
       "removeMember": "ลบสมาชิก"
+    },
+    "inproworker": {
+      "sidebar": {
+        "statusReport": "รายงานสถานะ"
+      },
+      "pointDistribution": {
+        "leader": "หัวหน้าทีม"
+      },
+      "teamMembers": "สมาชิกทีม",
+      "viewmode": {
+        "amount": "จำนวนเงินที่เสนอ",
+        "duration": "ระยะเวลา"
+      }
     }
   },
   "questWorkspace": {
@@ -495,6 +508,7 @@
       "category": "หมวดหมู่",
       "repoUrl": "URL ของ Git Repository"
     },
+    "workTypeDisabled": "ไม่สามารถเปลี่ยนประเภทงานได้ในขณะที่เควสต์กำลังดำเนินการอยู่",
     "requiredSkills": "สกิลที่ต้องการ",
     "difficulties": {
       "Easy": "ง่าย",

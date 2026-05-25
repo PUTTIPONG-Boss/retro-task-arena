@@ -114,6 +114,12 @@ const QuestDetail = () => {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
+  useEffect(() => {
+    if (reviews && reviews.length > 0) {
+      setPointsDistributed(reviews[0].isPointDistributed === true);
+    }
+  }, [reviews]);
+
   const { data: searchResults = [] } = useGetAllUsers(debouncedQuery);
 
   const filteredUsers = searchQuery.trim()
@@ -224,7 +230,7 @@ const QuestDetail = () => {
       await updateQuestMutation.mutateAsync({
         id: quest.id,
         payload: {
-          estimated_time: selectedBid.waitDuration || "",
+          estimatedTime: selectedBid.waitDuration || "",
         },
       });
 
@@ -429,6 +435,75 @@ const QuestDetail = () => {
               )}
             </PixelFrame>
           )}
+
+          {/* ===== IN-PROGRESS WORKER SECTION ===== */}
+          {quest.status === "in-progress" && (() => {
+            const acceptedBid = bids.find(b => b.status === "ACCEPTED");
+            if (!acceptedBid) return null;
+
+            return (
+              <PixelFrame>
+                <h2 className={`font-pixel text-foreground pixel-text-shadow mb-4 flex items-center gap-2 ${fontClass}`}>
+                  <PixelUsers size={18} className="text-gold" /> {t("questDetail.inproworker.sidebar.statusReport")}
+                </h2>
+
+                <div className="space-y-4">
+                  {/* Main Worker */}
+                  <div className="pixel-border border-border bg-secondary/30 p-4">
+                    <p className={`text-[12px] text-muted-foreground font-pixel mb-2 uppercase ${fontClass}`}>
+                      {t("questDetail.inproworker.pointDistribution.leader")}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className={`font-pixel text-gold text-[16px] ${fontClass}`}>{acceptedBid.username}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Team Members */}
+                  {acceptedBid.teamMembers && acceptedBid.teamMembers.length > 0 && (
+                    <div>
+                      <p className={`text-[12px] text-foreground font-pixel mb-3 flex items-center gap-1 ${fontClass}`}>
+                        <PixelUsers size={14} className="text-gold" /> {t("questDetail.inproworker.teamMembers")} ({acceptedBid.teamMembers.length})
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {acceptedBid.teamMembers.map((member) => (
+                          <div key={member.userId} className="pixel-border border-border/50 bg-secondary/20 p-3">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className={`font-pixel text-foreground text-[14px] ${fontClass}`}>{member.username}</p>
+                                <p className={`text-[12px] text-muted-foreground font-pixel ${fontClass}`}>
+                                  {member.firstName} {member.lastName}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bid Details */}
+                  <div className="pixel-inset bg-background/50 p-3">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className={`text-[11px] text-muted-foreground font-pixel uppercase mb-1 ${fontClass}`}>{t("questDetail.inproworker.viewmode.amount")}</p>
+                        <p className={`font-pixel text-gold text-[16px] flex items-center gap-1 ${fontClass}`}>
+                          <Coins size={14} className="text-gold" /> {acceptedBid.bidAmount} GP
+                        </p>
+                      </div>
+                      <div>
+                        <p className={`text-[11px] text-muted-foreground font-pixel uppercase mb-1 text-right ${fontClass}`}>{t("questDetail.inproworker.viewmode.duration")}</p>
+                        <p className={`font-pixel text-foreground text-[14px] flex items-center justify-end gap-1 ${fontClass}`}>
+                          <PixelHourglass size={14} className="text-gold" /> {acceptedBid.waitDuration}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </PixelFrame>
+            );
+          })()}
 
           {/* ===== POINT DISTRIBUTION SECTION (Team Leader Only) ===== */}
           {quest.status === "completed" && (quest.workType === "TEAM" || quest.workType === "BOTH") && isBidder && myBid?.status === "ACCEPTED" && myBid.teamMembers && myBid.teamMembers.length > 0 && !pointsDistributed && (() => {
@@ -668,7 +743,12 @@ const QuestDetail = () => {
                                 <div key={m.userId} className="pixel-border border-border/50 bg-background/40 p-3 flex flex-col relative group">
                                   <div className="flex justify-between items-start">
                                     <div>
-                                      <p className="text-[14px] font-pixel text-accent">{m.username}</p>
+                                      <p className="text-[14px] font-pixel text-accent flex items-center gap-2">
+                                        {m.username}
+                                        <Link to={`/profile/view/${m.userId}`} className="text-muted-foreground hover:text-accent transition-colors" title="View Profile">
+                                          <PixelEye size={14} />
+                                        </Link>
+                                      </p>
                                       <p className="text-[12px] font-pixel text-foreground/80">{m.firstName} {m.lastName}</p>
                                     </div>
                                     {(quest?.status === "in-progress" || quest?.status === "review") && bid.status === "ACCEPTED" && (
@@ -1145,11 +1225,23 @@ const QuestDetail = () => {
                 ) : (
                   <div className="space-y-3">
                     {bids.map(bid => (
-                      <div key={bid.id} className="pixel-border border-border/40 bg-secondary/30 p-3 flex justify-between items-center">
-                        <div className="flex flex-col">
+                      <div key={bid.id} className="pixel-border border-border/40 bg-secondary/30 p-3 flex justify-between items-start gap-3">
+                        <div className="flex flex-col flex-1">
                           <span className={`font-pixel text-accent text-[14px] ${fontClass}`}>{bid.username}</span>
+                          {bid.teamMembers && bid.teamMembers.length > 0 && (
+                            <div className="mt-2 text-[12px] text-muted-foreground">
+                              <p className="font-pixel mb-1">👥 Team:</p>
+                              <div className="space-y-0.5">
+                                {bid.teamMembers.map(member => (
+                                  <p key={member.userId} className={`font-pixel text-foreground/80 ${fontClass}`}>
+                                    • {member.username}
+                                  </p>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 flex-shrink-0">
                           <Coins size={12} className="text-gold" />
                           <span className={`font-pixel text-gold text-[14px] ${fontClass}`}>{bid.bidAmount} GP</span>
                         </div>

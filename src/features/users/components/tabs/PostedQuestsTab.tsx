@@ -1,12 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Archive, Clock, Hourglass, CheckCircle2 } from "lucide-react";
+import { Archive, Clock, Hourglass, CheckCircle2, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import PixelFrame from "@/components/PixelFrame";
 import PixelButton from "@/components/PixelButton";
 import DifficultyStars from "@/features/quests/components/DifficultyStars";
-import { useGetBids } from "@/features/quests/services/quest.service";
+import { useGetBids, useDeleteQuest } from "@/features/quests/services/quest.service";
 import { UserProfile } from "../../types";
 
 interface PostedQuestsTabProps {
@@ -147,6 +147,8 @@ const PostedQuestCard: React.FC<{ quest: any; fontClass: string }> = ({ quest: q
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { data: bids = [] } = useGetBids(q.id);
+  const { mutate: deleteQuest, isPending: isDeleting } = useDeleteQuest();
+  const [showConfirm, setShowConfirm] = React.useState(false);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -163,6 +165,23 @@ const PostedQuestCard: React.FC<{ quest: any; fontClass: string }> = ({ quest: q
   };
 
   const hasBids = bids.length > 0;
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    deleteQuest(q.id, {
+      onSuccess: () => setShowConfirm(false),
+    });
+  };
+
+  const cancelDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowConfirm(false);
+  };
 
   return (
     <div className="group relative">
@@ -214,7 +233,8 @@ const PostedQuestCard: React.FC<{ quest: any; fontClass: string }> = ({ quest: q
             </div>
             <DifficultyStars level={q.difficulty} />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            {/* Edit Button */}
             {hasBids ? (
               <div className="group/edit relative">
                 <PixelButton
@@ -248,9 +268,71 @@ const PostedQuestCard: React.FC<{ quest: any; fontClass: string }> = ({ quest: q
                 {t("userProfile.editPostedQuests")}
               </PixelButton>
             )}
+
+            {/* Delete Button */}
+            <div className="group/delete relative">
+              <PixelButton
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "h-8 w-8 p-0 flex items-center justify-center border hover:bg-destructive/10 transition-colors",
+                  hasBids
+                    ? "border-muted-foreground/20 opacity-50 cursor-not-allowed"
+                    : "border-destructive/30 hover:border-destructive"
+                )}
+                onClick={hasBids ? (e) => e.stopPropagation() : handleDelete}
+                disabled={isDeleting}
+              >
+                <Trash2 size={14} className={hasBids ? "text-muted-foreground" : "text-destructive"} />
+              </PixelButton>
+              {hasBids && (
+                <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-background border-2 border-destructive pixel-border text-[9px] text-destructive whitespace-nowrap opacity-0 group-hover/delete:opacity-100 transition-opacity z-50 pointer-events-none">
+                  {i18n.language === 'th' ? "ไม่สามารถลบได้เนื่องจากมีการประมูลแล้ว" : "Cannot delete: Quest already has active bids"}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Delete Confirm Dialog */}
+      {showConfirm && (
+        <div
+          className="absolute inset-0 z-50 flex items-center justify-center bg-background/90 pixel-border"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-4 text-center space-y-3">
+            <Trash2 size={24} className="text-destructive mx-auto" />
+            <p className={cn("font-pixel text-foreground", i18n.language === "th" ? "text-[13px]" : "text-[11px]")}>
+              {i18n.language === 'th' ? "ยืนยันการลบ Quest นี้?" : "Delete this Quest?"}
+            </p>
+            <p className={cn("font-pixel text-muted-foreground", i18n.language === "th" ? "text-[11px]" : "text-[9px]")}>
+              {i18n.language === 'th' ? "ไม่สามารถย้อนกลับได้" : "This action cannot be undone."}
+            </p>
+            <div className="flex gap-2 justify-center pt-1">
+              <PixelButton
+                variant="ghost"
+                size="sm"
+                className="font-pixel border border-muted-foreground/30 text-[11px] h-8"
+                onClick={cancelDelete}
+              >
+                {i18n.language === 'th' ? "ยกเลิก" : "Cancel"}
+              </PixelButton>
+              <PixelButton
+                variant="danger"
+                size="sm"
+                className="font-pixel text-[11px] h-8"
+                onClick={confirmDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting
+                  ? (i18n.language === 'th' ? "กำลังลบ..." : "Deleting...")
+                  : (i18n.language === 'th' ? "ลบ Quest" : "Delete")}
+              </PixelButton>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useRankingStore, SortOption } from "../store/rankingStore";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { Sword } from "lucide-react";
+import PixelClipboardList from "@/components/icons/PixelClipboardList";
 import PixelTrophy from "@/components/icons/PixelTrophy";
 
 import PixelCoin from "@/components/icons/PixelCoin";
@@ -11,9 +11,9 @@ const RankingFilter = () => {
   const { t } = useTranslation();
   const { sortBy, setSortBy } = useRankingStore();
 
-  const options: { id: SortOption; label: string; icon: React.ReactNode }[] = [
-    { id: "exp", label: t("ranking.filter.exp"), icon: <PixelTrophy size={14} /> },
-    { id: "quests", label: t("ranking.filter.quests"), icon: <Sword size={14} /> },
+  const options: { id: SortOption; label: string; icon: React.ReactNode | null }[] = [
+    { id: "exp", label: t("ranking.filter.exp"), icon: null },
+    { id: "quests", label: t("ranking.filter.quests"), icon: <PixelClipboardList size={14} /> },
     { id: "points", label: t("ranking.filter.points"), icon: <PixelCoin size={14} /> },
   ];
 
@@ -34,7 +34,7 @@ const RankingFilter = () => {
                 : "text-muted-foreground hover:text-foreground hover:bg-white/5"
             )}
           >
-            <span className="text-sm">{option.icon}</span>
+            {option.icon && <span className="text-sm">{option.icon}</span>}
             {option.label}
             
             {sortBy === option.id && (

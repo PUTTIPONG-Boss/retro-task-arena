@@ -3,7 +3,7 @@ import { Centrifuge } from 'centrifuge';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/lib/api';
-import { useNotificationStore } from '@/store/notificationStore';
+import { useNotificationStore } from '@/features/notifications/store/notificationStore';
 import { useGetQuests } from '@/features/quests/services/quest.service';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

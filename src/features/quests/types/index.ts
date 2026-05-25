@@ -95,6 +95,21 @@ export interface CreateQuestPayload {
   req_branch_name?: string;
 }
 
+// UpdateQuestPayload uses camelCase to match backend UpdateTaskReq struct
+export interface UpdateQuestPayload {
+  title?: string;
+  description?: string;
+  point?: number;
+  estimatedTime?: string;
+  type?: string;
+  skills?: string;
+  difficulty?: string;
+  workType?: string;
+  gitRepoUrl?: string;
+  reqBranchName?: string;
+  status?: string;
+}
+
 export interface CompletedTask {
   id: string;
   title: string;

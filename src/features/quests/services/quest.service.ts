@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { Quest, QuestStatus, CreateQuestPayload, Bid, SubmitBidPayload, DistributePointsPayload, CompletedTask, PortfolioTask } from '../types';
+import { Quest, QuestStatus, CreateQuestPayload, UpdateQuestPayload, Bid, SubmitBidPayload, DistributePointsPayload, CompletedTask, PortfolioTask } from '../types';
 
 // The Backend Response Types
 interface BackendBid {
@@ -89,7 +89,8 @@ interface BackendTask {
   createdAt: string;
   updatedAt: string;
   ownerName: string;
-  workType: string;
+  workType?: string;
+  work_type?: string; // snake_case fallback (some API responses use this)
 }
 
 interface FetchTasksResponse {
@@ -127,7 +128,7 @@ const mapTaskToQuest = (task: BackendTask): Quest => {
     bids: [], // TODO: Bids not yet supported by backend API
     assignedTo: task.assigneeId || undefined,
     skills: task.skills || "General",
-    workType: task.workType,
+    workType: task.workType || task.work_type || undefined,
     createdAt: task.createdAt,
   };
 };
@@ -203,7 +204,7 @@ export const useUpdateQuest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, payload }: { id: string; payload: Partial<CreateQuestPayload> & { status?: string } }) => {
+    mutationFn: async ({ id, payload }: { id: string; payload: UpdateQuestPayload }) => {
       const response = await apiClient.put(`/tasks/${id}`, payload);
       return response.data;
     },
@@ -356,6 +357,21 @@ export const useGetCompletedUserTasks = () => {
         skills: task.skills || '',
         completedAt: task.updatedAt,
       }));
+    },
+  });
+};
+
+export const useDeleteQuest = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await apiClient.delete(`/tasks/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quests'] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
   });
 };

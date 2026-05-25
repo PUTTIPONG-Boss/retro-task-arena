@@ -37,8 +37,8 @@ import ProfileView from "@/features/users/pages/View/ProfileView";
 
 import NotFound from "./pages/NotFound";
 import AuthSyncProvider from "@/features/auth/components/AuthSyncProvider";
-import { useOwnerBidNotifications } from "@/hooks/useOwnerBidNotifications";
-import { useUserNotifications } from "@/hooks/useUserNotifications"; //accept notifications
+import { useOwnerBidNotifications } from "@/features/notifications/hooks/useOwnerBidNotifications";
+import { useUserNotifications } from "@/features/notifications/hooks/useUserNotifications"; //accept notifications
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useThemeStore } from "@/store/themeStore";

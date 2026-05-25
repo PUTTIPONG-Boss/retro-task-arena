@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api';
-import { AppNotification } from '@/store/notificationStore';
+import { AppNotification } from '@/features/notifications/store/notificationStore';
 
 export interface BackendNotification {
   id: string;

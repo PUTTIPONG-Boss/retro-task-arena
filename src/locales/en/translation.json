@@ -91,9 +91,9 @@
     "workType": "Work Type",
     "workTypes": {
       "all": "ALL",
-      "INDIVIDUAL": "Solo",
-      "TEAM": "Team",
-      "BOTH": "Duo"
+      "INDIVIDUAL": "INDIVIDUAL",
+      "TEAM": "TEAM",
+      "BOTH": "BOTH"
     }
   },
   "questCard": {
@@ -226,6 +226,19 @@
       "searchPlaceholder": "Search Team Members...",
       "clearSearch": "Clear search",
       "removeMember": "Remove member"
+    },
+    "inproworker": {
+      "sidebar": {
+        "statusReport": "Status Report"
+      },
+      "pointDistribution": {
+        "leader": "Leader"
+      },
+      "teamMembers": "Team Members",
+      "viewmode": {
+        "amount": "Bid Amount",
+        "duration": "Duration"
+      }
     }
   },
   "questWorkspace": {
@@ -497,6 +510,7 @@
       "category": "Category",
       "repoUrl": "Git Repository URL"
     },
+    "workTypeDisabled": "Cannot change work type while quest is in progress",
     "requiredSkills": "Required Skills (comma separated)",
     "difficulties": {
       "Easy": "Easy",
